@@ -9,3 +9,23 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Keyword {
+  id       Int       @id @default(autoincrement())
+  text     String
+  textDesc String?
+  textTrans String?
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+}
+
+model Category {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique
+  parentId Int?
+  treePath String?
+  keywords Keyword[]
+  children Category[] @relation("ParentCategory")
+  parent   Category?  @relation("ParentCategory", fields: [parentId], references: [id])
+}
+
