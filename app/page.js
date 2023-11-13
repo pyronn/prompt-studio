@@ -6,10 +6,8 @@ export default function Home() {
     const [inputKeywords, setInputKeywords] = useState('');
     const [finalKeywords, setFinalKeywords] = useState('');
 
-    const [selectedKeywordSet,setSelectedKeywordSet] = useState(new Set())
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [libraryKeywords, setLibraryKeywords] = useState([]);
-    const [systemParams, setSystemParams] = useState([]);
     const [activeKeywords, setActiveKeywords] = useState(new Set());
 
     const handleInputKeywordsChange = (event) => {
@@ -66,7 +64,7 @@ export default function Home() {
         setActiveKeywords(new Set(keywordList.map(kw => kw.word)));
 
         setSelectedKeywords(keywordList)
-        setSystemParams(paramsObj);
+
     }
 
     const copyToClipboard = async ()=>{
@@ -118,12 +116,15 @@ export default function Home() {
                     <div className="w-1/2 px-4">
                         <div className="mt-4">
                             {selectedKeywords.map((kw, index) => (
-                                <button
-                                    key={index}
-                                    className={`inline-block p-2 m-1 text-white rounded ${activeKeywords.has(kw.word) ? 'bg-green-500' : 'bg-gray-500'}`}
-                                    onClick={(e) => toggleKeyword(kw.word)}>
-                                    {kw.word} {kw.weight ? `[${kw.weight}]` : ''}
-                                </button>
+                                <div className={`inline-block p-1 m-1 cursor-pointer hover:cursor-pointer`} onClick={(e)=>toggleKeyword(kw.word)} key={index}>
+                                    <div className={`inline-block rounded-l-2 p-1 text-white ${activeKeywords.has(kw.word)?"bg-green-400":"bg-gray-300"}`}>
+                                        {kw.word}
+                                    </div>
+                                    <div className={`inline-block rounded-r-2 p-1 text-white ${activeKeywords.has(kw.word)?"bg-blue-400":"bg-gray-400"}`}>
+                                        翻译
+                                    </div>
+                                </div>
+
                             ))}
                         </div>
                     </div>
@@ -138,6 +139,8 @@ export default function Home() {
                             </p>
                         ))}
                     </div>
+
+
                 </div>
             </div>
         </main>
