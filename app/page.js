@@ -5,6 +5,7 @@ export default function Home() {
 
     const [inputKeywords, setInputKeywords] = useState('');
     const [finalKeywords, setFinalKeywords] = useState('');
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [libraryKeywords, setLibraryKeywords] = useState([]);
@@ -57,9 +58,9 @@ export default function Home() {
         // 解析系统参数
 
         const paramsObj = params.map((param) => {
-            const val = '--'+param
+            const val = '--' + param
             keywordList.push({word: val})
-            return {word:val};
+            return {word: val};
         });
 
         const activeIndex = new Array(keywordList.length).fill(1)
@@ -70,39 +71,40 @@ export default function Home() {
     }
 
     const translateKeywords = async (keywords) => {
-        const resp = await fetch('/translate/api', {
+        const resp = await fetch('/api/translate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                provider: "tencent",
                 srcLang: "en",
                 tarLang: "zh",
                 textList: keywords
             })
         })
-        return resp.data.targetList
+        const data = await resp.json()
+        return data.data.targetList
     }
 
     const doTranslate = async () => {
         const srcTextList = []
         const srcTextObjList = []
         selectedKeywords.map((kw, index) => {
-            if (kw.transText === undefined||kw.transText === "") {
+            if (kw.transText === undefined || kw.transText === "") {
                 srcTextList.push(kw.word)
                 srcTextObjList.push({word: kw.word, index: index})
             }
         })
         const targetTextList = await translateKeywords(srcTextList)
-        const newSelectedKeywords = selectedKeywords
-        console.log(targetTextList);
+        const newSelectedKeywords = new Array(...selectedKeywords)
         srcTextObjList.map((kwObj) => {
             newSelectedKeywords[kwObj.index].transText = targetTextList[kwObj.index]
         })
         setSelectedKeywords(newSelectedKeywords)
     }
 
-    const copyToClipboard = async ()=>{
+    const copyToClipboard = async () => {
         if ('clipboard' in navigator) {
             try {
                 await navigator.clipboard.writeText(finalKeywords);
@@ -126,6 +128,7 @@ export default function Home() {
                     {/* 输入区域 */}
                     <div className="w-1/2">
                         <div className="bg-gray-800 p-4 rounded-md w-full max-w-2xl mx-auto my-8">
+                            <button onClick={(e)=>(setIsDrawerOpen(!isDrawerOpen))}>Drawer</button>
                             <div className="border-b border-gray-700 pb-2">
                                 <h1 className="text-white text-lg font-bold">untitled</h1>
                             </div>
@@ -143,7 +146,7 @@ export default function Home() {
                                 <button className={`btn btn-primary`} onClick={copyToClipboard}>
                                     复制
                                 </button>
-                                <button className={`btn btn-secondary`} onClick={doTranslate} >
+                                <button className={`btn btn-secondary`} onClick={doTranslate}>
                                     翻译
                                 </button>
                             </div>
@@ -153,16 +156,26 @@ export default function Home() {
                     {/* 中间提示词列表区域 */}
                     <div className="w-1/2 px-4">
                         <div className="mt-4">
-                            {selectedKeywords.map((kw, index) => (
-                                <div className={`inline-block p-1 m-1 cursor-pointer hover:cursor-pointer`} onClick={(e)=>toggleKeyword(index)} key={index}>
-                                    <div className={`inline-block rounded-l-2 p-1 text-white ${activeKeywords[index] === 1?"bg-green-400":"bg-gray-300"}`}>
-                                        {kw.word}
+                            {selectedKeywords.filter((kw)=>(kw.word !== undefined && kw.word !== "")).map((kw, index) => (
+                                <div className={`indicator`}>
+                                    <div className="indicator-item indicator-bottom" onClick={()=>(console.log("save"))}>
+                                        <svg  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 rounded">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                        </svg>
                                     </div>
-                                    <div className={`inline-block rounded-r-2 p-1 text-white ${activeKeywords[index] === 1 ?"bg-blue-400":"bg-gray-400"}`}>
-                                        {kw.transText === undefined? "":kw.transText}
+                                    <div
+                                        className={`inline-block p-1 m-0.25 rounded-lg cursor-pointer hover:cursor-pointer text-xs`}
+                                        onClick={(e) => toggleKeyword(index)} key={index}>
+                                        <div
+                                            className={`rounded-s-lg inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-green-400" : "bg-gray-300"}`}>
+                                            {kw.word}
+                                        </div>
+                                        <div
+                                            className={`${kw.transText === undefined || kw.transText === "" ? "hidden" : "show"} rounded-e-lg inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-blue-400" : "bg-gray-400"}`}>
+                                            {kw.transText}
+                                        </div>
                                     </div>
                                 </div>
-
                             ))}
                         </div>
                     </div>
@@ -179,6 +192,17 @@ export default function Home() {
                     </div>
 
 
+                </div>
+            </div>
+            <div
+                className={`fixed rounded-t-lg bottom-0 left-0 w-full h-256 bg-gray-200 overflow-hidden transition-transform duration-300 transform ${
+                    isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+                }`}
+            >
+                {/* 抽屉内容 */}
+                <div className="p-4">
+                    <h1>抽屉内容</h1>
+                    {/* 其他组件 */}
                 </div>
             </div>
         </main>
