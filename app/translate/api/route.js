@@ -1,10 +1,11 @@
-import {tencentcloud} from "tencentcloud-sdk-nodejs"
+import {tmt} from "tencentcloud-sdk-nodejs-tmt/tencentcloud/services/"
 
 // 导入对应产品模块的client models。
-const CvmClient = tencentcloud.cvm.v20170312.Client
+const TmtClient = tmt.v20180321.Client
+
 
 // 实例化要请求产品(以cvm为例)的client对象
-const client = new CvmClient({
+const client = new TmtClient({
     // 为了保护密钥安全，建议将密钥设置在环境变量中或者配置文件中，请参考本文凭证管理章节。
     // 硬编码密钥到代码中有可能随代码泄露而暴露，有安全隐患，并不推荐。
     credential: {
@@ -25,31 +26,21 @@ const client = new CvmClient({
 })
 
 
-export async function GET(req,resp){
-
+export async function POST(req){
+    const reqParam = await req.json()
+    const srcLang = reqParam.srcLang
+    const tarLang = reqParam.tarLang
+    const textList = reqParam.textList
+    const resp = await client.TextTranslateBatch({
+        Source: srcLang,
+        Target: tarLang,
+        ProjectId: 0,
+        SourceTextList: textList,
+    });
     return Response.json({
-        "status": "success",
-        "data": {
-            "id": 1,
-            "name": "测试",
-            "description": "测试",
-            "created_at": "2021-06-22T14:52:30.000000Z",
-            "updated_at": "2021-06-22T14:52:30.000000Z",
-            "deleted_at": null,
-            "keywords": [
-                {
-                    "id": 1,
-                    "name": "测试",
-                    "description": "测试",
-                    "created_at": "2021-06-22T14:52:30.000000Z",
-                    "updated_at": "2021-06-22T14:52:30.000000Z",
-                    "deleted_at": null,
-                    "pivot": {
-                        "category_id": 1,
-                        "keyword_id": 1
-                    }
-                }
-            ]
+        "status": "ok",
+        "data":{
+            targetList: resp.TargetTextList
         }
     })
 }

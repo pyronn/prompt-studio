@@ -8,7 +8,7 @@ export default function Home() {
 
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [libraryKeywords, setLibraryKeywords] = useState([]);
-    const [activeKeywords, setActiveKeywords] = useState(new Set());
+    const [activeKeywords, setActiveKeywords] = useState([]);
 
     const handleInputKeywordsChange = (event) => {
         setInputKeywords(event.target.value);
@@ -28,16 +28,17 @@ export default function Home() {
         // TODO: 实现保存新提示词的功能，包括分类的处理
     };
 
-    const toggleKeyword = (word) => {
-        const newActKeywords = new Set(activeKeywords)
-        if (newActKeywords.has(word)){
-            newActKeywords.delete(word)
-        }else{
-            newActKeywords.add(word)
-        }
+    const toggleKeyword = (index) => {
+        const newActKeywords = activeKeywords
+        newActKeywords[index] = activeKeywords[index] === 1 ? 0 : 1
         setActiveKeywords(newActKeywords)
-        const tmpArr = [...newActKeywords]
-        const keywordStr = tmpArr.join(",")
+        const keywordList = []
+        newActKeywords.forEach((val, index) => {
+            if (val === 1) {
+                keywordList.push(selectedKeywords[index].word)
+            }
+        })
+        const keywordStr = keywordList.join(",")
         setFinalKeywords(keywordStr)
     }
 
@@ -61,10 +62,44 @@ export default function Home() {
             return {word:val};
         });
 
-        setActiveKeywords(new Set(keywordList.map(kw => kw.word)));
+        const activeIndex = new Array(keywordList.length).fill(1)
+        setActiveKeywords(activeIndex);
 
         setSelectedKeywords(keywordList)
 
+    }
+
+    const translateKeywords = async (keywords) => {
+        const resp = await fetch('/translate/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                srcLang: "en",
+                tarLang: "zh",
+                textList: keywords
+            })
+        })
+        return resp.data.targetList
+    }
+
+    const doTranslate = async () => {
+        const srcTextList = []
+        const srcTextObjList = []
+        selectedKeywords.map((kw, index) => {
+            if (kw.transText === undefined||kw.transText === "") {
+                srcTextList.push(kw.word)
+                srcTextObjList.push({word: kw.word, index: index})
+            }
+        })
+        const targetTextList = await translateKeywords(srcTextList)
+        const newSelectedKeywords = selectedKeywords
+        console.log(targetTextList);
+        srcTextObjList.map((kwObj) => {
+            newSelectedKeywords[kwObj.index].transText = targetTextList[kwObj.index]
+        })
+        setSelectedKeywords(newSelectedKeywords)
     }
 
     const copyToClipboard = async ()=>{
@@ -108,6 +143,9 @@ export default function Home() {
                                 <button className={`btn btn-primary`} onClick={copyToClipboard}>
                                     复制
                                 </button>
+                                <button className={`btn btn-secondary`} onClick={doTranslate} >
+                                    翻译
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -116,12 +154,12 @@ export default function Home() {
                     <div className="w-1/2 px-4">
                         <div className="mt-4">
                             {selectedKeywords.map((kw, index) => (
-                                <div className={`inline-block p-1 m-1 cursor-pointer hover:cursor-pointer`} onClick={(e)=>toggleKeyword(kw.word)} key={index}>
-                                    <div className={`inline-block rounded-l-2 p-1 text-white ${activeKeywords.has(kw.word)?"bg-green-400":"bg-gray-300"}`}>
+                                <div className={`inline-block p-1 m-1 cursor-pointer hover:cursor-pointer`} onClick={(e)=>toggleKeyword(index)} key={index}>
+                                    <div className={`inline-block rounded-l-2 p-1 text-white ${activeKeywords[index] === 1?"bg-green-400":"bg-gray-300"}`}>
                                         {kw.word}
                                     </div>
-                                    <div className={`inline-block rounded-r-2 p-1 text-white ${activeKeywords.has(kw.word)?"bg-blue-400":"bg-gray-400"}`}>
-                                        翻译
+                                    <div className={`inline-block rounded-r-2 p-1 text-white ${activeKeywords[index] === 1 ?"bg-blue-400":"bg-gray-400"}`}>
+                                        {kw.transText === undefined? "":kw.transText}
                                     </div>
                                 </div>
 

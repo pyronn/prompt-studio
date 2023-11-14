@@ -14,7 +14,8 @@
     "react": "^18",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18",
-    "tencentcloud-sdk-nodejs": "^4.0.731"
+    "tencentcloud-sdk-nodejs": "^4.0.731",
+    "tencentcloud-sdk-nodejs-tmt": "^4.0.732"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
