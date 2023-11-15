@@ -33,39 +33,37 @@ export default function Test() {
     };
 
     return (
-        <div>
-            <button onClick={addNewButton} className="mb-4 p-2 bg-blue-500 text-white">
-                Add Button
-            </button>
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="droppable">
-                    {(provided, snapshot) => (
-                        <div
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                            style={{ backgroundColor: snapshot.isDraggingOver ? 'blue' : 'grey' }}
-                        >
-                            {items.map((item, index) => (
-                                <Draggable key={item.id} draggableId={item.id} index={index}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            style={provided.draggableProps.style}
-                                        >
-                                            <button className="p-2 m-2 bg-green-500 text-white">
-                                                {item.text}
-                                            </button>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
+        <div className={`bg-gray-100`}>
+            <div className="min-h-screen flex flex-col items-center justify-center">
+                <div className="bg-white shadow-lg rounded-lg p-8 m-4 w-full max-w-2xl">
+                    <div className="flex flex-col">
+                        <div className="overflow-hidden bg-gray-200 rounded-lg aspect-video mb-4">
+
                         </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div className="bg-green-200 p-2 rounded">apple</div>
+                            <div className="bg-green-300 p-2 rounded">forest</div>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 mb-4">
+                            <div className="bg-blue-200 p-2 rounded">big bad wolf</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-purple-200 p-2 rounded">Ikari Shinji from EVA</div>
+                            <div className="bg-purple-300 p-2 rounded">unreal engine</div>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 mt-4">
+                            <div className="bg-red-200 p-2 rounded">cinematic lighting</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div class="bg-yellow-200 p-2 rounded">UHD</div>
+                            <div class="bg-yellow-300 p-2 rounded">super detail</div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4 mt-4">
+                            <div class="bg-indigo-200 p-2 rounded">--aspect 2:3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

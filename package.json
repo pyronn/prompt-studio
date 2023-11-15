@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@notionhq/client": "^2.2.13",
     "@prisma/client": "^5.5.2",
     "next": "14.0.1",
     "react": "^18",
