@@ -4,17 +4,17 @@ import {DictPrompt} from "./types"
 // Initializing a client
 const notion = new Client({
     auth: process.env.NOTION_TOKEN,
+    // baseUrl: "https://cors.pyronn198928.workers.dev/https://api.notion.com",
 })
 
 const databaseId = process.env.NOTION_DATABASE_ID
 
-export async function GetAllPromptsDict() {
+export async function GetAllDictPrompts() {
     const response = await notion.databases.query({
-        database_id: databaseId,
-        filter: {
-            property: "type",
-            select: {
-                equals: "提示词库"
+        "filter": {
+            "property": "type",
+            "select": {
+                "equals": "提示词库"
             }
         }
     })
@@ -37,7 +37,6 @@ export async function GetAllPromptsDict() {
 function parsePropertyValue(properties, propertyName) {
     if (propertyName in properties) {
         const property = properties[propertyName];
-
         switch (property.type) {
             case 'title':
                 return property.title[0].plain_text;
@@ -45,10 +44,8 @@ function parsePropertyValue(properties, propertyName) {
                 return property.select.name;
             case 'multi_select':
                 return property[propertyName].map((option) => option.name);
-
             case 'rich_text':
                 return property.rich_text[0].plain_text;
-
             default:
                 return undefined;
         }
@@ -111,8 +108,9 @@ function parseCategoryObjects(categoryObjects) {
 }
 
 
-export async function SaveDictPrompts({text, textTrans, dir}) {
-    notion.pages.create({
+export async function SaveDictPromptsToNotion({text, transText, dir}) {
+    const dirs = dir.split("/")
+    const resp = notion.pages.create({
         parent: {
             "type": "database_id",
             "database_id": databaseId
@@ -120,13 +118,51 @@ export async function SaveDictPrompts({text, textTrans, dir}) {
         properties: {
             text: {
                 type: "title",
-                object: {}
+                title: [
+                    {
+                        type: "text",
+                        text: {
+                            content: text
+                        }
+                    }
+                ],
             },
-            textTrans: {},
-            category: {},
-            dir: {},
-            type: {}
+            transText: {
+                type: "rich_text",
+                rich_text: [
+                    {
+                        type: "text",
+                        text: {
+                            content: transText
+                        }
+                    }
+                ],
+            },
+            category: {
+                type: "select",
+                select: {
+                    name: dirs[0]
+                }
+            },
+            dir: {
+                type: "select",
+                select: {
+                    name: dir
+                }
+            },
+            type: {
+                type: "select",
+                select: {
+                    name: "提示词库"
+                }
+            }
         }
     })
 
+    console.log(resp);
+
+
+    return Response.json({
+        "status": "ok"
+    })
 }
