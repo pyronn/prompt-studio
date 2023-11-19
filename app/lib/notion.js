@@ -3,20 +3,32 @@ import {DictPrompt} from "./types"
 
 // Initializing a client
 const notion = new Client({
-    auth: process.env.NOTION_TOKEN,
-    // baseUrl: "https://cors.pyronn198928.workers.dev/https://api.notion.com",
+    auth: process.env.NOTION_TOKEN
 })
 
 const databaseId = process.env.NOTION_DATABASE_ID
 
-export async function GetAllDictPrompts() {
+export async function GetAllDictPrompts(auth,databaseID){
+    let token = ""
+    if (auth.startsWith("Bearer ")){
+        token = auth.substring(7)
+    }else{
+        token = auth
+    }
+    const notion = new Client({
+        auth: token
+    })
+    console.log(token)
+    console.log(databaseID)
+
     const response = await notion.databases.query({
-        "filter": {
-            "property": "type",
-            "select": {
+        database_id: databaseID,
+        filter: {
+            property: "type",
+            select: {
                 "equals": "提示词库"
             }
-        }
+        },
     })
     const promptsDict = []
 

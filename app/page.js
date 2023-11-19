@@ -10,6 +10,8 @@ export default function Home() {
     const [notionLoaded, setNotionLoaded] = useState(false);
     const [subCategoryPrompts, setSubCategoryPrompts] = useState({});
     const [categoryDirs, setCategoryDirs] = useState([]); // ["root", "root/child1", "root/child2"
+    const [isNotionConfigHover, setIsNotionConfigHover] = useState(false);
+
 
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [libraryKeywords, setLibraryKeywords] = useState([]);
@@ -34,6 +36,18 @@ export default function Home() {
     const addKeywordToFinal = (keyword) => {
         // TODO: 从提示词库中添加提示词到最终提示词中
     };
+
+    const onEnableNotionDictChange = (e)=>{
+        localStorage.setItem("enableNotionDict", e.target.checked)
+    }
+
+    const onNotionTokenChange= (e)=>{
+        localStorage.setItem("notionToken", e.target.value)
+    }
+
+    const onNotionDatabaseIdChange= (e)=>{
+        localStorage.setItem("notionDatabaseId", e.target.value)
+    }
 
     const saveNewDictPromptDialog = ({word, transText}) => {
         setNewDictPromptTransText("")
@@ -72,7 +86,7 @@ export default function Home() {
     };
 
     const toggleKeyword = (index) => {
-        const newActKeywords = activeKeywords
+        const newActKeywords = new Array(...activeKeywords)
         newActKeywords[index] = activeKeywords[index] === 1 ? 0 : 1
         setActiveKeywords(newActKeywords)
         const keywordList = []
@@ -159,6 +173,16 @@ export default function Home() {
         }
     }
 
+    const addKeyword = (dictPrompt)=>{
+        const newSelected = new Array(...selectedKeywords)
+        newSelected.push({word:dictPrompt.text,transText:dictPrompt.transText})
+        setSelectedKeywords(newSelected)
+
+        const newActive = new Array(...activeKeywords)
+        newActive.push(1)
+        setActiveKeywords(newActive)
+    }
+
     const toggleDrawer = () => {
         setIsDrawerOpen(!isDrawerOpen)
         if (!notionLoaded) {
@@ -182,11 +206,13 @@ export default function Home() {
         const resp = await fetch('/api/dict', {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("notionToken"),
+                'Notion-Database-Id': localStorage.getItem("notionDatabaseId")
             }
         })
         const result = await resp.json()
-        result.data.map()
+        console.log(result.data)
         setAllCategoryPrompts(result.data)
     }
 
@@ -283,22 +309,29 @@ export default function Home() {
                         <div className={`flex flex-basis-1`}>提示词词典</div>
                         <button className={`btn btn-sm `} onClick={loadAllCategoryKeywords}>刷新</button>
                         <div className={`flex flex-basis-4`}>
-                            <button className={`btn btn-sm`}>Notion配置</button>
-                            <div className={`absolute right-1/3 w-1/2 top-1/2 border-2 p-2 bg-gray-100 `}>
+                            <button className={`btn btn-sm`} onMouseEnter={() => setIsNotionConfigHover(true)}
+                                    onMouseLeave={() => setIsNotionConfigHover(false)}>Notion配置
+                            </button>
+                            <div
+                                className={`absolute right-1/3 w-1/2 top-1/3 border-2 p-2 bg-gray-100 ${isNotionConfigHover ? "show" : "hidden"}`}
+                                onMouseEnter={() => setIsNotionConfigHover(true)}
+                            onMouseLeave={()=>setIsNotionConfigHover(false)}>
                                 <div>
                                     <label className={`label text-xs`}>
                                         <span className={`label-text`}>是否启用Notion词典:</span>
-                                        <input type='checkbox' className={`checkbox checkbox-xs`}/>
+                                        <input type='checkbox' className={`checkbox checkbox-xs`} onChange={onEnableNotionDictChange}/>
                                     </label>
 
                                 </div>
                                 <div className={`p-1`}>
                                     <label className={`label text-xs z-20`}>NotionToken:</label>
-                                    <input type='text' className={`input input-xs input-bordered`} placeholder={`hello`}/>
+                                    <input type='text' className={`input input-xs input-bordered`}
+                                           placeholder={`NotionToken`} onChange={onNotionTokenChange}/>
                                 </div>
                                 <div className={`p-1`}>
-                                    <label className={`label text-xs`}>NotionToken:</label>
-                                    <input type='text' className={`input input-xs input-bordered`} placeholder={`hello`}/>
+                                    <label className={`label text-xs`}>NotionDatabaseID:</label>
+                                    <input type='text' className={`input input-xs input-bordered`}
+                                           placeholder={`NotionDatabaseID`} onChange={onNotionDatabaseIdChange}/>
                                 </div>
                                 <button className={`btn btn-xs w-full`} onClick={loadAllCategoryKeywords}>
                                     加载
@@ -311,19 +344,21 @@ export default function Home() {
                     </div>
 
                     <div className={`card-body h-256`}>
-                        <div className={`join`}>
+                        <div className={`join flex flex-wrap`}>
                             {
                                 allCategoryPrompts.map((category, index) => (
-                                    <input className={`join-item btn btn-sm text-sm`} type={`radio`} name={`category`}
+                                    <input className={`join-item btn btn-sm text-sm rounded-none`} type={`radio`} name={`category`}
                                            onClick={onDictCategoryClick} value={index} aria-label={category.name}/>
                                 ))
                             }
 
                         </div>
+
+
                         <div>
                             {
                                 Object.keys(subCategoryPrompts).map((subCateName, index) => (
-                                    <div className={`collapse collapse-arrow collapse-sm border`}>
+                                    <div className={`collapse collapse-arrow collapse-sm`}>
                                         <input type={"checkbox"}/>
                                         <div className={`collapse-title text-sm font-medium`}>{subCateName}</div>
                                         <div className={`collapse-content`}>
@@ -331,7 +366,7 @@ export default function Home() {
                                                 subCategoryPrompts[subCateName].map((prompt) => (
                                                     <div
                                                         className={`inline-block p-1 m-0.25 rounded-lg cursor-pointer hover:cursor-pointer text-xs`}
-                                                        onClick={(e) => console.log(prompt.text)}>
+                                                        onClick={(e) => addKeyword(prompt)}>
                                                         <div
                                                             className={`rounded-s-lg inline-block p-1 text-white bg-green-300`}>
                                                             {prompt.text}
