@@ -1,5 +1,9 @@
 "use client"
 import {useEffect, useState} from 'react'
+import Link from 'next/link';
+import { MenuIcon } from 'lucide-react';
+import {HoverCard} from '@radix-ui/react-hover-card';
+
 
 export default function Home() {
 
@@ -235,6 +239,48 @@ export default function Home() {
     return (
 
         <main className="">
+            <nav className="bg-white text-gray-500 shadow-lg">
+                <div className="max-w-6xl mx-auto px-4">
+                    <div className="flex justify-between">
+                        <div className="flex space-x-4">
+                            {/* Logo */}
+                            <div>
+                                <Link href="/" className={"flex items-center py-5 px-2 text-white"}>
+                                    <span className="font-bold">网站Logo</span>
+                                </Link>
+                            </div>
+
+
+                            {/* Primary Nav */}
+                            <div className="hidden md:flex  space-x-1 align-end">
+                                <button className="py-5 px-3" onClick={toggleDrawer}>
+                                    提示词典
+                                </button>
+                            </div>
+                        </div>
+
+                        {/*/!* Mobile Button *!/*/}
+                        {/*<div className="md:hidden flex items-center">*/}
+                        {/*    <button className="mobile-menu-button">*/}
+                        {/*        <MenuIcon className="w-6 h-6" />*/}
+                        {/*    </button>*/}
+                        {/*</div>*/}
+                    </div>
+                </div>
+
+                {/*/!* Mobile Menu *!/*/}
+                {/*<div className="mobile-menu hidden md:hidden">*/}
+                {/*    <Link href="/about">*/}
+                {/*        <a className="block py-2 px-4 text-sm hover:bg-blue-700">关于我们</a>*/}
+                {/*    </Link>*/}
+                {/*    <Link href="/services">*/}
+                {/*        <a className="block py-2 px-4 text-sm hover:bg-blue-700">服务</a>*/}
+                {/*    </Link>*/}
+                {/*    <Link href="/contact">*/}
+                {/*        <a className="block py-2 px-4 text-sm hover:bg-blue-700">联系我们</a>*/}
+                {/*    </Link>*/}
+                {/*</div>*/}
+            </nav>
             <div className=" container mx-auto p-4">
                 <div className="flex">
                     {/* 输入区域 */}
