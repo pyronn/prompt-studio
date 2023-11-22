@@ -1,8 +1,7 @@
 "use client"
 import {useEffect, useState} from 'react'
 import Link from 'next/link';
-import { MenuIcon } from 'lucide-react';
-import {HoverCard} from '@radix-ui/react-hover-card';
+import SortableButtonContainer from "@/app/components/SortableButtonContainer";
 
 
 export default function Home() {
@@ -20,6 +19,7 @@ export default function Home() {
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [libraryKeywords, setLibraryKeywords] = useState([]);
     const [activeKeywords, setActiveKeywords] = useState([]);
+    const [systemParams, setSystemParams] = useState([]); // ["--param1", "--param2"
 
     const [newDictPromptText, setNewDictPromptText] = useState("");
     const [newDictPromptTransText, setNewDictPromptTransText] = useState("");
@@ -33,23 +33,15 @@ export default function Home() {
         // TODO: 解析输入的提示词，并设置到detectedKeywords中
     };
 
-    const toggleKeywordSelection = (keyword) => {
-        // TODO: 切换中间列表中提示词的选择状态，并更新最终组装的提示词
-    };
-
-    const addKeywordToFinal = (keyword) => {
-        // TODO: 从提示词库中添加提示词到最终提示词中
-    };
-
-    const onEnableNotionDictChange = (e)=>{
+    const onEnableNotionDictChange = (e) => {
         localStorage.setItem("enableNotionDict", e.target.checked)
     }
 
-    const onNotionTokenChange= (e)=>{
+    const onNotionTokenChange = (e) => {
         localStorage.setItem("notionToken", e.target.value)
     }
 
-    const onNotionDatabaseIdChange= (e)=>{
+    const onNotionDatabaseIdChange = (e) => {
         localStorage.setItem("notionDatabaseId", e.target.value)
     }
 
@@ -90,17 +82,10 @@ export default function Home() {
     };
 
     const toggleKeyword = (index) => {
+        console.log(index);
         const newActKeywords = new Array(...activeKeywords)
         newActKeywords[index] = activeKeywords[index] === 1 ? 0 : 1
         setActiveKeywords(newActKeywords)
-        const keywordList = []
-        newActKeywords.forEach((val, index) => {
-            if (val === 1) {
-                keywordList.push(selectedKeywords[index].word)
-            }
-        })
-        const keywordStr = keywordList.join(",")
-        setFinalKeywords(keywordStr)
     }
 
     const parseInputKeywords = (input) => {
@@ -110,9 +95,9 @@ export default function Home() {
         // 分割系统参数和关键词
         const [keywordStr, ...params] = input.split(' --').filter(Boolean);
         console.log(keywordStr)
-        const keywordList = keywordStr.split(',').map((kw) => {
+        const keywordList = keywordStr.split(',').map((kw, index) => {
             const parts = kw.trim().split(' ::');
-            return {word: parts[0].trim(), weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined};
+            return {id: index, word: parts[0].trim(), weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined};
         });
 
         // 解析系统参数
@@ -122,6 +107,7 @@ export default function Home() {
             keywordList.push({word: val})
             return {word: val};
         });
+        console.log(paramsObj)
 
         const activeIndex = new Array(keywordList.length).fill(1)
         setActiveKeywords(activeIndex);
@@ -177,9 +163,9 @@ export default function Home() {
         }
     }
 
-    const addKeyword = (dictPrompt)=>{
+    const addKeyword = (dictPrompt) => {
         const newSelected = new Array(...selectedKeywords)
-        newSelected.push({word:dictPrompt.text,transText:dictPrompt.transText})
+        newSelected.push({word: dictPrompt.text, transText: dictPrompt.transText})
         setSelectedKeywords(newSelected)
 
         const newActive = new Array(...activeKeywords)
@@ -194,6 +180,11 @@ export default function Home() {
                 setNotionLoaded(true)
             })
         }
+    }
+
+    const handleKeywordSortChange = (items, activeItems) => {
+        setSelectedKeywords(items)
+        setActiveKeywords(activeItems)
     }
 
     const onDictCategoryClick = (e) => {
@@ -223,6 +214,22 @@ export default function Home() {
     useEffect(() => {
         parseInputKeywords(inputKeywords);
     }, [inputKeywords]);
+
+    useEffect(() => {
+        parseFinalKeyword();
+    }, [activeKeywords, selectedKeywords])
+
+    const parseFinalKeyword = () => {
+        const keywordList = []
+        activeKeywords.forEach((val, index) => {
+            if (val === 1) {
+                keywordList.push(selectedKeywords[index].word)
+            }
+        })
+        const keywordStr = keywordList.join(",")
+        // TODO 系统参数的处理
+        setFinalKeywords(keywordStr)
+    }
 
     const addToast = (message, type, duration = 5000) => {
         const newToast = {
@@ -285,18 +292,17 @@ export default function Home() {
                 <div className="flex">
                     {/* 输入区域 */}
                     <div className="w-1/3">
-                        <div className="bg-gray-800 p-4 rounded-md w-full max-w-2xl mx-auto my-8">
-                            <button onClick={(e) => (toggleDrawer())}>Drawer</button>
-                            <div className="border-b border-gray-700 pb-2">
-                                <h1 className="text-white text-lg font-bold">untitled</h1>
+                        <div className="bg-gray-100 p-4 rounded-md w-full max-w-2xl mx-auto my-8">
+                            <div className="border-b border-gray-300 pb-2">
+                                <h1 className="text-black text-lg font-bold">Prompt</h1>
                             </div>
                             <div className="mt-4">
                                 <textarea
-                                    className="min-h-[8rem] w-full max-w-md resize-none text-green-500 font-mono bg-gray-300 p-2 rounded-t-md"
+                                    className="min-h-[8rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-400 p-2 rounded-t-md bordered"
                                     onChange={handleInputKeywordsChange}
                                     defaultValue={inputKeywords}
                                 />
-                                <div className="text-white font-mono bg-gray-700 p-2 rounded-b-md">
+                                <div className="text-white font-mono bg-black-300 p-2 rounded-b-md">
                                     {finalKeywords}
                                 </div>
                             </div>
@@ -314,33 +320,16 @@ export default function Home() {
                     {/* 中间提示词列表区域 */}
                     <div className="w-1/3 px-4">
                         <div className="mt-4">
-                            {selectedKeywords.filter((kw) => (kw.word !== undefined && kw.word !== "")).map((kw, index) => (
-                                <div className={`indicator p-2`}>
-                                    <div className="indicator-item indicator-bottom cursor-pointer hover:cursor-pointer"
-                                         onClick={() => (saveNewDictPromptDialog(kw))}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                             strokeWidth={2.5} stroke="red" className="w-3 h-3">
-                                            <path strokeLinecap="round" strokeLinejoin="round"
-                                                  d="M4.5 12.75l6 6 9-13.5"/>
-                                        </svg>
-                                    </div>
-                                    <div
-                                        className={`inline-block rounded-lg cursor-pointer hover:cursor-pointer text-xs`}
-                                        onClick={(e) => toggleKeyword(index)} key={index}>
-                                        <div
-                                            className={`rounded-s-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-green-400" : "bg-gray-300"}`}>
-                                            {kw.word}
-                                        </div>
-                                        <div
-                                            className={`${kw.transText === undefined || kw.transText === "" ? "hidden" : "show"} rounded-e-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-blue-400" : "bg-gray-400"}`}>
-                                            {kw.transText}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                            <SortableButtonContainer items={selectedKeywords} onItemsChange={handleKeywordSortChange}
+                                                     activeKeywords={activeKeywords}
+                                                     saveNewDictPromptDialog={saveNewDictPromptDialog}
+                                                     toggleKeyword={toggleKeyword}/>
                         </div>
+
                     </div>
+
                 </div>
+
 
             </div>
 
@@ -361,11 +350,12 @@ export default function Home() {
                             <div
                                 className={`absolute right-1/3 w-1/2 top-1/3 border-2 p-2 bg-gray-100 ${isNotionConfigHover ? "show" : "hidden"}`}
                                 onMouseEnter={() => setIsNotionConfigHover(true)}
-                            onMouseLeave={()=>setIsNotionConfigHover(false)}>
+                                onMouseLeave={() => setIsNotionConfigHover(false)}>
                                 <div>
                                     <label className={`label text-xs`}>
                                         <span className={`label-text`}>是否启用Notion词典:</span>
-                                        <input type='checkbox' className={`checkbox checkbox-xs`} onChange={onEnableNotionDictChange}/>
+                                        <input type='checkbox' className={`checkbox checkbox-xs`}
+                                               onChange={onEnableNotionDictChange}/>
                                     </label>
 
                                 </div>
@@ -393,7 +383,8 @@ export default function Home() {
                         <div className={`join flex flex-wrap`}>
                             {
                                 allCategoryPrompts.map((category, index) => (
-                                    <input className={`join-item btn btn-sm text-sm rounded-none`} type={`radio`} name={`category`}
+                                    <input className={`join-item btn btn-sm text-sm rounded-none`} type={`radio`}
+                                           name={`category`}
                                            onClick={onDictCategoryClick} value={index} aria-label={category.name}/>
                                 ))
                             }
