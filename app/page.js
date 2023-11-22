@@ -1,7 +1,7 @@
 "use client"
 import {useEffect, useState} from 'react'
 import Link from 'next/link';
-import SortableButtonContainer from "@/app/components/SortableButtonContainer";
+import SortableButtonContainer from "@/components/SortableButtonContainer";
 
 
 export default function Home() {
@@ -298,15 +298,19 @@ export default function Home() {
                             </div>
                             <div className="mt-4">
                                 <textarea
-                                    className="min-h-[8rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-400 p-2 rounded-t-md bordered"
+                                    className="min-h-[12rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-400 p-2 rounded-t-md bordered"
                                     onChange={handleInputKeywordsChange}
                                     defaultValue={inputKeywords}
                                 />
-                                <div className="text-white font-mono bg-black-300 p-2 rounded-b-md">
+                                <div className="text-gray-200 font-mono bg-gray-700 p-2 rounded-b-md bordered max-w-md">
                                     {finalKeywords}
                                 </div>
                             </div>
+                            {/* 系统参数*/}
                             <div>
+
+                            </div>
+                            <div className={`p-2`}>
                                 <button className={`btn btn-primary`} onClick={copyToClipboard}>
                                     复制
                                 </button>

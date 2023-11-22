@@ -1,6 +1,7 @@
 import React from 'react';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
+import {Save} from "lucide-react";
 
 const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
     const {
@@ -23,11 +24,7 @@ const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword
 
             <div className="indicator-item indicator-bottom cursor-pointer hover:cursor-pointer"
                  onClick={() => (saveNewDictPromptDialog(item))}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                     strokeWidth={2.5} stroke="red" className="w-3 h-3">
-                    <path strokeLinecap="round" strokeLinejoin="round"
-                          d="M4.5 12.75l6 6 9-13.5"/>
-                </svg>
+                <Save size={20} color="#d567ad" strokeWidth={1.25} absoluteStrokeWidth />
             </div>
             <div
                 className={`inline-block rounded-lg cursor-pointer hover:cursor-pointer text-xs`}

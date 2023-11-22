@@ -1,4 +1,4 @@
-import {GetAllCategoryWithDictPrompts, SaveDictPrompts} from "@/app/lib/store";
+import {GetAllCategoryWithDictPrompts, SaveDictPrompts} from "@/lib/store";
 import {headers} from "next/headers";
 
 /**

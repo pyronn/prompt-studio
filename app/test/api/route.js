@@ -1,4 +1,4 @@
-import {GetAllDictPrompts, SaveDictPrompts} from "@/app/lib/notion";
+import {GetAllDictPrompts, SaveDictPrompts} from "@/lib/notion";
 
 export async function GET() {
     const resp = await GetAllDictPrompts()
