@@ -12,7 +12,7 @@ export default function Home() {
     const [finalKeywords, setFinalKeywords] = useState(''); // 最终的关键词
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // 是否打开抽屉
     const [allCategoryPrompts, setAllCategoryPrompts] = useState([]); // 所有的提示词
-    const [notionLoaded, setNotionLoaded] = useState(false); // 是否已经加载了notion词典
+    const [isPromptDictLoaded, setIsPromptDictLoaded] = useState(false); // 是否已经加载了notion词典
     const [subCategoryPrompts, setSubCategoryPrompts] = useState({}); // 二级分类的提示词
     const [isNotionEnable, setIsNotionEnable] = useState(false); // 是否启用notion词典
     const [notionToken, setNotionToken] = useState(""); // notion token
@@ -217,9 +217,9 @@ export default function Home() {
 
     const toggleDrawer = () => {
         setIsDrawerOpen(!isDrawerOpen)
-        if (!notionLoaded) {
+        if (!isPromptDictLoaded) {
             loadAllCategoryKeywords().then(() => {
-                setNotionLoaded(true)
+                setIsPromptDictLoaded(true)
             })
         }
     }
@@ -241,6 +241,14 @@ export default function Home() {
 
     const loadAllCategoryKeywords = async () => {
         if (!isNotionEnable) {
+            const resp = await fetch('/api/dict/local', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            const result = await resp.json()
+            setAllCategoryPrompts(result.data)
             return
         }
         const resp = await fetch('/api/dict', {
@@ -252,7 +260,6 @@ export default function Home() {
             }
         })
         const result = await resp.json()
-        console.log(result.data)
         setAllCategoryPrompts(result.data)
     }
 
@@ -524,7 +531,7 @@ export default function Home() {
                                         }}>
                                             {styleOptions.map((styleOption) => (
                                                 <option key={styleOption}
-                                                        selected={styleOption === style}
+                                                        defaultValue={style}
                                                         value={styleOption}>{styleOption}</option>
                                             ))}
                                         </select>
@@ -647,7 +654,7 @@ export default function Home() {
                         <button className={`btn btn-sm `} onClick={loadAllCategoryKeywords}>刷新</button>
                     </div>
 
-                    <div className={`card-body h-256`}>
+                    <div className={`card-body h-screen `}>
                         {/*一级分类*/}
                         <div className={`join flex flex-wrap`}>
                             {
@@ -659,7 +666,7 @@ export default function Home() {
                             }
                         </div>
                         {/*二级分类和词典*/}
-                        <div>
+                        <div className={`overflow-y-auto`}>
                             {
                                 Object.keys(subCategoryPrompts).map((subCateName, index) => (
                                     <div className={`collapse collapse-arrow collapse-sm`}>
