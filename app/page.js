@@ -1,31 +1,54 @@
 "use client"
 import {useEffect, useState} from 'react'
 import Link from 'next/link';
+import {Flex, HoverCard} from '@radix-ui/themes'
 import SortableButtonContainer from "@/components/SortableButtonContainer";
 
 
 export default function Home() {
 
-    const [inputKeywords, setInputKeywords] = useState('');
-    const [finalKeywords, setFinalKeywords] = useState('');
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [allCategoryPrompts, setAllCategoryPrompts] = useState([]);
-    const [notionLoaded, setNotionLoaded] = useState(false);
-    const [subCategoryPrompts, setSubCategoryPrompts] = useState({});
-    const [categoryDirs, setCategoryDirs] = useState([]); // ["root", "root/child1", "root/child2"
-    const [isNotionConfigHover, setIsNotionConfigHover] = useState(false);
+
+    const [inputKeywords, setInputKeywords] = useState(''); // 输入的关键词
+    const [finalKeywords, setFinalKeywords] = useState(''); // 最终的关键词
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false); // 是否打开抽屉
+    const [allCategoryPrompts, setAllCategoryPrompts] = useState([]); // 所有的提示词
+    const [notionLoaded, setNotionLoaded] = useState(false); // 是否已经加载了notion词典
+    const [subCategoryPrompts, setSubCategoryPrompts] = useState({}); // 二级分类的提示词
+    const [isNotionEnable, setIsNotionEnable] = useState(false); // 是否启用notion词典
+    const [notionToken, setNotionToken] = useState(""); // notion token
+    const [notionDatabaseId, setNotionDatabaseId] = useState(""); // notion database id
+
+    // 系统参数
+    const [stylize, setStylize] = useState(100);
+    const [model, setModel] = useState("niji5");
+    const [style, setStyle] = useState("");
+    const [chaos, setChaos] = useState(0);
+    const [imageWeight, setImageWeight] = useState(0.25);
+    const [aspect, setAspect] = useState("1:1");
 
 
     const [selectedKeywords, setSelectedKeywords] = useState([]);
-    const [libraryKeywords, setLibraryKeywords] = useState([]);
     const [activeKeywords, setActiveKeywords] = useState([]);
-    const [systemParams, setSystemParams] = useState([]); // ["--param1", "--param2"
+    const [systemParams, setSystemParams] = useState({});
 
     const [newDictPromptText, setNewDictPromptText] = useState("");
     const [newDictPromptTransText, setNewDictPromptTransText] = useState("");
     const [newDictPromptDir, setNewDictPromptDir] = useState("");
 
     const [toasts, setToasts] = useState([]);
+
+    const modelOptions = [
+        {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
+        {name: "niji5", paramName: "niji", paramValue: "5", showName: "Niji 5"},
+        {name: "v5.1", paramName: "v", paramValue: "5.1", showName: "V 5.1"},
+        {name: "v5", paramName: "v", paramValue: "5", showName: "V 5"},
+        {name: "v4", paramName: "v", paramValue: "4", showName: "V 4"},
+        {name: "v3", paramName: "v", paramValue: "3", showName: "V 3"},
+        {name: "niji4", paramName: "niji", paramValue: "4", showName: "Niji 4"},
+    ]
+    const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2"]
+
+    const styleOptions = ["raw", "cute", "expressive", "original", "scenic"]
 
     const handleInputKeywordsChange = (event) => {
         setInputKeywords(event.target.value);
@@ -34,14 +57,17 @@ export default function Home() {
     };
 
     const onEnableNotionDictChange = (e) => {
+        setIsNotionEnable(e.target.checked)
         localStorage.setItem("enableNotionDict", e.target.checked)
     }
 
     const onNotionTokenChange = (e) => {
+        setNotionToken(e.target.value)
         localStorage.setItem("notionToken", e.target.value)
     }
 
     const onNotionDatabaseIdChange = (e) => {
+        setNotionDatabaseId(e.target.value)
         localStorage.setItem("notionDatabaseId", e.target.value)
     }
 
@@ -88,31 +114,47 @@ export default function Home() {
         setActiveKeywords(newActKeywords)
     }
 
-    const parseInputKeywords = (input) => {
-        if (input === "") {
+    // 解析输入的关键词
+    const parseInputKeywords = () => {
+        if (inputKeywords === "") {
             return
         }
         // 分割系统参数和关键词
+        const input = inputKeywords.trim();
         const [keywordStr, ...params] = input.split(' --').filter(Boolean);
-        console.log(keywordStr)
-        const keywordList = keywordStr.split(',').map((kw, index) => {
+        console.log(keywordStr, params)
+        const inputKeywordList = []
+        keywordStr.split(',').map((kw, index) => {
             const parts = kw.trim().split(' ::');
-            return {id: index, word: parts[0].trim(), weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined};
+            if (parts[0].trim() !== "") {
+                inputKeywordList.push({
+                    id: index,
+                    word: parts[0].trim(),
+                    weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
+                })
+            }
         });
 
         // 解析系统参数
 
-        const paramsObj = params.map((param) => {
-            const val = '--' + param
-            keywordList.push({word: val})
-            return {word: val};
+        const sysParams = {}
+        params.map((param) => {
+            const name = param.split(' ')[0]
+            const value = param.split(' ')[1]
+            console.log(name, value)
+            let key = name
+            if (name === 'niji' || name === 'v') {
+                key = 'model'
+            }
+            sysParams[key] = {name: name, value: value}
         });
-        console.log(paramsObj)
 
-        const activeIndex = new Array(keywordList.length).fill(1)
+        const activeIndex = new Array(inputKeywordList.length).fill(1)
         setActiveKeywords(activeIndex);
 
-        setSelectedKeywords(keywordList)
+        setSelectedKeywords(inputKeywordList)
+        setSystemParams(sysParams)
+        parseSystemParams(sysParams)
 
     }
 
@@ -198,6 +240,9 @@ export default function Home() {
     }
 
     const loadAllCategoryKeywords = async () => {
+        if (!isNotionEnable) {
+            return
+        }
         const resp = await fetch('/api/dict', {
             method: 'GET',
             headers: {
@@ -212,12 +257,54 @@ export default function Home() {
     }
 
     useEffect(() => {
-        parseInputKeywords(inputKeywords);
+        parseInputKeywords();
     }, [inputKeywords]);
 
     useEffect(() => {
         parseFinalKeyword();
-    }, [activeKeywords, selectedKeywords])
+    }, [activeKeywords, selectedKeywords, systemParams])
+
+    useEffect(() => {
+        setIsNotionEnable(localStorage.getItem("enableNotionDict") === "true")
+        setNotionToken(localStorage.getItem("notionToken"))
+        setNotionDatabaseId(localStorage.getItem("notionDatabaseId"))
+    }, [])
+
+    useEffect(() => {
+        parseSystemForm()
+    }, [model, style, stylize, chaos, imageWeight, aspect]);
+
+    const parseSystemParams = (sysParams) => {
+        const params = {}
+        Object.keys(sysParams).map((key) => {
+            switch (key) {
+                case "s":
+                case "stylize":
+                    setStylize(sysParams[key].value)
+                    break
+                case "style":
+                    setStyle(sysParams[key].value)
+                    break
+                case "c":
+                case "chaos":
+                    setChaos(sysParams[key].value)
+                    break
+                case "iw":
+                    setImageWeight(sysParams[key].value)
+                    break
+                case "ar":
+                case "aspect":
+                    setAspect(sysParams[key].value)
+                    break
+                case "model":
+                    setModel(sysParams[key].name + sysParams[key].value)
+                    break
+                default:
+                    break
+            }
+        })
+        return params
+    }
 
     const parseFinalKeyword = () => {
         const keywordList = []
@@ -226,9 +313,37 @@ export default function Home() {
                 keywordList.push(selectedKeywords[index].word)
             }
         })
-        const keywordStr = keywordList.join(",")
-        // TODO 系统参数的处理
-        setFinalKeywords(keywordStr)
+        const keywordStr = keywordList.join(", ")
+        const systemParamStr = Object.keys(systemParams).map((key) => {
+            switch (key) {
+                case "s":
+                case "stylize":
+                    if (systemParams[key].value === 100) {
+                        return ""
+                    }
+                    return `--s ${systemParams[key].value ? systemParams[key].value : ""}`
+                case "style":
+                    return `--style ${systemParams[key].value ? systemParams[key].value : ""}`
+                case "c":
+                case "chaos":
+                    return `--c ${systemParams[key].value ? systemParams[key].value : ""}`
+                case "iw":
+                    if (systemParams[key].value === 1) {
+                        return ""
+                    }
+                    return `--iw ${systemParams[key].value ? systemParams[key].value : ""}`
+                case "ar":
+                case "aspect":
+                    return `--ar ${systemParams[key].value ? systemParams[key].value : ""}`
+                case "model":
+                    return `--${systemParams[key].name} ${systemParams[key].value ? systemParams[key].value : ""}`
+                case "tile":
+                    return `--tile`
+                default:
+                    return ""
+            }
+        }).join(" ")
+        setFinalKeywords(keywordStr + " " + systemParamStr)
     }
 
     const addToast = (message, type, duration = 5000) => {
@@ -241,6 +356,46 @@ export default function Home() {
         setTimeout(() => {
             setToasts(toasts.filter((t) => (t.id !== newToast.id)))
         }, duration)
+    }
+
+    function parseSystemForm() {
+        const newObj = {...systemParams}
+
+        modelOptions.map((modelOption) => {
+            if (modelOption.name === model) {
+                newObj["model"] = {name: modelOption.paramName, value: modelOption.paramValue}
+            }
+        })
+
+        if (style !== "") {
+            newObj["style"] = {name: "style", value: style}
+        }
+
+        if (aspect !== "1:1") {
+            newObj["ar"] = {name: "ar", value: aspect}
+        }
+
+        if (stylize !== 100) {
+            newObj["s"] = {name: "s", value: stylize}
+        }
+
+        if (chaos !== 0) {
+            newObj["c"] = {name: "c", value: chaos}
+        }
+
+        if (imageWeight !== 0.25) {
+            newObj["iw"] = {name: "iw", value: imageWeight}
+        }
+
+        setSystemParams(newObj)
+    }
+
+    function clearInput() {
+        setInputKeywords("")
+        setFinalKeywords("")
+        setSelectedKeywords([])
+        setActiveKeywords([])
+        setSystemParams({})
     }
 
     return (
@@ -288,17 +443,17 @@ export default function Home() {
                 {/*    </Link>*/}
                 {/*</div>*/}
             </nav>
-            <div className=" container mx-auto p-4">
+            <div className="container mx-auto p-4">
                 <div className="flex">
                     {/* 输入区域 */}
-                    <div className="w-1/3">
+                    <div className="w-2/5">
                         <div className="bg-gray-100 p-4 rounded-md w-full max-w-2xl mx-auto my-8">
                             <div className="border-b border-gray-300 pb-2">
                                 <h1 className="text-black text-lg font-bold">Prompt</h1>
                             </div>
                             <div className="mt-4">
                                 <textarea
-                                    className="min-h-[12rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-400 p-2 rounded-t-md bordered"
+                                    className="min-h-[12rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
                                     onChange={handleInputKeywordsChange}
                                     defaultValue={inputKeywords}
                                 />
@@ -306,23 +461,167 @@ export default function Home() {
                                     {finalKeywords}
                                 </div>
                             </div>
+                            <div className={'divider'}></div>
                             {/* 系统参数*/}
                             <div>
-
+                                <div className={`p-1`}>
+                                    <label className={`label text-xs`}>
+                                        <span className={`label-text`}>系统参数:</span>
+                                    </label>
+                                </div>
+                                <div className={`p-1`}>
+                                    <div className={`bordered p-1`}>
+                                        <label className={`label text-xs w-1/3 inline-block`}>
+                                            <span className={`label-text`}>模型:</span>
+                                        </label>
+                                        <select className={`select select-sm w-1/3 inline-block`}
+                                                onChange={(e) => setModel(e.target.value)}>
+                                            {modelOptions.map((modelOption) => (
+                                                <option key={modelOption.name}
+                                                        defaultValue={model}
+                                                        value={modelOption.name}>{modelOption.showName}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className={`bordered`}>
+                                        <label className={`label text-xs w-1/3 inline-block`}>
+                                            <span className={`label-text`}>--ar 图片尺寸:</span>
+                                        </label>
+                                        <select className={`select select-sm w-1/2 max-w-xs inline-block`}
+                                                onChange={(e) => {
+                                                    setAspect(e.target.value)
+                                                }}>
+                                            {aspectOptions.map((aspectOption) => (
+                                                <option key={aspectOption}
+                                                        defaultValue={aspect}
+                                                        value={aspectOption}>{aspectOption}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className={`bordered`}>
+                                        <label className={`label text-xs inline-block w-1/3`}>
+                                            <span className={`label-text`}>--s 风格化:</span>
+                                        </label>
+                                        <input type={`number`} className={`input input-xs inline-block w-1/4`}
+                                               value={stylize} onChange={(e) => {
+                                            setStylize(e.target.value)
+                                        }}/>
+                                        <input type="range" min={0} max={1000} value={stylize} step={10}
+                                               className="range range-xs w-1/3" onChange={(e) => {
+                                            setStylize(e.target.value)
+                                        }}/>
+                                    </div>
+                                    <div>
+                                        <label className={`label text-xs inline-block w-1/3`}>
+                                            <span className={`label-text`}>--style 风格:</span>
+                                        </label>
+                                        <input type={`text`} className={`input input-xs inline-block w-1/3`}
+                                               value={style} onChange={(e) => {
+                                            setStyle(e.target.value)
+                                        }}/>
+                                        <select className={`select select-sm`} onChange={(e) => {
+                                            setStyle(e.target.value)
+                                        }}>
+                                            {styleOptions.map((styleOption) => (
+                                                <option key={styleOption}
+                                                        selected={styleOption === style}
+                                                        value={styleOption}>{styleOption}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className={`label text-xs inline-block w-1/3`}>
+                                            <span className={`label-text`}>--c 多样性:</span>
+                                        </label>
+                                        <input type={`text`} className={`input input-xs inline-block w-1/4`}
+                                               value={chaos} onChange={(e) => {
+                                            setChaos(e.target.value)
+                                        }}/>
+                                        <input type="range" min={0} max={100} value={chaos} step={1}
+                                               className="range range-xs w-1/3" onChange={(e) => {
+                                            setChaos(e.target.value)
+                                        }}/>
+                                    </div>
+                                    <div>
+                                        <label className={`label text-xs inline-block w-1/3`}>
+                                            <span className={`label-text`}>--iw 图片权重:</span>
+                                        </label>
+                                        <input type={`text`} className={`input input-xs inline-block w-1/4`}
+                                               value={imageWeight} onChange={(e) => {
+                                            setImageWeight(e.target.value)
+                                        }}/>
+                                        <input type="range" min={0} max={2} value={imageWeight} step={0.25}
+                                               className="range range-xs w-1/3" onChange={(e) => {
+                                            setImageWeight(e.target.value)
+                                        }}/>
+                                    </div>
+                                </div>
                             </div>
                             <div className={`p-2`}>
-                                <button className={`btn btn-primary`} onClick={copyToClipboard}>
+                                <button className={`btn btn-primary btn-sm`} onClick={copyToClipboard}>
                                     复制
                                 </button>
-                                <button className={`btn btn-secondary`} onClick={doTranslate}>
+                                <button className={`btn btn-secondary btn-sm`} onClick={doTranslate}>
                                     翻译
                                 </button>
+                                <button className={`btn btn-secondary btn-sm`} onClick={clearInput}>
+                                    清空
+                                </button>
+                            </div>
+                            <div>
+                                <HoverCard.Root>
+                                    <HoverCard.Trigger>
+                                        <Link href={'#'} className={`btn btn-sm`}>Notion配置
+                                        </Link>
+                                    </HoverCard.Trigger>
+                                    <HoverCard.Content>
+                                        {/*<div*/}
+                                        {/*    // className={`absolute right-1/3 w-1/2 top-1/3 border-2 p-2 bg-gray-100 ${isNotionConfigHover ? "show" : "hidden"}`}*/}
+                                        {/*    onMouseEnter={() => setIsNotionConfigHover(true)}*/}
+                                        {/*    onMouseLeave={() => setIsNotionConfigHover(false)}>*/}
+                                        <Flex gap="4" className={`border-2 p-2 bg-gray-100`}>
+                                            <div>
+                                                <label className={`label text-xs`}>
+                                                    <span className={`label-text`}>是否启用Notion词典:</span>
+                                                    <input type='checkbox' className={`checkbox checkbox-xs`}
+                                                           checked={isNotionEnable}
+                                                           onChange={onEnableNotionDictChange}/>
+                                                </label>
+
+                                            </div>
+                                            <div className={`p-1`}>
+                                                <label className={`label text-xs z-20`}>NotionToken:</label>
+                                                <input type='text' className={`input input-xs input-bordered`}
+                                                       name={`notionToken`}
+                                                       placeholder={`NotionToken`} value={notionToken}
+                                                       onChange={onNotionTokenChange} disabled={!isNotionEnable}/>
+
+                                            </div>
+                                            <div className={`p-1`}>
+                                                <label className={`label text-xs`}>NotionDatabaseID:</label>
+                                                <input type='text' className={`input input-xs input-bordered`}
+                                                       name={`notionDatabaseId`}
+                                                       value={notionDatabaseId}
+                                                       placeholder={`NotionDatabaseID`}
+                                                       onChange={onNotionDatabaseIdChange} disabled={!isNotionEnable}/>
+                                            </div>
+                                            <button className={`btn btn-xs w-full`} onClick={loadAllCategoryKeywords}>
+                                                加载
+                                            </button>
+                                            <button className={`btn btn-xs w-full`}>
+                                                同步默认词典到notion
+                                            </button>
+                                        </Flex>
+
+                                        {/*</div>*/}
+                                    </HoverCard.Content>
+                                </HoverCard.Root>
                             </div>
                         </div>
                     </div>
 
                     {/* 中间提示词列表区域 */}
-                    <div className="w-1/3 px-4">
+                    <div className="w-2/5 px-4">
                         <div className="mt-4">
                             <SortableButtonContainer items={selectedKeywords} onItemsChange={handleKeywordSortChange}
                                                      activeKeywords={activeKeywords}
@@ -331,7 +630,6 @@ export default function Home() {
                         </div>
 
                     </div>
-
                 </div>
 
 
@@ -347,43 +645,10 @@ export default function Home() {
                     <div className={`card-title flex w-max text-sm`}>
                         <div className={`flex flex-basis-1`}>提示词词典</div>
                         <button className={`btn btn-sm `} onClick={loadAllCategoryKeywords}>刷新</button>
-                        <div className={`flex flex-basis-4`}>
-                            <button className={`btn btn-sm`} onMouseEnter={() => setIsNotionConfigHover(true)}
-                                    onMouseLeave={() => setIsNotionConfigHover(false)}>Notion配置
-                            </button>
-                            <div
-                                className={`absolute right-1/3 w-1/2 top-1/3 border-2 p-2 bg-gray-100 ${isNotionConfigHover ? "show" : "hidden"}`}
-                                onMouseEnter={() => setIsNotionConfigHover(true)}
-                                onMouseLeave={() => setIsNotionConfigHover(false)}>
-                                <div>
-                                    <label className={`label text-xs`}>
-                                        <span className={`label-text`}>是否启用Notion词典:</span>
-                                        <input type='checkbox' className={`checkbox checkbox-xs`}
-                                               onChange={onEnableNotionDictChange}/>
-                                    </label>
-
-                                </div>
-                                <div className={`p-1`}>
-                                    <label className={`label text-xs z-20`}>NotionToken:</label>
-                                    <input type='text' className={`input input-xs input-bordered`}
-                                           placeholder={`NotionToken`} onChange={onNotionTokenChange}/>
-                                </div>
-                                <div className={`p-1`}>
-                                    <label className={`label text-xs`}>NotionDatabaseID:</label>
-                                    <input type='text' className={`input input-xs input-bordered`}
-                                           placeholder={`NotionDatabaseID`} onChange={onNotionDatabaseIdChange}/>
-                                </div>
-                                <button className={`btn btn-xs w-full`} onClick={loadAllCategoryKeywords}>
-                                    加载
-                                </button>
-                                <button className={`btn btn-xs w-full`}>
-                                    同步默认词典到notion
-                                </button>
-                            </div>
-                        </div>
                     </div>
 
                     <div className={`card-body h-256`}>
+                        {/*一级分类*/}
                         <div className={`join flex flex-wrap`}>
                             {
                                 allCategoryPrompts.map((category, index) => (
@@ -392,10 +657,8 @@ export default function Home() {
                                            onClick={onDictCategoryClick} value={index} aria-label={category.name}/>
                                 ))
                             }
-
                         </div>
-
-
+                        {/*二级分类和词典*/}
                         <div>
                             {
                                 Object.keys(subCategoryPrompts).map((subCateName, index) => (
