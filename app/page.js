@@ -7,6 +7,20 @@ import SortableButtonContainer from "@/components/SortableButtonContainer";
 
 export default function Home() {
 
+    const modelOptions = {
+        "v5.2": {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
+        "niji5": {name: "niji5", paramName: "niji", paramValue: "5", showName: "Niji 5"},
+        "v5.1": {name: "v5.1", paramName: "v", paramValue: "5.1", showName: "V 5.1"},
+        "v5": {name: "v5", paramName: "v", paramValue: "5", showName: "V 5"},
+        "v4": {name: "v4", paramName: "v", paramValue: "4", showName: "V 4"},
+        "v3": {name: "v3", paramName: "v", paramValue: "3", showName: "V 3"},
+        "niji4": {name: "niji4", paramName: "niji", paramValue: "4", showName: "Niji 4"},
+    }
+
+
+    const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2"]
+
+    const styleOptions = ["raw", "cute", "expressive", "original", "scenic"]
 
     const [inputKeywords, setInputKeywords] = useState(''); // 输入的关键词
     const [finalKeywords, setFinalKeywords] = useState(''); // 最终的关键词
@@ -17,6 +31,7 @@ export default function Home() {
     const [isNotionEnable, setIsNotionEnable] = useState(false); // 是否启用notion词典
     const [notionToken, setNotionToken] = useState(""); // notion token
     const [notionDatabaseId, setNotionDatabaseId] = useState(""); // notion database id
+    const [isOnlyNotion, setIsOnlyNotion] = useState(false); // 是否只使用notion词典
 
     // 系统参数
     const [stylize, setStylize] = useState(100);
@@ -29,7 +44,8 @@ export default function Home() {
 
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [activeKeywords, setActiveKeywords] = useState([]);
-    const [systemParams, setSystemParams] = useState({});
+    const modelOption = modelOptions[model]
+    const [systemParams, setSystemParams] = useState({model: {name: modelOption.paramName, value: modelOption.paramValue}});
 
     const [newDictPromptText, setNewDictPromptText] = useState("");
     const [newDictPromptTransText, setNewDictPromptTransText] = useState("");
@@ -37,18 +53,7 @@ export default function Home() {
 
     const [toasts, setToasts] = useState([]);
 
-    const modelOptions = [
-        {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
-        {name: "niji5", paramName: "niji", paramValue: "5", showName: "Niji 5"},
-        {name: "v5.1", paramName: "v", paramValue: "5.1", showName: "V 5.1"},
-        {name: "v5", paramName: "v", paramValue: "5", showName: "V 5"},
-        {name: "v4", paramName: "v", paramValue: "4", showName: "V 4"},
-        {name: "v3", paramName: "v", paramValue: "3", showName: "V 3"},
-        {name: "niji4", paramName: "niji", paramValue: "4", showName: "Niji 4"},
-    ]
-    const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2"]
 
-    const styleOptions = ["raw", "cute", "expressive", "original", "scenic"]
 
     const handleInputKeywordsChange = (event) => {
         setInputKeywords(event.target.value);
@@ -64,6 +69,11 @@ export default function Home() {
     const onNotionTokenChange = (e) => {
         setNotionToken(e.target.value)
         localStorage.setItem("notionToken", e.target.value)
+    }
+
+    function onOnlyNotionChange() {
+        setIsOnlyNotion(e.target.checked)
+        localStorage.setItem("onlyNotionDict", e.target.checked)
     }
 
     const onNotionDatabaseIdChange = (e) => {
@@ -210,9 +220,16 @@ export default function Home() {
         newSelected.push({word: dictPrompt.text, transText: dictPrompt.transText})
         setSelectedKeywords(newSelected)
 
-        const newActive = new Array(...activeKeywords)
-        newActive.push(1)
-        setActiveKeywords(newActive)
+        if (activeKeywords.length === 1) {
+            const newActive = activeKeywords.copyWithin(1, 0)
+            console.log(newActive);
+            newActive.push(1)
+            setActiveKeywords(newActive)
+        } else {
+            const newActive = new Array(...activeKeywords)
+            newActive.push(1)
+            setActiveKeywords(newActive)
+        }
     }
 
     const toggleDrawer = () => {
@@ -260,6 +277,17 @@ export default function Home() {
             }
         })
         const result = await resp.json()
+        if (!isOnlyNotion) {
+            const localResp = await fetch('/api/dict/local', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            const localResult = await localResp.json()
+            result.data = result.data.concat(localResult.data)
+        }
+
         setAllCategoryPrompts(result.data)
     }
 
@@ -368,11 +396,8 @@ export default function Home() {
     function parseSystemForm() {
         const newObj = {...systemParams}
 
-        modelOptions.map((modelOption) => {
-            if (modelOption.name === model) {
-                newObj["model"] = {name: modelOption.paramName, value: modelOption.paramValue}
-            }
-        })
+        const modelOption = modelOptions[model]
+        newObj["model"] = {name: modelOption.paramName, value: modelOption.paramValue}
 
         if (style !== "") {
             newObj["style"] = {name: "style", value: style}
@@ -402,8 +427,11 @@ export default function Home() {
         setFinalKeywords("")
         setSelectedKeywords([])
         setActiveKeywords([])
-        setSystemParams({})
+        const modelOption = modelOptions[model]
+        setSystemParams({model: {name: modelOption.paramName, value: modelOption.paramValue}})
+
     }
+
 
     return (
 
@@ -414,8 +442,8 @@ export default function Home() {
                         <div className="flex space-x-4">
                             {/* Logo */}
                             <div>
-                                <Link href="/" className={"flex items-center py-5 px-2 text-white"}>
-                                    <span className="font-bold">网站Logo</span>
+                                <Link href="/" className={"flex items-center py-5 px-2 text-black"}>
+                                    <span className="font-bold">PromptRepo</span>
                                 </Link>
                             </div>
 
@@ -450,11 +478,11 @@ export default function Home() {
                 {/*    </Link>*/}
                 {/*</div>*/}
             </nav>
-            <div className="container mx-auto p-4">
+            <div className="container mx-auto p-3">
                 <div className="flex">
                     {/* 输入区域 */}
-                    <div className="w-2/5">
-                        <div className="bg-gray-100 p-4 rounded-md w-full max-w-2xl mx-auto my-8">
+                    <div className="w-1/3">
+                        <div className="bg-base-200 p-4 rounded-md w-full max-w-2xl mx-auto my-8">
                             <div className="border-b border-gray-300 pb-2">
                                 <h1 className="text-black text-lg font-bold">Prompt</h1>
                             </div>
@@ -462,7 +490,7 @@ export default function Home() {
                                 <textarea
                                     className="min-h-[12rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
                                     onChange={handleInputKeywordsChange}
-                                    defaultValue={inputKeywords}
+                                    value={inputKeywords}
                                 />
                                 <div className="text-gray-200 font-mono bg-gray-700 p-2 rounded-b-md bordered max-w-md">
                                     {finalKeywords}
@@ -470,7 +498,7 @@ export default function Home() {
                             </div>
                             <div className={'divider'}></div>
                             {/* 系统参数*/}
-                            <div>
+                            <div className={'bg-base-300 rounded rounded-2'}>
                                 <div className={`p-1`}>
                                     <label className={`label text-xs`}>
                                         <span className={`label-text`}>系统参数:</span>
@@ -482,10 +510,11 @@ export default function Home() {
                                             <span className={`label-text`}>模型:</span>
                                         </label>
                                         <select className={`select select-sm w-1/3 inline-block`}
-                                                onChange={(e) => setModel(e.target.value)}>
-                                            {modelOptions.map((modelOption) => (
+                                                onChange={(e) => setModel(e.target.value)}
+                                                defaultValue={model}>
+                                            {Object.values(modelOptions).map((modelOption) => (
                                                 <option key={modelOption.name}
-                                                        defaultValue={model}
+                                                        selected={model === modelOption.name}
                                                         value={modelOption.name}>{modelOption.showName}</option>
                                             ))}
                                         </select>
@@ -497,10 +526,12 @@ export default function Home() {
                                         <select className={`select select-sm w-1/2 max-w-xs inline-block`}
                                                 onChange={(e) => {
                                                     setAspect(e.target.value)
-                                                }}>
+                                                }}
+                                                defaultValue={aspect}
+                                        >
                                             {aspectOptions.map((aspectOption) => (
                                                 <option key={aspectOption}
-                                                        defaultValue={aspect}
+                                                        selected={aspect === aspectOption}
                                                         value={aspectOption}>{aspectOption}</option>
                                             ))}
                                         </select>
@@ -565,28 +596,24 @@ export default function Home() {
                                 </div>
                             </div>
                             <div className={`p-2`}>
-                                <button className={`btn btn-primary btn-sm`} onClick={copyToClipboard}>
+                                <button className={`btn btn-primary btn-sm m-2`} onClick={copyToClipboard}>
                                     复制
                                 </button>
-                                <button className={`btn btn-secondary btn-sm`} onClick={doTranslate}>
+                                <button className={`btn btn-secondary btn-sm m-2`} onClick={doTranslate}>
                                     翻译
                                 </button>
-                                <button className={`btn btn-secondary btn-sm`} onClick={clearInput}>
+                                <button className={`btn btn-error btn-sm m-2`} onClick={clearInput}>
                                     清空
                                 </button>
                             </div>
                             <div>
                                 <HoverCard.Root>
                                     <HoverCard.Trigger>
-                                        <Link href={'#'} className={`btn btn-sm`}>Notion配置
+                                        <Link href={'#'} className={`btn btn-sm btn-secondary`}>Notion配置
                                         </Link>
                                     </HoverCard.Trigger>
                                     <HoverCard.Content>
-                                        {/*<div*/}
-                                        {/*    // className={`absolute right-1/3 w-1/2 top-1/3 border-2 p-2 bg-gray-100 ${isNotionConfigHover ? "show" : "hidden"}`}*/}
-                                        {/*    onMouseEnter={() => setIsNotionConfigHover(true)}*/}
-                                        {/*    onMouseLeave={() => setIsNotionConfigHover(false)}>*/}
-                                        <Flex gap="4" className={`border-2 p-2 bg-gray-100`}>
+                                        <Flex gap="4" className={`border-2 p-2 bg-base-100 rounded rounded-5`}>
                                             <div>
                                                 <label className={`label text-xs`}>
                                                     <span className={`label-text`}>是否启用Notion词典:</span>
@@ -595,6 +622,14 @@ export default function Home() {
                                                            onChange={onEnableNotionDictChange}/>
                                                 </label>
 
+                                            </div>
+                                            <div>
+                                                <label className={`label text-xs`}>
+                                                    <span className={`label-text`}>是否只使用notion词典:</span>
+                                                    <input type='checkbox' className={`checkbox checkbox-xs`}
+                                                           checked={isOnlyNotion}
+                                                           onChange={onOnlyNotionChange}/>
+                                                </label>
                                             </div>
                                             <div className={`p-1`}>
                                                 <label className={`label text-xs z-20`}>NotionToken:</label>
@@ -612,10 +647,11 @@ export default function Home() {
                                                        placeholder={`NotionDatabaseID`}
                                                        onChange={onNotionDatabaseIdChange} disabled={!isNotionEnable}/>
                                             </div>
-                                            <button className={`btn btn-xs w-full`} onClick={loadAllCategoryKeywords}>
+                                            <button className={`btn btn-xs btn-accent w-full`}
+                                                    onClick={loadAllCategoryKeywords}>
                                                 加载
                                             </button>
-                                            <button className={`btn btn-xs w-full`}>
+                                            <button className={`btn btn-xs btn-info w-full`}>
                                                 同步默认词典到notion
                                             </button>
                                         </Flex>
@@ -628,7 +664,7 @@ export default function Home() {
                     </div>
 
                     {/* 中间提示词列表区域 */}
-                    <div className="w-2/5 px-4">
+                    <div className="w-3/5 px-4">
                         <div className="mt-4">
                             <SortableButtonContainer items={selectedKeywords} onItemsChange={handleKeywordSortChange}
                                                      activeKeywords={activeKeywords}

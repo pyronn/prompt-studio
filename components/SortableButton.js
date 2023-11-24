@@ -2,6 +2,7 @@ import React from 'react';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import {Save} from "lucide-react";
+import {Button} from "@radix-ui/themes";
 
 const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
     const {
@@ -18,23 +19,19 @@ const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners} onClick={() => {
-            toggleKeyword(index)
-        }} className={`indicator p-2`}>
-
-            <div className="indicator-item indicator-bottom cursor-pointer hover:cursor-pointer"
-                 onClick={() => (saveNewDictPromptDialog(item))}>
-                <Save size={20} color="#d567ad" strokeWidth={1.25} absoluteStrokeWidth />
-            </div>
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners}  className={`relative`}>
+            <Button className={`p-0.25 absolute bottom-0 right-0 rounded`} onClick={() => (saveNewDictPromptDialog(item))} >
+                <Save size={15} color="#ababab" className={`text-black`} strokeWidth={1.25} absoluteStrokeWidth />
+            </Button>
             <div
-                className={`inline-block rounded-lg cursor-pointer hover:cursor-pointer text-xs`}
+                className={`inline-block rounded-lg cursor-pointer hover:cursor-pointer text-xs m-2`}
                 onClick={(e) => toggleKeyword(index)} key={index}>
                 <div
-                    className={`rounded-s-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-green-400" : "bg-gray-300"}`}>
+                    className={`rounded-s-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-primary" : "bg-gray-300"}`}>
                     {item.word}
                 </div>
                 <div
-                    className={`${item.transText === undefined || item.transText === "" ? "hidden" : "show"} rounded-e-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-blue-400" : "bg-gray-400"}`}>
+                    className={`${item.transText === undefined || item.transText === "" ? "hidden" : "show"} rounded-e-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-secondary" : "bg-gray-400"}`}>
                     {item.transText}
                 </div>
             </div>
