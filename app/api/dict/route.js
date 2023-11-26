@@ -1,5 +1,4 @@
 import {GetAllCategoryWithDictPrompts, SaveDictPrompts} from "@/lib/store";
-import {headers} from "next/headers";
 
 /**
  * getAllCategory And keyword
@@ -19,8 +18,11 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+    const headers = req.headers
+    const auth = headers.get("authorization")
+    const databaseID = headers.get("notion-database-id")
     const reqBody = await req.json()
-    const result = await SaveDictPrompts(reqBody)
+    const result = await SaveDictPrompts({auth, databaseID}, reqBody)
     console.log(result);
     return Response.json({
         "status": "ok"

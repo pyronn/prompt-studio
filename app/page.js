@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react'
 import Link from 'next/link';
 import {Flex, HoverCard} from '@radix-ui/themes'
 import SortableButtonContainer from "@/components/SortableButtonContainer";
+import {X} from "lucide-react";
 
 
 export default function Home() {
@@ -71,7 +72,7 @@ export default function Home() {
         localStorage.setItem("notionToken", e.target.value)
     }
 
-    function onOnlyNotionChange() {
+    function onOnlyNotionChange(e) {
         setIsOnlyNotion(e.target.checked)
         localStorage.setItem("onlyNotionDict", e.target.checked)
     }
@@ -206,12 +207,12 @@ export default function Home() {
         if ('clipboard' in navigator) {
             try {
                 await navigator.clipboard.writeText(finalKeywords);
-                alert('Text copied to clipboard!');
+                addToast("已复制到粘贴板!", "success",3000)
             } catch (err) {
-                console.error('Failed to copy: ', err);
+                addToast("复制失败"+err.message,"error",3000);
             }
         } else {
-            console.warn('Clipboard API not available.');
+            addToast("浏览器不支持复制到粘贴板","warning",3000);
         }
     }
 
@@ -433,6 +434,14 @@ export default function Home() {
     }
 
 
+    function syncToNotion() {
+        addToast("暂不支持同步到notion","warning",3000)
+    }
+
+    function saveNewPromptDialog() {
+
+    }
+
     return (
 
         <main className="">
@@ -605,11 +614,14 @@ export default function Home() {
                                 <button className={`btn btn-error btn-sm m-2`} onClick={clearInput}>
                                     清空
                                 </button>
+                                <button className={`btn btn-error btn-sm m-2`} onClick={saveNewPromptDialog}>
+                                    保存提示词
+                                </button>
                             </div>
-                            <div>
+                            <div className={`p-2`}>
                                 <HoverCard.Root>
                                     <HoverCard.Trigger>
-                                        <Link href={'#'} className={`btn btn-sm btn-secondary`}>Notion配置
+                                        <Link href={'#'} className={`m-2 btn btn-sm btn-secondary`}>Notion配置
                                         </Link>
                                     </HoverCard.Trigger>
                                     <HoverCard.Content>
@@ -648,10 +660,10 @@ export default function Home() {
                                                        onChange={onNotionDatabaseIdChange} disabled={!isNotionEnable}/>
                                             </div>
                                             <button className={`btn btn-xs btn-accent w-full`}
-                                                    onClick={loadAllCategoryKeywords}>
+                                                    onClick={loadAllCategoryKeywords} disabled={!isNotionEnable}>
                                                 加载
                                             </button>
-                                            <button className={`btn btn-xs btn-info w-full`}>
+                                            <button className={`btn btn-xs btn-info w-full`} disabled={!isNotionEnable} onClick={syncToNotion}>
                                                 同步默认词典到notion
                                             </button>
                                         </Flex>
@@ -659,6 +671,9 @@ export default function Home() {
                                         {/*</div>*/}
                                     </HoverCard.Content>
                                 </HoverCard.Root>
+                                <div>
+                                    <button className={"m-2 btn btn-sm btn-secondary"} onClick={toggleDrawer}>打开提示词词典</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -678,7 +693,7 @@ export default function Home() {
 
             </div>
 
-            {/*抽屉*/}
+            {/*词典抽屉*/}
             <div
                 className={`fixed rounded-t-lg inset-y-0 z-50 right-0 w-1/3 h-screen bg-gray-200 transform transition-transform duration-300 ease-in-out 
                 ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'} bg-white shadow-lg`}
@@ -688,6 +703,9 @@ export default function Home() {
                     <div className={`card-title flex w-max text-sm`}>
                         <div className={`flex flex-basis-1`}>提示词词典</div>
                         <button className={`btn btn-sm `} onClick={loadAllCategoryKeywords}>刷新</button>
+                        <button>
+                            <X onClick={(e)=>setIsDrawerOpen(false)}></X>
+                        </button>
                     </div>
 
                     <div className={`card-body h-screen `}>
@@ -737,7 +755,7 @@ export default function Home() {
                 <dialog id={`dict_prompt_editor`} className={`modal`}>
                     <div className={`modal-box`}>
                         <div className={`modal-header`}>
-                            <div className={`modal-title`}>保存提示词</div>
+                            <div className={`modal-title`}>保存提示词词典</div>
                         </div>
                         <form method="dialog">
                             {/* if there is a button in form, it will close the modal */}
@@ -745,7 +763,7 @@ export default function Home() {
                         </form>
                         <div>
                             <div className={`p-1`}>
-                                <input type="text" placeholder="提示词原文" className=" m-1 input input-border input-sm"
+                                <input type="text" placeholder="提示词原文" className=" m-1 input input-border input-sm" disabled={true}
                                        name={`text`} value={newDictPromptText} onChange={(e) => {
                                     setNewDictPromptText(e.target.value)
                                 }}/>
@@ -766,10 +784,50 @@ export default function Home() {
                 </dialog>
             </div>
 
+            {/* 提示词保存*/}
+            <div>
+            <dialog id={`prompt_editor`} className={`modal`}>
+                <div className={`modal-box`}>
+                    <div className={`modal-header`}>
+                        <div className={`modal-title`}>保存提示词</div>
+                    </div>
+                    <form method="dialog">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                    </form>
+                    <div>
+                        <div className={`p-1`}>
+                            {/*<input type="text" placeholder="提示词标题" className=" m-1 input input-border input-sm"*/}
+                            {/*       name={`text`} value={promptTitle} onChange={(e) => {*/}
+                            {/*    setNewDictPromptText(e.target.value)*/}
+                            {/*}}/>*/}
+                            {/*<input type="text" placeholder="文件夹" className=" m-1 input input-border input-sm"*/}
+                            {/*       name={`text`} value={promptTitle} onChange={(e) => {*/}
+                            {/*    setNewDictPromptText(e.target.value)*/}
+                            {/*}}/>*/}
+                            {/*<input type="text" placeholder="提示词描述" className="m-1 input input-border input-sm"*/}
+                            {/*       name={`transText`} value={newDictPromptTransText} onChange={(e) => {*/}
+                            {/*    setNewDictPromptTransText(promptDesc)*/}
+                            {/*}}/>*/}
+                            {/*<input type="text" placeholder="示例图片链接" className="m-1 input input-border input-sm"*/}
+                            {/*       name={`sampleImage`} value={sampleImage} onChange={(e) => {*/}
+                            {/*    setNewDictPromptDir(e.target.value)*/}
+                            {/*}}/>*/}
+                            {/*<textarea type="text" placeholder="提示词原文" className="m-1 input input-border input-sm"*/}
+                            {/*       name={`rawPrompt`} value={rawPrompt} />*/}
+                        </div>
+                    </div>
+                    <div className={`modal-footer`}>
+                        <button className={`btn btn-sm`} onClick={saveNewDictPrompt}>保存</button>
+                    </div>
+                </div>
+            </dialog>
+        </div>
+
             {/*toast*/}
             <div className={`toast toast-top toast-center`}>
                 {toasts.map((toast) => (
-                    <div className={`text-white alert alert-${toast.type}`}
+                    <div role="alert" className={` alert alert-${toast.type}`}
                          onClick={() => (setToasts(toasts.filter((t) => (t.id !== toast.id))))}>
                         {toast.message}
                     </div>
