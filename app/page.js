@@ -133,46 +133,46 @@ export default function Home() {
 
     // 解析输入的关键词
     const parseInputKeywords = () => {
-        if (inputKeywords === "") {
-            return
-        }
+
         // 分割系统参数和关键词
         const input = inputKeywords.trim();
-        const [keywordStr, ...params] = input.split(' --').filter(Boolean);
-        console.log(keywordStr, params)
         const inputKeywordList = []
-        keywordStr.split(',').map((kw, index) => {
-            const parts = kw.trim().split(' ::');
-            if (parts[0].trim() !== "") {
-                inputKeywordList.push({
-                    id: index,
-                    word: parts[0].trim(),
-                    weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
-                })
-            }
-        });
-
-        // 解析系统参数
-
         const sysParams = {}
-        params.map((param) => {
-            const name = param.split(' ')[0]
-            const value = param.split(' ')[1]
-            console.log(name, value)
-            let key = name
-            if (name === 'niji' || name === 'v') {
-                key = 'model'
-            }
-            sysParams[key] = {name: name, value: value}
-        });
+        if (inputKeywords !== ""){
+            const [keywordStr, ...params] = input.split(' --').filter(Boolean);
+            keywordStr.split(',').map((kw, index) => {
+                const parts = kw.trim().split(' ::');
+                if (parts[0].trim() !== "") {
+                    inputKeywordList.push({
+                        id: index,
+                        word: parts[0].trim(),
+                        weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
+                    })
+                }
+            });
 
+            // 解析系统参数
+            params.map((param) => {
+                const name = param.split(' ')[0]
+                const value = param.split(' ')[1]
+                console.log(name, value)
+                let key = name
+                if (name === 'niji' || name === 'v') {
+                    key = 'model'
+                }
+                sysParams[key] = {name: name, value: value}
+            });
+        }
+        if (!('model' in sysParams)) {
+            const curModel = modelOptions[model]
+            sysParams['model'] = {name: curModel.paramName, value: curModel.paramValue}
+        }
         const activeIndex = new Array(inputKeywordList.length).fill(1)
         setActiveKeywords(activeIndex);
 
         setSelectedKeywords(inputKeywordList)
         setSystemParams(sysParams)
         parseSystemParams(sysParams)
-
     }
 
     const translateKeywords = async (keywords) => {
@@ -733,7 +733,8 @@ export default function Home() {
                         </div>
 
                         <div className={`flex space-x-1`}>
-                            <button className={`btn btn-sm btn-secondary `} onClick={loadAllCategoryKeywords}>加载</button>
+                            <button className={`btn btn-sm btn-secondary `} onClick={loadAllCategoryKeywords}>加载
+                            </button>
                             <button>
                                 <X onClick={(e) => setIsDrawerOpen(false)}></X>
                             </button>
