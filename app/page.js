@@ -23,18 +23,26 @@ export default function Home() {
 
     const styleOptions = ["raw", "cute", "expressive", "original", "scenic"]
 
+    const [isPreviewImgShow, setIsPreviewImgShow] = useState(false)
+    const [previewImgLink, setPreviewImgLink] = useState("")
+
     const [inputKeywords, setInputKeywords] = useState(''); // 输入的关键词
     const [finalKeywords, setFinalKeywords] = useState(''); // 最终的关键词
+    const [outputKeywords, setOutputKeywords] = useState(''); // 输出的关键词
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // 是否打开抽屉
     const [isPromptDrawerOpen, setIsPromptDrawerOpen] = useState(false); // 是否打开抽屉
     const [allCategoryPrompts, setAllCategoryPrompts] = useState([]); // 所有的提示词
-    const [prompts, setPrompts] = useState([]); // 所有的提示词
+
     const [isPromptDictLoaded, setIsPromptDictLoaded] = useState(false); // 是否已经加载了notion词典
     const [subCategoryPrompts, setSubCategoryPrompts] = useState({}); // 二级分类的提示词
     const [isNotionEnable, setIsNotionEnable] = useState(false); // 是否启用notion词典
     const [notionToken, setNotionToken] = useState(""); // notion token
     const [notionDatabaseId, setNotionDatabaseId] = useState(""); // notion database id
     const [isOnlyNotion, setIsOnlyNotion] = useState(false); // 是否只使用notion词典
+
+    const [prompts, setPrompts] = useState([]); // 所有的提示词
+    const [promptsCategories, setPromptsCategories] = useState([]); // 词库分类
+    const [curPromptCategory, setCurPromptCategory] = useState("全部"); // 当前的词库分类
 
     // 系统参数
     const [stylize, setStylize] = useState(100);
@@ -59,13 +67,17 @@ export default function Home() {
     const [newDictPromptTransText, setNewDictPromptTransText] = useState("");
     const [newDictPromptDir, setNewDictPromptDir] = useState("");
 
+    const [newPromptTitle, setNewPromptTitle] = useState("");
+    const [newPromptDesc, setNewPromptDesc] = useState("");
+    const [newPromptCategory, setNewPromptCategory] = useState("");
+    const [newPromptRawPrompt, setNewPromptRawPrompt] = useState("");
+    const [newPromptSampleImgLink, setNewPromptSampleImgLink] = useState("");
+
     const [toasts, setToasts] = useState([]);
 
 
     const handleInputKeywordsChange = (event) => {
         setInputKeywords(event.target.value);
-        setFinalKeywords(event.target.value)
-        // TODO: 解析输入的提示词，并设置到detectedKeywords中
     };
 
     const onEnableNotionDictChange = (e) => {
@@ -99,10 +111,16 @@ export default function Home() {
     };
 
     const saveNewDictPrompt = () => {
+        if (!isNotionEnable) {
+            addToast("请先启用Notion", "warning")
+            return
+        }
         const resp = fetch("api/dict", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("notionToken"),
+                'Notion-Database-Id': localStorage.getItem("notionDatabaseId")
             },
             body: JSON.stringify({
                 text: newDictPromptText,
@@ -119,6 +137,41 @@ export default function Home() {
             setNewDictPromptTransText("")
             setNewDictPromptText("")
             setNewDictPromptDir("")
+            addToast("保存失败" + err, "error", 3000)
+        });
+
+    };
+
+    const saveNewPrompt = () => {
+        const resp = fetch("api/prompt", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("notionToken"),
+                'Notion-Database-Id': localStorage.getItem("notionDatabaseId")
+            },
+            body: JSON.stringify({
+                title: newPromptTitle,
+                desc: newPromptDesc,
+                category: newPromptCategory,
+                rawPrompt: newPromptRawPrompt,
+                sampleImgLink: newPromptSampleImgLink,
+            })
+        }).then(resp => {
+            document.getElementById("prompt_editor").close()
+            setNewPromptTitle("")
+            setNewPromptDesc("")
+            setNewPromptCategory("")
+            setNewPromptRawPrompt("")
+            setNewPromptSampleImgLink("")
+            addToast("保存成功", "success", 3000)
+        }).catch(err => {
+            document.getElementById("prompt_editor").close()
+            setNewPromptTitle("")
+            setNewPromptDesc("")
+            setNewPromptCategory("")
+            setNewPromptRawPrompt("")
+            setNewPromptSampleImgLink("")
             addToast("保存失败" + err, "error", 3000)
         })
 
@@ -138,7 +191,7 @@ export default function Home() {
         const input = inputKeywords.trim();
         const inputKeywordList = []
         const sysParams = {}
-        if (inputKeywords !== ""){
+        if (inputKeywords !== "") {
             const [keywordStr, ...params] = input.split(' --').filter(Boolean);
             keywordStr.split(',').map((kw, index) => {
                 const parts = kw.trim().split(' ::');
@@ -266,7 +319,15 @@ export default function Home() {
             }
         }).then(res => res.json()).then(res => res.data);
         const result = await data
+        const cateSet = new Set()
+        result.map((item) => {
+            if (item.category !== undefined && item.category !== "其他") {
+                cateSet.add(item.category)
+            }
+        })
+        const cateArr = ["全部", ...cateSet.values(), "其他"]
         setPrompts(result)
+        setPromptsCategories(cateArr)
     }
 
     const handleKeywordSortChange = (items, activeItems) => {
@@ -407,6 +468,7 @@ export default function Home() {
             }
         }).join(" ")
         const imaginePrefix = "/imagine prompt:"
+        setOutputKeywords(keywordStr + " " + systemParamStr)
         setFinalKeywords(imaginePrefix + " " + keywordStr + " " + systemParamStr)
     }
 
@@ -454,11 +516,11 @@ export default function Home() {
     function clearInput() {
         setInputKeywords("")
         setFinalKeywords("")
+        setOutputKeywords("")
         setSelectedKeywords([])
         setActiveKeywords([])
         const modelOption = modelOptions[model]
         setSystemParams({model: {name: modelOption.paramName, value: modelOption.paramValue}})
-
     }
 
 
@@ -467,12 +529,32 @@ export default function Home() {
     }
 
     function saveNewPromptDialog() {
-
+        if (!isNotionEnable) {
+            addToast("请先启用Notion", "warning")
+            return
+        }
+        setNewPromptTitle("");
+        setNewPromptCategory("")
+        setNewPromptDesc("")
+        setNewPromptSampleImgLink("")
+        setNewPromptRawPrompt(outputKeywords)
+        document.getElementById("prompt_editor").showModal()
     }
 
     function usePrompt(rawPrompt) {
         setInputKeywords(rawPrompt)
         togglePromptDrawer()
+    }
+
+    function previewPromptImage(promptItem) {
+        togglePromptDrawer()
+        setPreviewImgLink(promptItem.sampleImage)
+        setIsPreviewImgShow(true)
+    }
+
+    function closePreviewImg() {
+        setPreviewImgLink("")
+        setIsPreviewImgShow(false)
     }
 
     return (
@@ -487,15 +569,24 @@ export default function Home() {
                                 <Link href="/" className={"flex items-center py-5 px-2 text-black"}>
                                     <span className="font-bold">PromptRepo</span>
                                 </Link>
+
                             </div>
-                            {/* Primary Nav */}
-                            <div className="hidden md:flex  space-x-1 ">
-                                <button className="py-5 px-3" onClick={toggleDrawer}>
-                                    提示词典
-                                </button>
-                                <button className="py-5 px-3" onClick={togglePromptDrawer}>
-                                    提示词库
-                                </button>
+                            {/*Primary Nav*/}
+                            <div className="hidden md:flex  space-x-1 items-center">
+                                <Link href={"https://github.com/pyronn/prompt-repo"}>
+                                    <svg t="1701159477788" className="icon" viewBox="0 0 1024 1024" version="1.1"
+                                         xmlns="http://www.w3.org/2000/svg" p-id="4354" width="16" height="16">
+                                        <path
+                                            d="M512 42.666667A464.64 464.64 0 0 0 42.666667 502.186667 460.373333 460.373333 0 0 0 363.52 938.666667c23.466667 4.266667 32-9.813333 32-22.186667v-78.08c-130.56 27.733333-158.293333-61.44-158.293333-61.44a122.026667 122.026667 0 0 0-52.053334-67.413333c-42.666667-28.16 3.413333-27.733333 3.413334-27.733334a98.56 98.56 0 0 1 71.68 47.36 101.12 101.12 0 0 0 136.533333 37.973334 99.413333 99.413333 0 0 1 29.866667-61.44c-104.106667-11.52-213.333333-50.773333-213.333334-226.986667a177.066667 177.066667 0 0 1 47.36-124.16 161.28 161.28 0 0 1 4.693334-121.173333s39.68-12.373333 128 46.933333a455.68 455.68 0 0 1 234.666666 0c89.6-59.306667 128-46.933333 128-46.933333a161.28 161.28 0 0 1 4.693334 121.173333A177.066667 177.066667 0 0 1 810.666667 477.866667c0 176.64-110.08 215.466667-213.333334 226.986666a106.666667 106.666667 0 0 1 32 85.333334v125.866666c0 14.933333 8.533333 26.88 32 22.186667A460.8 460.8 0 0 0 981.333333 502.186667 464.64 464.64 0 0 0 512 42.666667"
+                                            fill="#231F20" p-id="4355"></path>
+                                    </svg>
+                                </Link>
+                                {/*<button className="py-5 px-3" onClick={toggleDrawer}>*/}
+                                {/*    提示词典*/}
+                                {/*</button>*/}
+                                {/*<button className="py-5 px-3" onClick={togglePromptDrawer}>*/}
+                                {/*    提示词库*/}
+                                {/*</button>*/}
                             </div>
                         </div>
                         <div className={`flex space-x-4`}>
@@ -508,7 +599,7 @@ export default function Home() {
                                     <Flex gap="4" className={`border-2 p-2 bg-base-100 rounded rounded-5`}>
                                         <div>
                                             <label className={`label text-xs`}>
-                                                <span className={`label-text`}>是否启用Notion词典:</span>
+                                                <span className={`label-text`}>是否启用Notion:</span>
                                                 <input type='checkbox' className={`checkbox checkbox-xs`}
                                                        checked={isNotionEnable}
                                                        onChange={onEnableNotionDictChange}/>
@@ -567,7 +658,7 @@ export default function Home() {
                     <div className="w-1/3">
                         <div className="bg-base-200 p-4 rounded-md w-full max-w-2xl mx-auto my-8">
                             <div className="border-b border-gray-300 pb-2">
-                                <h1 className="text-black text-md font-bold">Prompt</h1>
+                                <h2 className="text-black text-md font-bold">Prompt</h2>
                             </div>
                             <div className="mt-4">
                                 <textarea
@@ -696,7 +787,10 @@ export default function Home() {
                             <div className={`p-1`}>
                                 <div>
                                     <button className={"m-2 btn btn-sm btn-secondary"}
-                                            onClick={toggleDrawer}>打开提示词词典
+                                            onClick={toggleDrawer}>查看提示词词典
+                                    </button>
+                                    <button className={"m-2 btn btn-sm btn-secondary"}
+                                            onClick={togglePromptDrawer}>查看提示词收藏
                                     </button>
                                 </div>
                             </div>
@@ -756,7 +850,7 @@ export default function Home() {
                         {/*二级分类和词典*/}
                         <div className={`overflow-y-auto`}>
                             {
-                                Object.keys(subCategoryPrompts).map((subCateName, index) => (
+                                Object.keys(subCategoryPrompts).map((subCateName) => (
                                     <div className={`collapse collapse-arrow collapse-sm`}>
                                         <input type={"checkbox"}/>
                                         <div className={`collapse-title text-sm font-medium`}>{subCateName}</div>
@@ -787,6 +881,7 @@ export default function Home() {
                 </div>
 
             </div>
+            {/*词典保存对话框*/}
             <dialog id={`dict_prompt_editor`} className={`modal`}>
                 <div className={`modal-box`}>
                     <div className={`modal-header`}>
@@ -826,28 +921,49 @@ export default function Home() {
             >
                 {/* 抽屉内容 */}
                 <div className="p-4 card">
-                    <div className={`card-title flex w-max text-sm`}>
-                        <div className={`flex flex-basis-1`}>提示词库</div>
+                    <div className={`card-title flex text-sm flex-between w-full items-center justify-between`}>
+                        <div>
+                            <h3>
+                                提示词库
+                            </h3>
+                        </div>
 
-                        <button>
+                        <button className={`space-x-1`}>
                             <X onClick={(e) => setIsPromptDrawerOpen(false)}></X>
                         </button>
                     </div>
 
                     <div className={`card-body h-screen `}>
-                        <div className={`grid grid-cols-2 lg:grid-cols-4 gap-2`}>
-                            {prompts.map((item, index) => (
+                        <div className={`join flex flex-wrap rounded-xl`}>
+                            {
+                                promptsCategories.map((category, index) => (
+                                    <input className={`join-item btn btn-sm text-sm rounded-none`} type={`radio`}
+                                           key={index}
+                                           name={`category`}
+                                           onClick={(e) => {
+                                               setCurPromptCategory(category)
+                                           }} value={category} aria-label={category}/>
+                                ))
+                            }
+                        </div>
+                        <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2`}>
+                            {prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部").map((item, index) => (
                                 <div
-                                    className={`card w-48 h-48 shadow-md break-inside-avoid image-full aspect-w-1 aspect-h-1 overflow-hidden `}>
-                                    <figure className={``}>
-                                        <img src={item.sampleImage} alt={item.title}
-                                             className="object-cover object-center w-full h-full"/>
-                                    </figure>
-                                    <div className={`card-body`}>
-                                        <h5>{item.title}</h5>
-                                        <p>{item.desc}</p>
-                                        <div className={`card-actions justify-end`}>
-                                            <button className={`btn btn-primary btn-sm`} onClick={(e) => {
+                                    className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"
+                                >
+                                    <img src={item.sampleImage} alt={item.desc}
+                                         className="absolute inset-0 w-full h-full object-cover object-center"/>
+                                    <div
+                                        className="absolute inset-0 bg-black bg-opacity-30 hover:bg-opacity-50 flex text-white justify-end xs:text-xs items-start flex-col p-4"
+                                        onClick={(e) => {
+                                            previewPromptImage(item)
+                                        }}>
+                                        <div className={'flex flex-col w-full'}>
+                                            <h5>{item.title}</h5>
+                                            <p className="text-white">{item.desc}</p>
+                                        </div>
+                                        <div className={"space-x-4 w-full flex justify-end"}>
+                                            <button className={`btn btn-xs md:btn-sm btn-secondary `} onClick={(e) => {
                                                 usePrompt(item.rawPrompt)
                                             }}>使用
                                             </button>
@@ -864,7 +980,7 @@ export default function Home() {
             {/* 提示词保存*/}
             <div>
                 <dialog id={`prompt_editor`} className={`modal`}>
-                    <div className={`modal-box`}>
+                    <div className={`modal-box w-11/12 max-w-5xl`}>
                         <div className={`modal-header`}>
                             <div className={`modal-title`}>保存提示词</div>
                         </div>
@@ -873,29 +989,47 @@ export default function Home() {
                             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                         </form>
                         <div>
-                            <div className={`p-1`}>
-                                {/*<input type="text" placeholder="提示词标题" className=" m-1 input input-border input-sm"*/}
-                                {/*       name={`text`} value={promptTitle} onChange={(e) => {*/}
-                                {/*    setNewDictPromptText(e.target.value)*/}
-                                {/*}}/>*/}
-                                {/*<input type="text" placeholder="文件夹" className=" m-1 input input-border input-sm"*/}
-                                {/*       name={`text`} value={promptTitle} onChange={(e) => {*/}
-                                {/*    setNewDictPromptText(e.target.value)*/}
-                                {/*}}/>*/}
-                                {/*<input type="text" placeholder="提示词描述" className="m-1 input input-border input-sm"*/}
-                                {/*       name={`transText`} value={newDictPromptTransText} onChange={(e) => {*/}
-                                {/*    setNewDictPromptTransText(promptDesc)*/}
-                                {/*}}/>*/}
-                                {/*<input type="text" placeholder="示例图片链接" className="m-1 input input-border input-sm"*/}
-                                {/*       name={`sampleImage`} value={sampleImage} onChange={(e) => {*/}
-                                {/*    setNewDictPromptDir(e.target.value)*/}
-                                {/*}}/>*/}
-                                {/*<textarea type="text" placeholder="提示词原文" className="m-1 input input-border input-sm"*/}
-                                {/*       name={`rawPrompt`} value={rawPrompt} />*/}
+                            <div className={`p-1 flex`}>
+                                {newPromptSampleImgLink && newPromptSampleImgLink !== "" ?
+                                    <img className={`w-48`} src={newPromptSampleImgLink} alt={``}/> :
+                                    <div className={`w-48 skeleton`}/>
+                                }
+
+                                <div className={`flex flex-col w-1/3`}>
+                                    <input type="text" placeholder="提示词标题"
+                                           className=" m-1 input input-border input-sm"
+                                           name={`text`} value={newPromptTitle} onChange={(e) => {
+                                        setNewPromptTitle(e.target.value)
+                                    }}/>
+                                    <input type="text" placeholder="分类(只支持一级分类)"
+                                           className=" m-1 input input-border input-sm"
+                                           name={`text`} value={newPromptCategory} onChange={(e) => {
+                                        setNewPromptCategory(e.target.value)
+                                    }}/>
+                                    <input type="text" placeholder="提示词描述"
+                                           className="m-1 input input-border input-sm"
+                                           name={`transText`} value={newPromptDesc} onChange={(e) => {
+                                        setNewPromptDesc(e.target.value)
+                                    }}/>
+                                    <input type="text" placeholder="示例图片链接"
+                                           className="m-1 input input-border input-sm"
+                                           name={`sampleImage`} value={newPromptSampleImgLink} onChange={(e) => {
+                                        setNewPromptSampleImgLink(e.target.value)
+                                    }}/>
+
+                                </div>
+                                <div className={`w-2/5`}>
+                                    <textarea placeholder="提示词原文"
+                                              className="text-sm min-h-[8rem] w-full max-w-md resize-none font-mono p-2 rounded border-red-100"
+                                              name={`rawPrompt`} value={newPromptRawPrompt}
+                                              onChange={(e) => setNewPromptRawPrompt(e.target.value)}/>
+                                    {/*TODO 翻译*/}
+                                </div>
+
                             </div>
                         </div>
                         <div className={`modal-footer`}>
-                            <button className={`btn btn-sm`} onClick={saveNewDictPrompt}>保存</button>
+                            <button className={`btn btn-sm`} onClick={saveNewPrompt}>保存</button>
                         </div>
                     </div>
                 </dialog>
@@ -911,6 +1045,20 @@ export default function Home() {
                 ))
                 }
             </div>
+            <div
+                className={`absolute inset-0 w-full h-screen flex justify-center items-center bg-black bg-opacity-50 ${isPreviewImgShow ? "show" : "hidden"}`}
+                onClick={closePreviewImg}>
+                <img src={previewImgLink} alt={'previewImg'}/>
+            </div>
+            <div className={`divider`}>
+
+            </div>
+            <footer className="footer footer-center p-2 text-base-content">
+                <aside>
+                    <p>Copyright © 2023 - All right reserved </p>
+                    <p>made by pyronn</p>
+                </aside>
+            </footer>
         </main>
 
     )

@@ -10,21 +10,13 @@ export async function GET(req) {
 
     const auth = headers.get("authorization")
     const databaseID = headers.get("notion-database-id")
-    const data = await GetAllCategoryWithDictPrompts(auth, databaseID)
-    return Response.json({
-        "status": "ok",
-        "data": data
-    })
+    return GetAllCategoryWithDictPrompts(auth, databaseID)
 }
 
 export async function POST(req) {
     const headers = req.headers
     const auth = headers.get("authorization")
-    const databaseID = headers.get("notion-database-id")
+    const databaseId = headers.get("notion-database-id")
     const reqBody = await req.json()
-    const result = await SaveDictPrompts({auth, databaseID}, reqBody)
-    console.log(result);
-    return Response.json({
-        "status": "ok"
-    })
+    return SaveDictPrompts({auth, databaseId}, {...reqBody})
 }
