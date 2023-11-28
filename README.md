@@ -1,4 +1,15 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# PromptRep
+## 介绍
+提示词仓库，基于Nextjs实现的Midjourney提示词仓库和可视化编辑器。可以方便的编辑和调整提示词的顺序,支持中文翻译,修改系统参数，并且可以保存到notion中,构建自己的提示词库。
+整体功能和用户使用逻辑参考了[OpenPromptStudio](https://github.com/Moonvy/OpenPromptStudio)的方式，在此基础上增加了提示词的保存功能。使用nextjs实现，可以方便的部署到vercel上。
+
+## Features
+[x] 基本的提示词编辑和调整功能，支持常用的系统参数调整
+[x] 支持使用notion作为数据库
+[x] 提示词中文翻译(目前只支持腾讯机翻)
+[x] 提示词保存到notion，单个的词组和整个提示词都支持保存，可以添加示例图片。
+[ ] 提示词搜索和删除功能
+[ ] 提示词分享成图片
 
 ## Getting Started
 
@@ -14,23 +25,11 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
