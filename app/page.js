@@ -49,7 +49,7 @@ export default function Home() {
     const [model, setModel] = useState("niji5");
     const [style, setStyle] = useState("");
     const [chaos, setChaos] = useState(0);
-    const [imageWeight, setImageWeight] = useState(0.25);
+    const [imageWeight, setImageWeight] = useState(1);
     const [aspect, setAspect] = useState("1:1");
 
 
@@ -143,6 +143,10 @@ export default function Home() {
     };
 
     const saveNewPrompt = () => {
+        if (!isNotionEnable) {
+            addToast("请先启用Notion", "warning")
+            return
+        }
         const resp = fetch("api/prompt", {
             method: "POST",
             headers: {
@@ -178,7 +182,6 @@ export default function Home() {
     };
 
     const toggleKeyword = (index) => {
-        console.log(index);
         const newActKeywords = new Array(...activeKeywords)
         newActKeywords[index] = activeKeywords[index] === 1 ? 0 : 1
         setActiveKeywords(newActKeywords)
@@ -310,6 +313,9 @@ export default function Home() {
     }
 
     const loadPromptAll = async () => {
+        if (!isNotionEnable) {
+            return
+        }
         const data = fetch("/api/prompt", {
             method: 'GET',
             headers: {
@@ -447,9 +453,15 @@ export default function Home() {
                     }
                     return `--s ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "style":
+                    if (systemParams[key].value === "") {
+                        return ""
+                    }
                     return `--style ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "c":
                 case "chaos":
+                    if (systemParams[key].value === 0) {
+                        return ""
+                    }
                     return `--c ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "iw":
                     if (systemParams[key].value === 1) {
@@ -458,6 +470,9 @@ export default function Home() {
                     return `--iw ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "ar":
                 case "aspect":
+                    if (systemParams[key].value === "1:1") {
+                        return ""
+                    }
                     return `--ar ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "model":
                     return `--${systemParams[key].name} ${systemParams[key].value ? systemParams[key].value : ""}`
@@ -490,25 +505,11 @@ export default function Home() {
         const modelOption = modelOptions[model]
         newObj["model"] = {name: modelOption.paramName, value: modelOption.paramValue}
 
-        if (style !== "") {
-            newObj["style"] = {name: "style", value: style}
-        }
-
-        if (aspect !== "1:1") {
-            newObj["ar"] = {name: "ar", value: aspect}
-        }
-
-        if (stylize !== 100) {
-            newObj["s"] = {name: "s", value: stylize}
-        }
-
-        if (chaos !== 0) {
-            newObj["c"] = {name: "c", value: chaos}
-        }
-
-        if (imageWeight !== 0.25) {
-            newObj["iw"] = {name: "iw", value: imageWeight}
-        }
+        newObj["style"] = {name: "style", value: style}
+        newObj["ar"] = {name: "ar", value: aspect}
+        newObj["s"] = {name: "s", value: stylize}
+        newObj["c"] = {name: "c", value: chaos}
+        newObj["iw"] = {name: "iw", value: imageWeight}
 
         setSystemParams(newObj)
     }
@@ -547,7 +548,8 @@ export default function Home() {
     }
 
     function previewPromptImage(promptItem) {
-        togglePromptDrawer()
+        setIsDrawerOpen(false)
+        setIsPromptDrawerOpen(false)
         setPreviewImgLink(promptItem.sampleImage)
         setIsPreviewImgShow(true)
     }
@@ -565,8 +567,11 @@ export default function Home() {
                     <div className="flex justify-between">
                         <div className="flex space-x-4">
                             {/* Logo */}
-                            <div>
-                                <Link href="/" className={"flex items-center py-5 px-2 text-black"}>
+                            <div className={`flex`}>
+                                <Link href={""} className={`flex items-center`}>
+                                    <span><img className={`w-12`} src={`favicon.ico`} alt={''}/></span>
+                                </Link>
+                                <Link href="/" className={"flex items-center py-5 px-5 text-black"}>
                                     <span className="font-bold">PromptRepo</span>
                                 </Link>
 
@@ -652,26 +657,26 @@ export default function Home() {
                 {/*    </Link>*/}
                 {/*</div>*/}
             </nav>
-            <div className="container mx-auto p-3">
+            <div className="container mx-auto py-1 px-3">
                 <div className="flex">
                     {/* 输入区域 */}
                     <div className="w-1/3">
-                        <div className="bg-base-200 p-4 rounded-md w-full max-w-2xl mx-auto my-8">
-                            <div className="border-b border-gray-300 pb-2">
+                        <div className="bg-base-200 p-3 rounded-md w-full max-w-2xl mx-auto my-2">
+                            <div className="border-b border-gray-300 pb-1">
                                 <h2 className="text-black text-md font-bold">Prompt</h2>
                             </div>
-                            <div className="mt-4">
+                            <div className="mt-1.5">
                                 <textarea
-                                    className="text-sm min-h-[12rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
+                                    className="text-sm min-h-[10rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
                                     onChange={handleInputKeywordsChange}
                                     value={inputKeywords}
                                 />
                                 <div
-                                    className="text-sm text-gray-200 font-mono bg-gray-700 p-2 rounded-b-md bordered max-w-md">
+                                    className="text-sm text-gray-200 font-mono bg-gray-700 p-1.5 rounded-b-md bordered max-w-md">
                                     {finalKeywords}
                                 </div>
                             </div>
-                            <div className={'divider m-1'}></div>
+                            <div className={'divider m-0.5'}></div>
                             {/* 系统参数*/}
                             <div className={'bg-base-300 rounded rounded-2'}>
                                 <div className={`p-1`}>
@@ -679,40 +684,40 @@ export default function Home() {
                                         <span className={`label-text`}>系统参数:</span>
                                     </label>
                                 </div>
-                                <div className={`p-1`}>
+                                <div className={``}>
                                     <div className={`bordered p-1`}>
-                                        <label className={`label text-xs w-1/3 inline-block`}>
+                                        <label className={`label text-xs w-1/4 inline-block`}>
                                             <span className={`label-text`}>模型:</span>
                                         </label>
-                                        <select className={`select select-sm w-1/3 inline-block`}
+                                        <select className={`select select-sm  inline-block`}
                                                 onChange={(e) => setModel(e.target.value)}
-                                                defaultValue={model}>
+                                                value={model}>
                                             {Object.values(modelOptions).map((modelOption) => (
                                                 <option key={modelOption.name}
-                                                        selected={model === modelOption.name}
+                                                    // selected={model === modelOption.name}
                                                         value={modelOption.name}>{modelOption.showName}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <div className={`bordered`}>
-                                        <label className={`label text-xs w-1/3 inline-block`}>
+                                        <label className={`label text-xs w-1/4 inline-block`}>
                                             <span className={`label-text`}>--ar 图片尺寸:</span>
                                         </label>
-                                        <select className={`select select-sm w-1/2 max-w-xs inline-block`}
+                                        <select className={`select select-sm max-w-xs inline-block`}
                                                 onChange={(e) => {
                                                     setAspect(e.target.value)
                                                 }}
-                                                defaultValue={aspect}
+                                                value={aspect}
                                         >
                                             {aspectOptions.map((aspectOption) => (
                                                 <option key={aspectOption}
-                                                        selected={aspect === aspectOption}
+                                                    // selected={aspect === aspectOption}
                                                         value={aspectOption}>{aspectOption}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <div className={`bordered`}>
-                                        <label className={`label text-xs inline-block w-1/3`}>
+                                        <label className={`label text-xs inline-block w-1/4`}>
                                             <span className={`label-text`}>--s 风格化:</span>
                                         </label>
                                         <input type={`number`} className={`input input-xs inline-block w-1/4`}
@@ -725,7 +730,7 @@ export default function Home() {
                                         }}/>
                                     </div>
                                     <div>
-                                        <label className={`label text-xs inline-block w-1/3`}>
+                                        <label className={`label text-xs inline-block w-1/4`}>
                                             <span className={`label-text`}>--style 风格:</span>
                                         </label>
                                         <input type={`text`} className={`input input-xs inline-block w-1/3`}
@@ -743,7 +748,7 @@ export default function Home() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className={`label text-xs inline-block w-1/3`}>
+                                        <label className={`label text-xs inline-block w-1/4`}>
                                             <span className={`label-text`}>--c 多样性:</span>
                                         </label>
                                         <input type={`text`} className={`input input-xs inline-block w-1/4`}
@@ -756,7 +761,7 @@ export default function Home() {
                                         }}/>
                                     </div>
                                     <div>
-                                        <label className={`label text-xs inline-block w-1/3`}>
+                                        <label className={`label text-xs inline-block w-1/4`}>
                                             <span className={`label-text`}>--iw 图片权重:</span>
                                         </label>
                                         <input type={`text`} className={`input input-xs inline-block w-1/4`}
@@ -770,7 +775,7 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
-                            <div className={`p-1`}>
+                            <div className={``}>
                                 <button className={`btn btn-primary btn-sm m-1`} onClick={copyToClipboard}>
                                     复制
                                 </button>
@@ -784,12 +789,12 @@ export default function Home() {
                                     保存提示词
                                 </button>
                             </div>
-                            <div className={`p-1`}>
+                            <div className={``}>
                                 <div>
-                                    <button className={"m-2 btn btn-sm btn-secondary"}
+                                    <button className={"m-1 btn btn-sm btn-secondary"}
                                             onClick={toggleDrawer}>查看提示词词典
                                     </button>
-                                    <button className={"m-2 btn btn-sm btn-secondary"}
+                                    <button className={"m-1 btn btn-sm btn-secondary"}
                                             onClick={togglePromptDrawer}>查看提示词收藏
                                     </button>
                                 </div>
@@ -841,7 +846,8 @@ export default function Home() {
                         <div className={`join flex flex-wrap`}>
                             {
                                 allCategoryPrompts.map((category, index) => (
-                                    <input className={`join-item btn btn-sm text-sm rounded-none`} type={`radio`}
+                                    <input className={`join-item btn btn-sm text-sm rounded-none btn-primary-bg`}
+                                           type={`radio`}
                                            name={`category`}
                                            onClick={onDictCategoryClick} value={index} aria-label={category.name}/>
                                 ))
@@ -861,11 +867,11 @@ export default function Home() {
                                                         className={`inline-block p-1 m-0.25 rounded-lg cursor-pointer hover:cursor-pointer text-xs`}
                                                         onClick={(e) => addKeyword(prompt)}>
                                                         <div
-                                                            className={`rounded-s-lg inline-block p-1 text-white bg-green-300`}>
+                                                            className={`rounded-s-lg inline-block p-1 text-white bg-green-400`}>
                                                             {prompt.text}
                                                         </div>
                                                         <div
-                                                            className={`${prompt.transText === undefined || prompt.transText === "" ? "hidden" : "show"} rounded-e-lg inline-block p-1 text-white bg-blue-300`}>
+                                                            className={`${prompt.transText === undefined || prompt.transText === "" ? "hidden" : "show"} rounded-e-lg inline-block p-1 text-white bg-blue-400`}>
                                                             {prompt.transText}
                                                         </div>
                                                     </div>
@@ -916,16 +922,17 @@ export default function Home() {
 
             {/*词库抽屉*/}
             <div
-                className={`fixed rounded-t-lg inset-y-0 z-50 right-0 w-2/3 h-screen bg-gray-200 transform transition-transform duration-300 ease-in-out 
-                ${isPromptDrawerOpen ? 'translate-x-0' : 'translate-x-full'} bg-white shadow-lg`}
+                // className={`fixed rounded-t-lg inset-y-0 z-50 right-0 w-2/3 h-screen bg-gray-200 transform transition-transform duration-300 ease-in-out
+                className={`fixed rounded rounded-t-lg inset-x-0 z-50 bottom-0 w-full  bg-base-200 transform transition-transform duration-300 ease-in-out 
+                ${isPromptDrawerOpen ? 'translate-y-0' : 'translate-y-full'} drop-shadow-3xl`}
             >
                 {/* 抽屉内容 */}
-                <div className="p-4 card">
-                    <div className={`card-title flex text-sm flex-between w-full items-center justify-between`}>
+                <div className="p-2 card h-full">
+                    <div className={`p-2 card-title flex text-sm flex-between w-full items-center justify-between`}>
                         <div>
-                            <h3>
+                            <h2>
                                 提示词库
-                            </h3>
+                            </h2>
                         </div>
 
                         <button className={`space-x-1`}>
@@ -933,8 +940,9 @@ export default function Home() {
                         </button>
                     </div>
 
-                    <div className={`card-body h-screen `}>
-                        <div className={`join flex flex-wrap rounded-xl`}>
+                    <div className={`card-body p-2 h-full`}>
+                        {isNotionEnable ? "" : <div>Notion数据库未启用</div>}
+                        <div className={`p-0.5 join flex flex-wrap rounded-xl`}>
                             {
                                 promptsCategories.map((category, index) => (
                                     <input className={`join-item btn btn-sm text-sm rounded-none`} type={`radio`}
@@ -946,7 +954,7 @@ export default function Home() {
                                 ))
                             }
                         </div>
-                        <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2`}>
+                        <div className={`flex flex-wrap overflow-y-auto gap-4 h-96 p-1`}>
                             {prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部").map((item, index) => (
                                 <div
                                     className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"
@@ -958,13 +966,14 @@ export default function Home() {
                                         onClick={(e) => {
                                             previewPromptImage(item)
                                         }}>
-                                        <div className={'flex flex-col w-full'}>
+                                        <div className={'flex flex-col w-full text-xs md:text-md lg:text-lg'}>
                                             <h5>{item.title}</h5>
                                             <p className="text-white">{item.desc}</p>
                                         </div>
                                         <div className={"space-x-4 w-full flex justify-end"}>
                                             <button className={`btn btn-xs md:btn-sm btn-secondary `} onClick={(e) => {
-                                                usePrompt(item.rawPrompt)
+                                                usePrompt(item.rawPrompt);
+                                                e.stopPropagation();
                                             }}>使用
                                             </button>
                                         </div>
@@ -972,7 +981,6 @@ export default function Home() {
                                 </div>
                             ))}
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -1046,14 +1054,13 @@ export default function Home() {
                 }
             </div>
             <div
-                className={`absolute inset-0 w-full h-screen flex justify-center items-center bg-black bg-opacity-50 ${isPreviewImgShow ? "show" : "hidden"}`}
+                className={`absolute inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 ${isPreviewImgShow ? "show" : "hidden"}`}
                 onClick={closePreviewImg}>
                 <img src={previewImgLink} alt={'previewImg'}/>
             </div>
-            <div className={`divider`}>
-
+            <div className={`divider m-0.5`}>
             </div>
-            <footer className="footer footer-center p-2 text-base-content">
+            <footer className="footer footer-center p-1 text-base-content">
                 <aside>
                     <p>Copyright © 2023 - All right reserved </p>
                     <p>made by pyronn</p>
