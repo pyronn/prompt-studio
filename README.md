@@ -3,7 +3,7 @@
 ## 介绍
 
 个人提示词可视化编辑和管理工具，基于Nextjs+tailwindcss实现。可以方便的编辑和调整提示词的顺序,支持中文翻译,修改系统参数，并且可以保存到notion中,构建自己的私人提示词库。
-整体功能和用户使用逻辑参考了[OpenPromptStudio](https://github.com/Moonvy/OpenPromptStudio)的方式，在此基础上增加了提示词的保存功能。使用nextjs实现，可以方便的部署到vercel上。
+整体功能和交互参考了[OpenPromptStudio](https://github.com/Moonvy/OpenPromptStudio)的方式，在此基础上增加了提示词的保存功能。使用nextjs实现，可以方便的部署到vercel上。
 
 ## 特性
 
@@ -21,6 +21,8 @@
     - [ ] 提示词分类快速选择
 
     - [ ] 已在数据库中的词组不再显示保存按钮
+    
+    - [ ] 优化UI和交互
 
 - [ ] 提示词搜索和删除功能
 
@@ -40,24 +42,24 @@
 
 ### 提示词编辑
 
-![基本编辑功能](.\docs\asset\img.png)
+![基本编辑功能](docs/asset/img.png)
 
 ### 保存到词典
 
-![基本编辑功能](.\docs\asset\img_1.png)
+![保存到词典](docs/asset/img_1.png)
 
-### 词典使用
+### 关键词典使用
 
-![基本编辑功能](.\docs\asset\img_2.png)
+![词典关键词的使用](docs/asset/img_2.png)
 
 ### 保存到词库
 
 实例图片只能使用图片链接，不支持上传文件的方式.
-![基本编辑功能](.\docs\asset\img_3.png)
+![保存到词库](docs/asset/img_3.png)
 
-### 提示词库查看和使用
+## 提示词库查看和使用
 
-![基本编辑功能](.\docs\asset\img_4.png)
+![提示词库查看和使用](docs/asset/img_4.png)
 
 ## Notion配置
 
