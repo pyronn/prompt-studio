@@ -21,7 +21,7 @@ export default function Home() {
 
     const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2"]
 
-    const styleOptions = ["raw", "cute", "expressive", "original", "scenic"]
+    const styleOptions = ["default", "raw", "cute", "expressive", "original", "scenic"]
 
     const [isPreviewImgShow, setIsPreviewImgShow] = useState(false)
     const [previewImgLink, setPreviewImgLink] = useState("")
@@ -211,7 +211,6 @@ export default function Home() {
             params.map((param) => {
                 const name = param.split(' ')[0]
                 const value = param.split(' ')[1]
-                console.log(name, value)
                 let key = name
                 if (name === 'niji' || name === 'v') {
                     key = 'model'
@@ -285,7 +284,6 @@ export default function Home() {
 
         if (activeKeywords.length === 1) {
             const newActive = activeKeywords.copyWithin(1, 0)
-            console.log(newActive);
             newActive.push(1)
             setActiveKeywords(newActive)
         } else {
@@ -448,23 +446,23 @@ export default function Home() {
             switch (key) {
                 case "s":
                 case "stylize":
-                    if (systemParams[key].value === 100) {
+                    if (systemParams[key].value === "100") {
                         return ""
                     }
                     return `--s ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "style":
-                    if (systemParams[key].value === "") {
+                    if (systemParams[key].value === "" || systemParams[key].value === "default") {
                         return ""
                     }
                     return `--style ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "c":
                 case "chaos":
-                    if (systemParams[key].value === 0) {
+                    if (systemParams[key].value === "0") {
                         return ""
                     }
                     return `--c ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "iw":
-                    if (systemParams[key].value === 1) {
+                    if (systemParams[key].value === "1") {
                         return ""
                     }
                     return `--iw ${systemParams[key].value ? systemParams[key].value : ""}`
@@ -569,10 +567,10 @@ export default function Home() {
                             {/* Logo */}
                             <div className={`flex`}>
                                 <Link href={""} className={`flex items-center`}>
-                                    <span><img className={`w-12`} src={`favicon.ico`} alt={''}/></span>
+                                    <span><img className={`w-8`} src={`favicon.ico`} alt={''}/></span>
                                 </Link>
                                 <Link href="/" className={"flex items-center py-5 px-5 text-black"}>
-                                    <span className="font-bold">PromptRepo</span>
+                                    <span className="font-bold">PromptStudio</span>
                                 </Link>
 
                             </div>
@@ -667,18 +665,18 @@ export default function Home() {
                             </div>
                             <div className="mt-1.5">
                                 <textarea
-                                    className="text-sm min-h-[10rem] w-full max-w-md resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
+                                    className="text-sm min-h-[10rem] w-full resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
                                     onChange={handleInputKeywordsChange}
                                     value={inputKeywords}
                                 />
                                 <div
-                                    className="text-sm text-gray-200 font-mono bg-gray-700 p-1.5 rounded-b-md bordered max-w-md">
+                                    className="w-full text-sm text-gray-200 font-mono bg-gray-700 p-1.5 rounded-b-md bordered">
                                     {finalKeywords}
                                 </div>
                             </div>
                             <div className={'divider m-0.5'}></div>
                             {/* 系统参数*/}
-                            <div className={'bg-base-300 rounded rounded-2'}>
+                            <div className={'bg-base-300 p-1 rounded rounded-2'}>
                                 <div className={`p-1`}>
                                     <label className={`label text-xs`}>
                                         <span className={`label-text`}>系统参数:</span>
@@ -720,7 +718,7 @@ export default function Home() {
                                         <label className={`label text-xs inline-block w-1/4`}>
                                             <span className={`label-text`}>--s 风格化:</span>
                                         </label>
-                                        <input type={`number`} className={`input input-xs inline-block w-1/4`}
+                                        <input type={`number`} className={`input input-sm inline-block w-24`}
                                                value={stylize} onChange={(e) => {
                                             setStylize(e.target.value)
                                         }}/>
@@ -733,7 +731,7 @@ export default function Home() {
                                         <label className={`label text-xs inline-block w-1/4`}>
                                             <span className={`label-text`}>--style 风格:</span>
                                         </label>
-                                        <input type={`text`} className={`input input-xs inline-block w-1/3`}
+                                        <input type={`text`} className={`input input-sm inline-block w-1/3`}
                                                value={style} onChange={(e) => {
                                             setStyle(e.target.value)
                                         }}/>
@@ -751,7 +749,7 @@ export default function Home() {
                                         <label className={`label text-xs inline-block w-1/4`}>
                                             <span className={`label-text`}>--c 多样性:</span>
                                         </label>
-                                        <input type={`text`} className={`input input-xs inline-block w-1/4`}
+                                        <input type={`text`} className={`input input-sm inline-block w-16`}
                                                value={chaos} onChange={(e) => {
                                             setChaos(e.target.value)
                                         }}/>
@@ -764,7 +762,7 @@ export default function Home() {
                                         <label className={`label text-xs inline-block w-1/4`}>
                                             <span className={`label-text`}>--iw 图片权重:</span>
                                         </label>
-                                        <input type={`text`} className={`input input-xs inline-block w-1/4`}
+                                        <input type={`text`} className={`input input-sm inline-block w-16`}
                                                value={imageWeight} onChange={(e) => {
                                             setImageWeight(e.target.value)
                                         }}/>
@@ -775,6 +773,7 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
+                            {/*按钮组*/}
                             <div className={``}>
                                 <button className={`btn btn-primary btn-sm m-1`} onClick={copyToClipboard}>
                                     复制
@@ -803,7 +802,7 @@ export default function Home() {
                     </div>
 
                     {/* 中间提示词列表区域 */}
-                    <div className="w-3/5 px-4">
+                    <div className="w-2/5 px-2">
                         <div className="mt-4">
                             <SortableButtonContainer items={selectedKeywords} onItemsChange={handleKeywordSortChange}
                                                      activeKeywords={activeKeywords}
