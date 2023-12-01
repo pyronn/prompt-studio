@@ -16,8 +16,12 @@ jobs:
     - uses: actions/checkout@v3
     - name: Get latest tag
       run: echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag prompt-studio:${{env.LATEST_TAG}}
+    - name: Test tag
+      run: | 
+        echo $LATEST_TAG
+        echo ${{ env.LATEST_TAG }}
+#    - name: Build the Docker image
+#      run: docker build . --file Dockerfile --tag prompt-studio:${{env.LATEST_TAG}}
 #    - name: Set up QEMU
 #      uses: docker/setup-qemu-action@v3
 #    - name: Set up Docker Buildx
