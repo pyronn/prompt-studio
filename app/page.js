@@ -32,6 +32,7 @@ export default function Home() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // 是否打开抽屉
     const [isPromptDrawerOpen, setIsPromptDrawerOpen] = useState(false); // 是否打开抽屉
     const [allCategoryPrompts, setAllCategoryPrompts] = useState([]); // 所有的提示词
+    const [dictCategoryDirs, setDictCategoryDirs] = useState([]); // 词典分类
 
     const [isPromptDictLoaded, setIsPromptDictLoaded] = useState(false); // 是否已经加载了notion词典
     const [subCategoryPrompts, setSubCategoryPrompts] = useState({}); // 二级分类的提示词
@@ -349,6 +350,27 @@ export default function Home() {
         setSubCategoryPrompts(subCatePrompts)
     }
 
+    /**
+     * 解析词典分类路径列表用于快速选择
+     * @param dictKeywords
+     */
+    const parseAllDictDirs = (dictKeywords) => {
+        const dirs = new Set()
+        dictKeywords.map((item) => {
+            if (item.children === undefined || item.children.length === 0) {
+                return
+            }
+            item.children.map((subCate) => {
+                if (subCate.texts !== undefined && subCate.texts.length > 0) {
+                    subCate.texts.map((text) => {
+                        dirs.add(text.dir)
+                    })
+                }
+            })
+        })
+        setDictCategoryDirs([...dirs.values()])
+    }
+
     const loadAllCategoryKeywords = async () => {
         if (!isNotionEnable) {
             const resp = await fetch('/api/dict/local', {
@@ -358,6 +380,7 @@ export default function Home() {
                 }
             })
             const result = await resp.json()
+            parseAllDictDirs(result.data)
             setAllCategoryPrompts(result.data)
             return
         }
@@ -380,7 +403,7 @@ export default function Home() {
             const localResult = await localResp.json()
             result.data = result.data.concat(localResult.data)
         }
-
+        parseAllDictDirs(result.data)
         setAllCategoryPrompts(result.data)
     }
 
@@ -443,32 +466,35 @@ export default function Home() {
         })
         const keywordStr = keywordList.join(", ")
         const systemParamStr = Object.keys(systemParams).map((key) => {
+            if (systemParams[key].value === undefined || systemParams[key].value === ""){
+                return ""
+            }
             switch (key) {
                 case "s":
                 case "stylize":
-                    if (systemParams[key].value === "100") {
+                    if ( systemParams[key].value === 100 || systemParams[key].value === "100") {
                         return ""
                     }
                     return `--s ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "style":
-                    if (systemParams[key].value === "" || systemParams[key].value === "default") {
+                    if ( systemParams[key].value === "default") {
                         return ""
                     }
                     return `--style ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "c":
                 case "chaos":
-                    if (systemParams[key].value === "0") {
+                    if (systemParams[key].value === "0" || systemParams[key].value === 0) {
                         return ""
                     }
                     return `--c ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "iw":
-                    if (systemParams[key].value === "1") {
+                    if ( systemParams[key].value === "1" || systemParams[key].value === 1) {
                         return ""
                     }
                     return `--iw ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "ar":
                 case "aspect":
-                    if (systemParams[key].value === "1:1") {
+                    if ( systemParams[key].value === "1:1") {
                         return ""
                     }
                     return `--ar ${systemParams[key].value ? systemParams[key].value : ""}`
@@ -911,6 +937,17 @@ export default function Home() {
                                    name={`dir`} value={newDictPromptDir} onChange={(e) => {
                                 setNewDictPromptDir(e.target.value)
                             }}/>
+                            <select className={`select select-sm max-w-xs inline-block`}
+                                    onChange={(e) => {
+                                        setNewDictPromptDir(e.target.value)
+                                    }}
+                                    value={newDictPromptDir}
+                            >
+                                {dictCategoryDirs.map((item, index) => (
+                                    <option key={index}
+                                            value={item}>{item}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                     <div className={`modal-footer`}>
