@@ -5,7 +5,7 @@ import {Theme} from "@radix-ui/themes";
 const inter = Inter({subsets: ['latin']})
 
 export const metadata = {
-    title: 'PromptRepo',
+    title: 'PromptStudio',
     description: 'Your MidJourney Prompt Repo and Generator',
 }
 
