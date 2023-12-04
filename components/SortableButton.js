@@ -4,7 +4,7 @@ import {CSS} from '@dnd-kit/utilities';
 import {Save} from "lucide-react";
 import {Button} from "@radix-ui/themes";
 
-const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
+const SortableButton = ({id,item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
     const {
         attributes,
         listeners,
@@ -25,7 +25,7 @@ const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword
             </Button>
             <div
                 className={`inline-block rounded-lg cursor-pointer hover:cursor-pointer text-xs m-2`}
-                onClick={(e) => toggleKeyword(index)} key={index}>
+                onClick={(e) => toggleKeyword(index)} key={id}>
                 <div
                     className={`rounded-s-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-primary" : "bg-gray-300"}`}>
                     {item.word}

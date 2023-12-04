@@ -198,10 +198,11 @@ export default function Home() {
         if (inputKeywords !== "") {
             const [keywordStr, ...params] = input.split(' --').filter(Boolean);
             keywordStr.split(',').map((kw, index) => {
+                const id = Date.now() + Math.random() * 1000
                 const parts = kw.trim().split(' ::');
                 if (parts[0].trim() !== "") {
                     inputKeywordList.push({
-                        id: index,
+                        id: id,
                         word: parts[0].trim(),
                         weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
                     })
@@ -280,7 +281,8 @@ export default function Home() {
 
     const addKeyword = (dictPrompt) => {
         const newSelected = new Array(...selectedKeywords)
-        newSelected.push({word: dictPrompt.text, transText: dictPrompt.transText})
+        const id = dictPrompt.id ? dictPrompt.id : Date.now()
+        newSelected.push({word: dictPrompt.text, transText: dictPrompt.transText, id: id})
         setSelectedKeywords(newSelected)
 
         if (activeKeywords.length === 1) {
@@ -466,18 +468,18 @@ export default function Home() {
         })
         const keywordStr = keywordList.join(", ")
         const systemParamStr = Object.keys(systemParams).map((key) => {
-            if (systemParams[key].value === undefined || systemParams[key].value === ""){
+            if (systemParams[key].value === undefined || systemParams[key].value === "") {
                 return ""
             }
             switch (key) {
                 case "s":
                 case "stylize":
-                    if ( systemParams[key].value === 100 || systemParams[key].value === "100") {
+                    if (systemParams[key].value === 100 || systemParams[key].value === "100") {
                         return ""
                     }
                     return `--s ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "style":
-                    if ( systemParams[key].value === "default") {
+                    if (systemParams[key].value === "default") {
                         return ""
                     }
                     return `--style ${systemParams[key].value ? systemParams[key].value : ""}`
@@ -488,13 +490,13 @@ export default function Home() {
                     }
                     return `--c ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "iw":
-                    if ( systemParams[key].value === "1" || systemParams[key].value === 1) {
+                    if (systemParams[key].value === "1" || systemParams[key].value === 1) {
                         return ""
                     }
                     return `--iw ${systemParams[key].value ? systemParams[key].value : ""}`
                 case "ar":
                 case "aspect":
-                    if ( systemParams[key].value === "1:1") {
+                    if (systemParams[key].value === "1:1") {
                         return ""
                     }
                     return `--ar ${systemParams[key].value ? systemParams[key].value : ""}`
