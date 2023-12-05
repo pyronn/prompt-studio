@@ -4,6 +4,7 @@ import Link from 'next/link';
 import {Flex, HoverCard} from '@radix-ui/themes'
 import SortableButtonContainer from "@/components/SortableButtonContainer";
 import {X} from "lucide-react";
+import PromptAutoInput from "@/components/PromptAutoInput";
 
 
 export default function Home() {
@@ -33,6 +34,7 @@ export default function Home() {
     const [isPromptDrawerOpen, setIsPromptDrawerOpen] = useState(false); // 是否打开抽屉
     const [allCategoryPrompts, setAllCategoryPrompts] = useState([]); // 所有的提示词
     const [dictCategoryDirs, setDictCategoryDirs] = useState([]); // 词典分类
+    const [dictPromptList, setDictPromptList] = useState([]); // 词典全部列表
 
     const [isPromptDictLoaded, setIsPromptDictLoaded] = useState(false); // 是否已经加载了notion词典
     const [subCategoryPrompts, setSubCategoryPrompts] = useState({}); // 二级分类的提示词
@@ -296,6 +298,16 @@ export default function Home() {
         }
     }
 
+    const onInputPrompt = (prompt) => {
+        if (typeof prompt == "string") {
+            addKeyword({
+                text: prompt,
+            })
+        } else {
+            addKeyword(prompt)
+        }
+    }
+
     const toggleDrawer = () => {
         setIsDrawerOpen(!isDrawerOpen)
         if (!isPromptDictLoaded) {
@@ -373,6 +385,33 @@ export default function Home() {
         setDictCategoryDirs([...dirs.values()])
     }
 
+    const parseAllDictText = (dictKeywords) => {
+        const dictList = []
+        const idSet = new Set()
+        dictKeywords.map((item) => {
+            if (item.children === undefined || item.children.length === 0) {
+                return
+            }
+            item.children.map((subCate) => {
+                if (subCate.texts !== undefined && subCate.texts.length > 0) {
+                    subCate.texts.map((text) => {
+                        if (idSet.has(text.id)) {
+                            console.log("duplicate id", text.id, text.text)
+                            return
+                        }
+                        idSet.add(text.id)
+                        dictList.push(text)
+                    })
+                }
+            })
+        })
+        setDictPromptList(dictList)
+    }
+
+    /**
+     * 词典加载
+     * @returns {Promise<void>}
+     */
     const loadAllCategoryKeywords = async () => {
         if (!isNotionEnable) {
             const resp = await fetch('/api/dict/local', {
@@ -383,6 +422,7 @@ export default function Home() {
             })
             const result = await resp.json()
             parseAllDictDirs(result.data)
+            parseAllDictText(result.data)
             setAllCategoryPrompts(result.data)
             return
         }
@@ -406,6 +446,7 @@ export default function Home() {
             result.data = result.data.concat(localResult.data)
         }
         parseAllDictDirs(result.data)
+        parseAllDictText(result.data)
         setAllCategoryPrompts(result.data)
     }
 
@@ -421,6 +462,9 @@ export default function Home() {
         setIsNotionEnable(localStorage.getItem("enableNotionDict") === "true")
         setNotionToken(localStorage.getItem("notionToken"))
         setNotionDatabaseId(localStorage.getItem("notionDatabaseId"))
+        loadAllCategoryKeywords().catch(err => {
+            console.log("loadDictFailed", err)
+        })
     }, [])
 
     useEffect(() => {
@@ -587,7 +631,7 @@ export default function Home() {
 
     return (
 
-        <main className="">
+        <main className="bg-white">
             <nav className="bg-white text-gray-500 shadow-lg">
                 <div className="max-w-6xl mx-auto px-4">
                     <div className="flex justify-between">
@@ -831,6 +875,9 @@ export default function Home() {
 
                     {/* 中间提示词列表区域 */}
                     <div className="w-2/5 px-2">
+                        <div className={"mt-4 w-full"}>
+                            <PromptAutoInput items={dictPromptList} onInputPrompt={onInputPrompt}/>
+                        </div>
                         <div className="mt-4">
                             <SortableButtonContainer items={selectedKeywords} onItemsChange={handleKeywordSortChange}
                                                      activeKeywords={activeKeywords}

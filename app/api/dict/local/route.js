@@ -8,6 +8,7 @@ export async function GET(req) {
     const data = fs.readFileSync(filePath, 'utf8');
     const jsonData = JSON.parse(data)
 
+
     const result = parseCategoryObjects(jsonData)
 
     // 读取 JSON 文件
