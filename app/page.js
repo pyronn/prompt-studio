@@ -2,9 +2,24 @@
 import {useEffect, useState} from 'react'
 import Link from 'next/link';
 import SortableButtonContainer from "@/components/SortableButtonContainer";
-import {X} from "lucide-react";
+import {PanelRightCloseIcon, X} from "lucide-react";
 import PromptAutoInput from "@/components/PromptAutoInput";
-import {AutoComplete, Input, message, Modal, Popover,Button} from "antd";
+import {
+    AutoComplete,
+    Button,
+    Checkbox,
+    Col,
+    Input,
+    InputNumber,
+    message,
+    Modal,
+    Popover,
+    Row,
+    Select,
+    Slider
+} from "antd";
+import {bgYellow} from "next/dist/lib/picocolors";
+import {CopyOutlined} from "@ant-design/icons";
 
 
 export default function Home() {
@@ -628,25 +643,18 @@ export default function Home() {
     const notionConfigPopoverContent = (
         <div className={`flex flex-col space-y-2`}>
             <div>
-                <label className={`label text-xs`}>
-                    <span className={`label-text`}>是否启用Notion:</span>
-                    <input type='checkbox' className={`checkbox checkbox-xs`}
-                           checked={isNotionEnable}
-                           onChange={onEnableNotionDictChange}/>
-                </label>
-
+                <Checkbox
+                    value={isNotionEnable}
+                    onChange={onEnableNotionDictChange}>是否启用Notion</Checkbox>
             </div>
             <div>
-                <label className={`label text-xs`}>
-                    <span className={`label-text`}>是否只使用notion词典:</span>
-                    <input type='checkbox' className={`checkbox checkbox-xs`}
-                           checked={isOnlyNotion}
-                           onChange={onOnlyNotionChange}/>
-                </label>
+                <Checkbox
+                    value={isOnlyNotion}
+                    onChange={onOnlyNotionChange}>是否只使用notion词典</Checkbox>
             </div>
             <div className={`p-1`}>
                 <label className={`label text-xs z-20`}>NotionToken:</label>
-                <input type='text' className={`input input-xs input-bordered`}
+                <Input type='text'
                        name={`notionToken`}
                        placeholder={`NotionToken`} value={notionToken}
                        onChange={onNotionTokenChange} disabled={!isNotionEnable}/>
@@ -654,7 +662,7 @@ export default function Home() {
             </div>
             <div className={`p-1`}>
                 <label className={`label text-xs`}>NotionDatabaseID:</label>
-                <input type='text' className={`input input-xs input-bordered`}
+                <Input type='text'
                        name={`notionDatabaseId`}
                        value={notionDatabaseId}
                        placeholder={`NotionDatabaseID`}
@@ -730,7 +738,7 @@ export default function Home() {
                             </div>
                             <div className="mt-1.5">
                                 <textarea
-                                    className="text-sm min-h-[10rem] w-full resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
+                                    className="min-h-[10rem] w-full resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
                                     onChange={handleInputKeywordsChange}
                                     value={inputKeywords}
                                 />
@@ -752,116 +760,150 @@ export default function Home() {
                                         <label className={`label text-xs w-1/4 inline-block`}>
                                             <span className={`label-text`}>模型:</span>
                                         </label>
-                                        <select className={`select select-sm  inline-block`}
-                                                onChange={(e) => setModel(e.target.value)}
-                                                value={model}>
-                                            {Object.values(modelOptions).map((modelOption) => (
-                                                <option key={modelOption.name}
-                                                    // selected={model === modelOption.name}
-                                                        value={modelOption.name}>{modelOption.showName}</option>
-                                            ))}
-                                        </select>
+                                        <Select className={`inline-block`}
+                                                onChange={(val) => setModel(val)}
+                                                value={model}
+                                                options={Object.values(modelOptions).map((modelOption) => {
+                                                    return {value: modelOption.name, label: modelOption.showName}
+                                                })}>s
+                                        </Select>
                                     </div>
                                     <div className={`bordered`}>
+
                                         <label className={`label text-xs w-1/4 inline-block`}>
                                             <span className={`label-text`}>--ar 图片尺寸:</span>
                                         </label>
-                                        <select className={`select select-sm max-w-xs inline-block`}
-                                                onChange={(e) => {
-                                                    setAspect(e.target.value)
+                                        <Select className={`max-w-xs inline-block`}
+                                                onChange={(value) => {
+                                                    setAspect(value)
                                                 }}
                                                 value={aspect}
+                                                options={aspectOptions.map((aspectOption) => {
+                                                        return {value: aspectOption, label: aspectOption}
+                                                    }
+                                                )}
                                         >
-                                            {aspectOptions.map((aspectOption) => (
-                                                <option key={aspectOption}
-                                                    // selected={aspect === aspectOption}
-                                                        value={aspectOption}>{aspectOption}</option>
-                                            ))}
-                                        </select>
+                                        </Select>
                                     </div>
-                                    <div className={`bordered`}>
-                                        <label className={`label text-xs inline-block w-1/4`}>
-                                            <span className={`label-text`}>--s 风格化:</span>
-                                        </label>
-                                        <input type={`number`} className={`input input-sm inline-block w-24`}
-                                               value={stylize} onChange={(e) => {
-                                            setStylize(e.target.value)
-                                        }}/>
-                                        <input type="range" min={0} max={1000} value={stylize} step={10}
-                                               className="range range-xs w-1/3" onChange={(e) => {
-                                            setStylize(e.target.value)
-                                        }}/>
-                                    </div>
-                                    <div>
-                                        <label className={`label text-xs inline-block w-1/4`}>
-                                            <span className={`label-text`}>--style 风格:</span>
-                                        </label>
-                                        <input type={`text`} className={`input input-sm inline-block w-1/3`}
-                                               value={style} onChange={(e) => {
-                                            setStyle(e.target.value)
-                                        }}/>
-                                        <select className={`select select-sm`} onChange={(e) => {
-                                            setStyle(e.target.value)
-                                        }}>
-                                            {styleOptions.map((styleOption) => (
-                                                <option key={styleOption}
-                                                        defaultValue={style}
-                                                        value={styleOption}>{styleOption}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className={`label text-xs inline-block w-1/4`}>
-                                            <span className={`label-text`}>--c 多样性:</span>
-                                        </label>
-                                        <input type={`text`} className={`input input-sm inline-block w-16`}
-                                               value={chaos} onChange={(e) => {
-                                            setChaos(e.target.value)
-                                        }}/>
-                                        <input type="range" min={0} max={100} value={chaos} step={1}
-                                               className="range range-xs w-1/3" onChange={(e) => {
-                                            setChaos(e.target.value)
-                                        }}/>
-                                    </div>
-                                    <div>
-                                        <label className={`label text-xs inline-block w-1/4`}>
-                                            <span className={`label-text`}>--iw 图片权重:</span>
-                                        </label>
-                                        <input type={`text`} className={`input input-sm inline-block w-16`}
-                                               value={imageWeight} onChange={(e) => {
-                                            setImageWeight(e.target.value)
-                                        }}/>
-                                        <input type="range" min={0} max={2} value={imageWeight} step={0.25}
-                                               className="range range-xs w-1/3" onChange={(e) => {
-                                            setImageWeight(e.target.value)
-                                        }}/>
-                                    </div>
+                                    <Row>
+                                        <Col span={6}>
+
+                                            <label className={`text-xs w-1/4`}>
+                                                <span className={`label-text`}>--s 风格化:</span>
+                                            </label>
+                                        </Col>
+                                        <Col span={10}>
+                                            <Slider
+                                                min={0}
+                                                max={1000}
+                                                onChange={(value) => setStylize(value)}
+                                                value={stylize}
+                                            />
+                                        </Col>
+                                        <Col span={6}>
+                                            <InputNumber width={10}
+                                                         min={0}
+                                                         max={1000}
+                                                         value={stylize}
+                                                         onChange={(value) => setStylize(value)}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span={6}>
+                                            <label className={`text-xs w-1/4 items-center`}>
+                                                <span className={`label-text`}>--style 风格:</span>
+                                            </label>
+                                        </Col>
+                                        <Col span={6}>
+                                            <Input type={`text`} value={style}
+                                                   onChange={(e) => {
+                                                       setStyle(e.target.value)
+                                                   }}/>
+                                        </Col>
+                                        <Col span={12}>
+                                            <Select style={{width: 120}}
+                                                    onChange={(value) => {
+                                                        setStyle(value)
+                                                    }}
+                                                    defaultValue={style}
+                                                    options={styleOptions.map((styleOption) => {
+                                                            return {value: styleOption, label: styleOption}
+                                                        }
+                                                    )}
+                                            >
+                                            </Select>
+                                        </Col>
+                                    </Row>
+
+                                    <Row>
+                                        <Col span={6}>
+                                            <label className={``}>
+                                                <span className={`label-text`}>--c 多样性:</span>
+                                            </label>
+                                        </Col>
+                                        <Col span={10}>
+                                            <Slider min={0} max={100} value={chaos} step={1}
+                                                    onChange={(value) => {
+                                                        setChaos(value)
+                                                    }}/>
+                                        </Col>
+                                        <Col span={6}>
+                                            <InputNumber
+                                                min={0}
+                                                max={100}
+                                                value={chaos} onChange={(value) => {
+                                                setChaos(value)
+                                            }}/>
+                                        </Col>
+
+
+                                    </Row>
+                                    <Row>
+                                        <Col span={6}>
+                                            <label>
+                                                <span className={`label-text`}>--iw 图片权重:</span>
+                                            </label>
+                                        </Col>
+                                        <Col span={10}>
+                                            <Slider min={0} max={2} value={imageWeight} step={0.25}
+                                                    onChange={(value) => {
+                                                        setImageWeight(value)
+                                                    }}/>
+                                        </Col>
+                                        <Col span={6}>
+                                            <InputNumber
+                                                value={imageWeight} onChange={(value) => {
+                                                setImageWeight(value)
+                                            }}/>
+                                        </Col>
+                                    </Row>
                                 </div>
                             </div>
                             {/*按钮组*/}
                             <div className={``}>
-                                <button className={`btn btn-primary btn-sm m-1`} onClick={copyToClipboard}>
+                                <Button type={"primary"} onClick={copyToClipboard} icon={<CopyOutlined/>}>
+
                                     复制
-                                </button>
-                                <button className={`btn btn-secondary btn-sm m-1`} onClick={doTranslate}>
+                                </Button>
+                                <Button type={"primary"} onClick={doTranslate}>
                                     翻译
-                                </button>
-                                <button className={`btn btn-error btn-sm m-1`} onClick={clearInput}>
+                                </Button>
+                                <Button type={"primary"} onClick={clearInput}>
                                     清空
-                                </button>
-                                <button className={`btn btn-error btn-sm m-1`} onClick={saveNewPromptDialog}>
+                                </Button>
+                                <Button type={"primary"} onClick={saveNewPromptDialog}>
                                     保存提示词
-                                </button>
+                                </Button>
                             </div>
                             <div className={``}>
                                 <div>
-                                    <Button type={"primary"} className={"btn btn-primary"}>test</Button>
-                                    <button className={"m-1 btn btn-sm btn-secondary"}
+                                    <Button type={"primary"} className={bgYellow(300)}
                                             onClick={toggleDrawer}>查看提示词词典
-                                    </button>
-                                    <button className={"m-1 btn btn-sm btn-secondary"}
+                                    </Button>
+                                    <Button type={"primary"} className={bgYellow(300)}
                                             onClick={togglePromptDrawer}>查看提示词收藏
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>
@@ -902,9 +944,9 @@ export default function Home() {
                         <div className={`flex space-x-1`}>
                             <button className={`btn btn-sm btn-secondary `} onClick={loadAllCategoryKeywords}>加载
                             </button>
-                            <button>
-                                <X onClick={(e) => setIsDrawerOpen(false)}></X>
-                            </button>
+                            <Button icon={PanelRightCloseIcon} onClick={(e) => setIsDrawerOpen(false)}>
+                                {/*<X onClick={(e) => setIsDrawerOpen(false)}></X>*/}
+                            </Button>
                         </div>
 
                     </div>
@@ -1011,6 +1053,10 @@ export default function Home() {
                                 提示词库
                             </h2>
                         </div>
+
+                        {/*<Button icon={XOut} onClick={(e) => setIsPromptDrawerOpen(false)}>*/}
+                        {/*    /!*<X onClick={(e) => setIsDrawerOpen(false)}></X>*!/*/}
+                        {/*</Button>*/}
 
                         <button className={`space-x-1`}>
                             <X onClick={(e) => setIsPromptDrawerOpen(false)}></X>
