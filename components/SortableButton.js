@@ -1,10 +1,10 @@
 import React from 'react';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
-import {Save} from "lucide-react";
-import {Button} from "@radix-ui/themes";
+import {Save, SaveIcon} from "lucide-react";
+import {Button} from "antd";
 
-const SortableButton = ({id,item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
+const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
     const {
         attributes,
         listeners,
@@ -19,9 +19,11 @@ const SortableButton = ({id,item, index, saveNewDictPromptDialog, toggleKeyword,
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners}  className={`relative`}>
-            <Button className={`p-0.25 absolute bottom-0 right-0 rounded`} onClick={() => (saveNewDictPromptDialog(item))} >
-                <Save size={15} color="#ababab" className={`text-black`} strokeWidth={1.25} absoluteStrokeWidth />
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`relative`}>
+            <Button className={`p-0.25 absolute bottom-0 right-0 rounded`}
+                    shape={"circle"} icon={<SaveIcon size={"small"} />} size={"small"}
+                    onClick={() => (saveNewDictPromptDialog(item))}>
+                {/*<Save size={15} color="#ababab" className={`text-black`} strokeWidth={1.25} absoluteStrokeWidth/>*/}
             </Button>
             <div
                 className={`inline-block rounded-lg cursor-pointer hover:cursor-pointer text-xs m-2`}

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import SortableButtonContainer from "@/components/SortableButtonContainer";
 import {X} from "lucide-react";
 import PromptAutoInput from "@/components/PromptAutoInput";
-import {message, Modal, Popover} from "antd";
+import {AutoComplete, Input, message, Modal, Popover,Button} from "antd";
 
 
 export default function Home() {
@@ -30,6 +30,7 @@ export default function Home() {
     const [promptModalOpen, setPromptModalOpen] = useState(false)
     const [promptModalLoading, setPromptModalLoading] = useState(false)
     const [dictModalLoading, setDictModalLoading] = useState(false)
+    const [dictDirOptions, setDictDirOptions] = useState([])
 
     const [isPreviewImgShow, setIsPreviewImgShow] = useState(false)
     const [previewImgLink, setPreviewImgLink] = useState("")
@@ -854,6 +855,7 @@ export default function Home() {
                             </div>
                             <div className={``}>
                                 <div>
+                                    <Button type={"primary"} className={"btn btn-primary"}>test</Button>
                                     <button className={"m-1 btn btn-sm btn-secondary"}
                                             onClick={toggleDrawer}>查看提示词词典
                                     </button>
@@ -964,30 +966,33 @@ export default function Home() {
             >
                 <div>
                     <div className={`p-1`}>
-                        <input type="text" placeholder="提示词原文" className=" m-1 input input-border input-sm"
+                        <Input type="text" placeholder="提示词原文"
                                disabled={true}
                                name={`text`} value={newDictPromptText} onChange={(e) => {
                             setNewDictPromptText(e.target.value)
                         }}/>
-                        <input type="text" placeholder="提示词翻译" className="m-1 input input-border input-sm"
+                        <Input type="text" placeholder="输入提示词翻译"
                                name={`transText`} value={newDictPromptTransText} onChange={(e) => {
                             setNewDictPromptTransText(e.target.value)
                         }}/>
-                        <input type="text" placeholder="分类路径" className="m-1 input input-border input-sm"
-                               name={`dir`} value={newDictPromptDir} onChange={(e) => {
-                            setNewDictPromptDir(e.target.value)
-                        }}/>
-                        <select className={`select select-sm max-w-xs inline-block`}
-                                onChange={(e) => {
-                                    setNewDictPromptDir(e.target.value)
-                                }}
-                                value={newDictPromptDir}
+
+                        <AutoComplete className={'w-full'}
+                                      placeholder={"输入词典分类路径"}
+                                      value={newDictPromptDir}
+                                      options={dictDirOptions}
+                                      onSelect={(val) => setNewDictPromptDir(val)}
+                                      onChange={(val) => setNewDictPromptDir(val)}
+                                      onSearch={(query) => {
+                                          setDictDirOptions(query ? dictCategoryDirs.filter(item => item.includes(query)).map(item => {
+                                              return {
+                                                  label: (<span>{item}</span>),
+                                                  value: item
+                                              }
+
+                                          }) : [])
+                                      }}
                         >
-                            {dictCategoryDirs.map((item, index) => (
-                                <option key={index}
-                                        value={item}>{item}</option>
-                            ))}
-                        </select>
+                        </AutoComplete>
                     </div>
                 </div>
             </Modal>
@@ -1076,22 +1081,22 @@ export default function Home() {
                         }
 
                         <div className={`flex flex-col w-1/3`}>
-                            <input type="text" placeholder="提示词标题"
+                            <Input type="text" placeholder="提示词标题"
                                    className=" m-1 input input-border input-sm"
                                    name={`text`} value={newPromptTitle} onChange={(e) => {
                                 setNewPromptTitle(e.target.value)
                             }}/>
-                            <input type="text" placeholder="分类(只支持一级分类)"
+                            <Input type="text" placeholder="分类(只支持一级分类)"
                                    className=" m-1 input input-border input-sm"
                                    name={`text`} value={newPromptCategory} onChange={(e) => {
                                 setNewPromptCategory(e.target.value)
                             }}/>
-                            <input type="text" placeholder="提示词描述"
+                            <Input type="text" placeholder="提示词描述"
                                    className="m-1 input input-border input-sm"
                                    name={`transText`} value={newPromptDesc} onChange={(e) => {
                                 setNewPromptDesc(e.target.value)
                             }}/>
-                            <input type="text" placeholder="示例图片链接"
+                            <Input type="text" placeholder="示例图片链接"
                                    className="m-1 input input-border input-sm"
                                    name={`sampleImage`} value={newPromptSampleImgLink} onChange={(e) => {
                                 setNewPromptSampleImgLink(e.target.value)
