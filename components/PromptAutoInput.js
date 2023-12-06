@@ -35,7 +35,8 @@ const PromptAutoInput = ({items, onInputPrompt}) => {
 
     const searchResult = (query, items) => {
         const fItems = items.filter((item) => {
-            return item.text.includes(query) || item.transText.includes(query)
+
+            return item.text.toLowerCase().includes(query.toLowerCase()) || item.transText.toLowerCase().includes(query.toLowerCase())
         })
 
         return fItems.map(item => {

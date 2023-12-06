@@ -5,6 +5,7 @@ import {Flex, HoverCard} from '@radix-ui/themes'
 import SortableButtonContainer from "@/components/SortableButtonContainer";
 import {X} from "lucide-react";
 import PromptAutoInput from "@/components/PromptAutoInput";
+import {message} from "antd";
 
 
 export default function Home() {
@@ -23,6 +24,8 @@ export default function Home() {
     const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2"]
 
     const styleOptions = ["default", "raw", "cute", "expressive", "original", "scenic"]
+
+    const [messageApi, contextHolder] = message.useMessage()
 
     const [isPreviewImgShow, setIsPreviewImgShow] = useState(false)
     const [previewImgLink, setPreviewImgLink] = useState("")
@@ -115,7 +118,8 @@ export default function Home() {
 
     const saveNewDictPrompt = () => {
         if (!isNotionEnable) {
-            addToast("请先启用Notion", "warning")
+            message.warning("请先启用Notion", 3000).then(() => {
+            })
             return
         }
         const resp = fetch("api/dict", {
@@ -135,19 +139,19 @@ export default function Home() {
             setNewDictPromptTransText("")
             setNewDictPromptText("")
             setNewDictPromptDir("")
-            addToast("保存成功", "success", 3000)
+            message.success("保存成功")
         }).catch(err => {
             setNewDictPromptTransText("")
             setNewDictPromptText("")
             setNewDictPromptDir("")
-            addToast("保存失败" + err, "error", 3000)
+            message.error("保存失败" + err)
         });
 
     };
 
     const saveNewPrompt = () => {
         if (!isNotionEnable) {
-            addToast("请先启用Notion", "warning")
+            message.warning("请先启用Notion")
             return
         }
         const resp = fetch("api/prompt", {
@@ -171,7 +175,7 @@ export default function Home() {
             setNewPromptCategory("")
             setNewPromptRawPrompt("")
             setNewPromptSampleImgLink("")
-            addToast("保存成功", "success", 3000)
+            message.success("保存成功")
         }).catch(err => {
             document.getElementById("prompt_editor").close()
             setNewPromptTitle("")
@@ -179,7 +183,7 @@ export default function Home() {
             setNewPromptCategory("")
             setNewPromptRawPrompt("")
             setNewPromptSampleImgLink("")
-            addToast("保存失败" + err, "error", 3000)
+            message.error("保存失败" + err)
         })
 
     };
@@ -270,14 +274,9 @@ export default function Home() {
 
     const copyToClipboard = async () => {
         if ('clipboard' in navigator) {
-            try {
-                await navigator.clipboard.writeText(finalKeywords);
-                addToast("已复制到粘贴板!", "success", 3000)
-            } catch (err) {
-                addToast("复制失败" + err.message, "error", 3000);
-            }
+            navigator.clipboard.writeText(finalKeywords).then(() => message.success("已复制到粘贴板")).catch(err => message.error("复制失败" + err))
         } else {
-            addToast("浏览器不支持复制到粘贴板", "warning", 3000);
+            message.warning("浏览器不支持复制到粘贴板")
         }
     }
 
@@ -317,11 +316,11 @@ export default function Home() {
         }
     }
 
-    const togglePromptDrawer = () => {
+    const togglePromptDrawer = async () => {
 
         setIsPromptDrawerOpen(!isPromptDrawerOpen)
         if (!isPromptDrawerOpen) {
-            loadPromptAll()
+            await loadPromptAll()
         }
     }
 
@@ -557,18 +556,6 @@ export default function Home() {
         setFinalKeywords(imaginePrefix + " " + keywordStr + " " + systemParamStr)
     }
 
-    const addToast = (message, type, duration = 5000) => {
-        const newToast = {
-            id: Date.now(),
-            message: message,
-            type: type
-        }
-        setToasts([...toasts, newToast])
-        setTimeout(() => {
-            setToasts(toasts.filter((t) => (t.id !== newToast.id)))
-        }, duration)
-    }
-
     function parseSystemForm() {
         const newObj = {...systemParams}
 
@@ -594,14 +581,9 @@ export default function Home() {
         setSystemParams({model: {name: modelOption.paramName, value: modelOption.paramValue}})
     }
 
-
-    function syncToNotion() {
-        addToast("暂不支持同步到notion", "warning", 3000)
-    }
-
     function saveNewPromptDialog() {
         if (!isNotionEnable) {
-            addToast("请先启用Notion", "warning")
+            message.warning("请先启用Notion")
             return
         }
         setNewPromptTitle("");
@@ -1128,16 +1110,6 @@ export default function Home() {
                 </dialog>
             </div>
 
-            {/*toast*/}
-            <div className={`toast toast-top toast-center`}>
-                {toasts.map((toast) => (
-                    <div role="alert" className={` alert alert-${toast.type}`}
-                         onClick={() => (setToasts(toasts.filter((t) => (t.id !== toast.id))))}>
-                        {toast.message}
-                    </div>
-                ))
-                }
-            </div>
             <div
                 className={`absolute inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 ${isPreviewImgShow ? "show" : "hidden"}`}
                 onClick={closePreviewImg}>
