@@ -2910,12 +2910,6 @@
         "dir": "绘画/相机"
     },
     {
-        "text": "Panorama",
-        "transText": "全景",
-        "category": "绘画",
-        "dir": "绘画/相机"
-    },
-    {
         "text": "Pinhole Lens",
         "transText": "针孔透镜",
         "category": "绘画",
@@ -3192,24 +3186,6 @@
         "dir": "绘画/颜色"
     },
     {
-        "text": "Orange",
-        "transText": "橙色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
-        "text": "Blue",
-        "transText": "蓝色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
-        "text": "Red",
-        "transText": "红色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
         "text": "Light brown",
         "transText": "浅棕色",
         "category": "绘画",
@@ -3242,12 +3218,6 @@
     {
         "text": "Black",
         "transText": "黑色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
-        "text": "Gray",
-        "transText": "灰色",
         "category": "绘画",
         "dir": "绘画/颜色"
     },
@@ -3504,20 +3474,8 @@
         "dir": "绘画/颜色"
     },
     {
-        "text": "Cyan",
-        "transText": "碧绿色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
         "text": "Aquamarine",
         "transText": "绿松石色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
-        "text": "Turquoise",
-        "transText": "中绿松石色",
         "category": "绘画",
         "dir": "绘画/颜色"
     },
@@ -3552,12 +3510,6 @@
         "dir": "绘画/颜色"
     },
     {
-        "text": "Teal",
-        "transText": "暗灰蓝色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
         "text": "Darkslategray",
         "transText": "深绿色",
         "category": "绘画",
@@ -3566,12 +3518,6 @@
     {
         "text": "Darkgreen",
         "transText": "绿色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
-        "text": "Green",
-        "transText": "森林绿色",
         "category": "绘画",
         "dir": "绘画/颜色"
     },
@@ -3702,12 +3648,6 @@
         "dir": "绘画/颜色"
     },
     {
-        "text": "Beige",
-        "transText": "米色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
         "text": "Lightyellow",
         "transText": "浅黄色",
         "category": "绘画",
@@ -3740,12 +3680,6 @@
     {
         "text": "Tan",
         "transText": "棕褐色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
-        "text": "Yellow",
-        "transText": "黄色",
         "category": "绘画",
         "dir": "绘画/颜色"
     },
@@ -3858,12 +3792,6 @@
         "dir": "绘画/颜色"
     },
     {
-        "text": "Coral",
-        "transText": "珊瑚色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
         "text": "Tomato",
         "transText": "番茄红",
         "category": "绘画",
@@ -3906,12 +3834,6 @@
         "dir": "绘画/颜色"
     },
     {
-        "text": "Pink",
-        "transText": "粉色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
         "text": "Lightpink",
         "transText": "浅粉色",
         "category": "绘画",
@@ -3924,20 +3846,8 @@
         "dir": "绘画/颜色"
     },
     {
-        "text": "Magenta",
-        "transText": "洋红色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
         "text": "Fuchsia",
         "transText": "紫红色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
-        "text": "Violet",
-        "transText": "紫色",
         "category": "绘画",
         "dir": "绘画/颜色"
     },
@@ -3980,12 +3890,6 @@
     {
         "text": "Purple",
         "transText": "紫色",
-        "category": "绘画",
-        "dir": "绘画/颜色"
-    },
-    {
-        "text": "Indigo",
-        "transText": "靛蓝色",
         "category": "绘画",
         "dir": "绘画/颜色"
     },
@@ -4254,12 +4158,6 @@
         "dir": "绘画/材质"
     },
     {
-        "text": "Gold",
-        "transText": "金子",
-        "category": "绘画",
-        "dir": "绘画/材质"
-    },
-    {
         "text": "Gummies",
         "transText": "软糖",
         "category": "绘画",
@@ -4476,12 +4374,6 @@
         "dir": "绘画/艺术风格"
     },
     {
-        "text": "Realistic",
-        "transText": "写实",
-        "category": "绘画",
-        "dir": "绘画/艺术风格"
-    },
-    {
         "text": "Photo",
         "transText": "照片",
         "category": "绘画",
@@ -4586,18 +4478,6 @@
     {
         "text": "Back",
         "transText": "背影像",
-        "category": "绘画",
-        "dir": "绘画/艺术风格"
-    },
-    {
-        "text": "Bust",
-        "transText": "半身像",
-        "category": "绘画",
-        "dir": "绘画/艺术风格"
-    },
-    {
-        "text": "Profile",
-        "transText": "侧面绘",
         "category": "绘画",
         "dir": "绘画/艺术风格"
     },
@@ -4788,12 +4668,6 @@
         "dir": "绘画/艺术风格"
     },
     {
-        "text": "Synthwave",
-        "transText": "蒸汽波",
-        "category": "绘画",
-        "dir": "绘画/艺术风格"
-    },
-    {
         "text": "Illustration,paper figure,lococo,impasto,shiny skin",
         "transText": "洛可可",
         "category": "绘画",
@@ -4808,12 +4682,6 @@
     {
         "text": "Dalle de verre",
         "transText": "彩色玻璃",
-        "category": "绘画",
-        "dir": "绘画/艺术类型"
-    },
-    {
-        "text": "Pixel art",
-        "transText": "像素画",
         "category": "绘画",
         "dir": "绘画/艺术类型"
     },
@@ -4872,12 +4740,6 @@
         "dir": "绘画/艺术类型"
     },
     {
-        "text": "Sketch",
-        "transText": "手画草稿",
-        "category": "绘画",
-        "dir": "绘画/艺术类型"
-    },
-    {
         "text": "Monochrome, gray scale, pencil sketch lines",
         "transText": "铅笔速写",
         "category": "绘画",
@@ -4892,24 +4754,6 @@
     {
         "text": "Art nouveau",
         "transText": "新艺术主义",
-        "category": "绘画",
-        "dir": "绘画/艺术派系"
-    },
-    {
-        "text": "Classicism",
-        "transText": "古典主义",
-        "category": "绘画",
-        "dir": "绘画/艺术派系"
-    },
-    {
-        "text": "Futurism",
-        "transText": "未来主义",
-        "category": "绘画",
-        "dir": "绘画/艺术派系"
-    },
-    {
-        "text": "Dadaism",
-        "transText": "达达主义",
         "category": "绘画",
         "dir": "绘画/艺术派系"
     },
@@ -4950,12 +4794,6 @@
         "dir": "绘画/光照"
     },
     {
-        "text": "Lens flare",
-        "transText": "透镜光晕",
-        "category": "绘画",
-        "dir": "绘画/光照"
-    },
-    {
         "text": "Metallic luster",
         "transText": "金属光泽",
         "category": "绘画",
@@ -4992,12 +4830,6 @@
         "dir": "绘画/光照"
     },
     {
-        "text": "Highres",
-        "transText": "厚涂（风格）",
-        "category": "绘画",
-        "dir": "绘画/写实"
-    },
-    {
         "text": "Photo medium",
         "transText": "照片（风格）",
         "category": "绘画",
@@ -5024,12 +4856,6 @@
     {
         "text": "Flat color",
         "transText": "色块",
-        "category": "绘画",
-        "dir": "绘画/素描"
-    },
-    {
-        "text": "Monochrome",
-        "transText": "单色",
         "category": "绘画",
         "dir": "绘画/素描"
     },
@@ -5064,28 +4890,10 @@
         "dir": "绘画/素描"
     },
     {
-        "text": "Chromatic aberration",
-        "transText": "色差、色失焦",
-        "category": "绘画",
-        "dir": "绘画/素描"
-    },
-    {
-        "text": "Contour deepening",
-        "transText": "轮廓加深",
-        "category": "绘画",
-        "dir": "绘画/素描"
-    },
-    {
         "text": "Outline",
         "transText": "轮廓线",
         "category": "绘画",
         "dir": "绘画/素描"
-    },
-    {
-        "text": "Traditional media",
-        "transText": "传统画布（如纸等）",
-        "category": "绘画",
-        "dir": "绘画/画笔"
     },
     {
         "text": "Marker medium",
@@ -5142,20 +4950,8 @@
         "dir": "绘画/画笔"
     },
     {
-        "text": "Watercolor medium",
-        "transText": "水彩",
-        "category": "绘画",
-        "dir": "绘画/画笔"
-    },
-    {
         "text": "Acrylic paint medium",
         "transText": "丙烯漆料画",
-        "category": "绘画",
-        "dir": "绘画/画笔"
-    },
-    {
-        "text": "Contour deepening",
-        "transText": "线条变粗",
         "category": "绘画",
         "dir": "绘画/画笔"
     },
@@ -5168,18 +4964,6 @@
     {
         "text": "Ban",
         "transText": "科技幻想",
-        "category": "绘画",
-        "dir": "绘画/背景"
-    },
-    {
-        "text": "Cyberpunk",
-        "transText": "赛博朋克",
-        "category": "绘画",
-        "dir": "绘画/背景"
-    },
-    {
-        "text": "Depth of field",
-        "transText": "景深(画法)",
         "category": "绘画",
         "dir": "绘画/背景"
     },
@@ -5204,12 +4988,6 @@
     {
         "text": "White background",
         "transText": "白色背景",
-        "category": "绘画",
-        "dir": "绘画/背景"
-    },
-    {
-        "text": "Transparent background",
-        "transText": "透明背景",
         "category": "绘画",
         "dir": "绘画/背景"
     },
@@ -5322,12 +5100,6 @@
         "dir": "绘画/背景"
     },
     {
-        "text": "Landscape",
-        "transText": "景观",
-        "category": "绘画",
-        "dir": "绘画/背景"
-    },
-    {
         "text": "Foral background",
         "transText": "花卉图案装饰的背景",
         "category": "绘画",
@@ -5348,12 +5120,6 @@
     {
         "text": "Sparkle background",
         "transText": "闪着星光的背景",
-        "category": "绘画",
-        "dir": "绘画/背景"
-    },
-    {
-        "text": "Cityscape",
-        "transText": "城市背景",
         "category": "绘画",
         "dir": "绘画/背景"
     },
@@ -8934,12 +8700,6 @@
         "dir": "人物/身份"
     },
     {
-        "text": "Female",
-        "transText": "女人",
-        "category": "人物",
-        "dir": "人物/身份"
-    },
-    {
         "text": "Harem",
         "transText": "后宫",
         "category": "人物",
@@ -8948,12 +8708,6 @@
     {
         "text": "Idol",
         "transText": "偶像",
-        "category": "人物",
-        "dir": "人物/身份"
-    },
-    {
-        "text": "Male",
-        "transText": "男人",
         "category": "人物",
         "dir": "人物/身份"
     },
@@ -9110,12 +8864,6 @@
     {
         "text": "Vampire",
         "transText": "吸血鬼",
-        "category": "人物",
-        "dir": "人物/二次元"
-    },
-    {
-        "text": "Knight",
-        "transText": "骑士",
         "category": "人物",
         "dir": "人物/二次元"
     },
@@ -9354,12 +9102,6 @@
         "dir": "人物/二次元"
     },
     {
-        "text": "Multiple girls",
-        "transText": "魔幻少女",
-        "category": "人物",
-        "dir": "人物/二次元"
-    },
-    {
         "text": "No humans",
         "transText": "非人",
         "category": "人物",
@@ -9458,12 +9200,6 @@
     {
         "text": "Tattoo",
         "transText": "纹身",
-        "category": "人物",
-        "dir": "人物/皮肤"
-    },
-    {
-        "text": "Tan",
-        "transText": "日晒",
         "category": "人物",
         "dir": "人物/皮肤"
     },
@@ -10128,12 +9864,6 @@
         "dir": "人物/面部"
     },
     {
-        "text": "Tattoo",
-        "transText": "纹身",
-        "category": "人物",
-        "dir": "人物/面部"
-    },
-    {
         "text": "Elf ears",
         "transText": "精灵耳朵",
         "category": "人物",
@@ -10298,12 +10028,6 @@
     {
         "text": "Ears down",
         "transText": "垂耳",
-        "category": "人物",
-        "dir": "人物/耳朵"
-    },
-    {
-        "text": "Fake animal ears",
-        "transText": "假兽耳",
         "category": "人物",
         "dir": "人物/耳朵"
     },
@@ -10686,12 +10410,6 @@
         "dir": "人物/眼睛"
     },
     {
-        "text": "Eyeshadow",
-        "transText": "眼影",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
         "text": "Red eyeshadow",
         "transText": "红色眼影",
         "category": "人物",
@@ -10836,18 +10554,6 @@
         "dir": "人物/眼睛"
     },
     {
-        "text": "Colored eyelashes",
-        "transText": "彩色睫毛",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
-        "text": "Mole under eye",
-        "transText": "眼下痣",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
         "text": "Light eyes",
         "transText": "明亮的眼睛",
         "category": "人物",
@@ -10956,18 +10662,6 @@
         "dir": "人物/眼睛"
     },
     {
-        "text": "Fisheye",
-        "transText": "鱼眼",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
-        "text": "Blood from eyes",
-        "transText": "血从眼里流出",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
         "text": "Solid eyes",
         "transText": "坚定的眼睛",
         "category": "人物",
@@ -10980,12 +10674,6 @@
         "dir": "人物/眼睛"
     },
     {
-        "text": "Crying with eyes open",
-        "transText": "睁着眼落泪",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
         "text": "Eye contact",
         "transText": "眼神交流",
         "category": "人物",
@@ -10994,12 +10682,6 @@
     {
         "text": "Eye of horus",
         "transText": "荷鲁斯之眼",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
-        "text": "Eyeball",
-        "transText": "眼球",
         "category": "人物",
         "dir": "人物/眼睛"
     },
@@ -11124,12 +10806,6 @@
         "dir": "人物/眼睛"
     },
     {
-        "text": "Eyes visible through hair",
-        "transText": "透过头发可以看到的眼睛",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
         "text": "Hair over one eye",
         "transText": "头发遮住了一只眼睛",
         "category": "人物",
@@ -11142,12 +10818,6 @@
         "dir": "人物/眼睛"
     },
     {
-        "text": "Bags under eyes",
-        "transText": "眼袋",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
         "text": "Eyepatch",
         "transText": "眼罩",
         "category": "人物",
@@ -11156,12 +10826,6 @@
     {
         "text": "Medical eyepatch",
         "transText": "医用眼罩",
-        "category": "人物",
-        "dir": "人物/眼睛"
-    },
-    {
-        "text": "Scar across eye",
-        "transText": "眼睛上的疤痕",
         "category": "人物",
         "dir": "人物/眼睛"
     },
@@ -11196,32 +10860,8 @@
         "dir": "人物/瞳孔"
     },
     {
-        "text": "Heterochromia",
-        "transText": "异色瞳",
-        "category": "人物",
-        "dir": "人物/瞳孔"
-    },
-    {
-        "text": "Slit pupils",
-        "transText": "竖的瞳孔/猫眼",
-        "category": "人物",
-        "dir": "人物/瞳孔"
-    },
-    {
-        "text": "Snake pupils",
-        "transText": "瞳孔闪光",
-        "category": "人物",
-        "dir": "人物/瞳孔"
-    },
-    {
         "text": "Symbol-shaped pupils",
         "transText": "符号形瞳孔",
-        "category": "人物",
-        "dir": "人物/瞳孔"
-    },
-    {
-        "text": "Heart-shaped pupils",
-        "transText": "爱心形瞳孔",
         "category": "人物",
         "dir": "人物/瞳孔"
     },
@@ -11246,18 +10886,6 @@
     {
         "text": "No pupils",
         "transText": "没有瞳孔",
-        "category": "人物",
-        "dir": "人物/瞳孔"
-    },
-    {
-        "text": "Ringed eyes",
-        "transText": "轮回眼",
-        "category": "人物",
-        "dir": "人物/瞳孔"
-    },
-    {
-        "text": "Constricted pupils",
-        "transText": "收缩的瞳孔(没有效果",
         "category": "人物",
         "dir": "人物/瞳孔"
     },
@@ -11400,12 +11028,6 @@
         "dir": "人物/鼻子"
     },
     {
-        "text": "Nosebleed",
-        "transText": "流鼻血",
-        "category": "人物",
-        "dir": "人物/鼻子"
-    },
-    {
         "text": "Snot",
         "transText": "鼻涕",
         "category": "人物",
@@ -11432,12 +11054,6 @@
     {
         "text": "Puffy lips",
         "transText": "肿嘴唇",
-        "category": "人物",
-        "dir": "人物/嘴巴"
-    },
-    {
-        "text": "Lipstick",
-        "transText": "口红",
         "category": "人物",
         "dir": "人物/嘴巴"
     },
@@ -11736,20 +11352,8 @@
         "dir": "人物/牙齿"
     },
     {
-        "text": "Shark mouth",
-        "transText": "鲨鱼牙",
-        "category": "人物",
-        "dir": "人物/牙齿"
-    },
-    {
         "text": "Long tongue",
         "transText": "长舌头",
-        "category": "人物",
-        "dir": "人物/舌头"
-    },
-    {
-        "text": "Tongue",
-        "transText": "舌头",
         "category": "人物",
         "dir": "人物/舌头"
     },
@@ -12150,20 +11754,8 @@
         "dir": "服饰/正装"
     },
     {
-        "text": "Maid",
-        "transText": "女仆装",
-        "category": "服饰",
-        "dir": "服饰/正装"
-    },
-    {
         "text": "Stile uniform",
         "transText": "女侍从的制服",
-        "category": "服饰",
-        "dir": "服饰/正装"
-    },
-    {
-        "text": "Miko",
-        "transText": "巫女服",
         "category": "服饰",
         "dir": "服饰/正装"
     },
@@ -12180,12 +11772,6 @@
         "dir": "服饰/正装"
     },
     {
-        "text": "Nurse",
-        "transText": "护士",
-        "category": "服饰",
-        "dir": "服饰/正装"
-    },
-    {
         "text": "Chef uniform",
         "transText": "厨师工装",
         "category": "服饰",
@@ -12194,12 +11780,6 @@
     {
         "text": "Labcoat",
         "transText": "白大褂",
-        "category": "服饰",
-        "dir": "服饰/正装"
-    },
-    {
-        "text": "Cheerleader",
-        "transText": "啦啦队服",
         "category": "服饰",
         "dir": "服饰/正装"
     },
@@ -12228,12 +11808,6 @@
         "dir": "服饰/正装"
     },
     {
-        "text": "China dress",
-        "transText": "中国服饰",
-        "category": "服饰",
-        "dir": "服饰/风格"
-    },
-    {
         "text": "Chinese style",
         "transText": "中国风",
         "category": "服饰",
@@ -12242,12 +11816,6 @@
     {
         "text": "Traditional clothes",
         "transText": "传统服装|民族服装",
-        "category": "服饰",
-        "dir": "服饰/风格"
-    },
-    {
-        "text": "Japanese clothes",
-        "transText": "日式服装",
         "category": "服饰",
         "dir": "服饰/风格"
     },
@@ -12290,12 +11858,6 @@
     {
         "text": "Byzantine fashion",
         "transText": "拜占庭风格",
-        "category": "服饰",
-        "dir": "服饰/风格"
-    },
-    {
-        "text": "Tropical",
-        "transText": "热带特征的",
         "category": "服饰",
         "dir": "服饰/风格"
     },
@@ -13350,12 +12912,6 @@
         "dir": "服饰/上衣"
     },
     {
-        "text": "Shrug clothing",
-        "transText": "包肩上衣",
-        "category": "服饰",
-        "dir": "服饰/上衣"
-    },
-    {
         "text": "Cardigan",
         "transText": "开襟毛衣衫",
         "category": "服饰",
@@ -13382,12 +12938,6 @@
     {
         "text": "Hawaiian shirt",
         "transText": "夏威夷衫",
-        "category": "服饰",
-        "dir": "服饰/上衣"
-    },
-    {
-        "text": "Hoodie",
-        "transText": "连帽衫",
         "category": "服饰",
         "dir": "服饰/上衣"
     },
@@ -13860,12 +13410,6 @@
         "dir": "服饰/外套"
     },
     {
-        "text": "Letterman jacket",
-        "transText": "莱特曼夹克",
-        "category": "服饰",
-        "dir": "服饰/外套"
-    },
-    {
         "text": "Bomber jacket",
         "transText": "飞行员夹克",
         "category": "服饰",
@@ -13902,12 +13446,6 @@
         "dir": "服饰/外套"
     },
     {
-        "text": "Furisode",
-        "transText": "振袖(和服的一部份)",
-        "category": "服饰",
-        "dir": "服饰/外套"
-    },
-    {
         "text": "Windbreaker",
         "transText": "冲锋衣",
         "category": "服饰",
@@ -13940,12 +13478,6 @@
     {
         "text": "Capelet",
         "transText": "披肩",
-        "category": "服饰",
-        "dir": "服饰/外套"
-    },
-    {
-        "text": "Winter clothes",
-        "transText": "冬装",
         "category": "服饰",
         "dir": "服饰/外套"
     },
@@ -14018,12 +13550,6 @@
     {
         "text": "Virgin killer sweater",
         "transText": "处男杀手毛衣",
-        "category": "服饰",
-        "dir": "服饰/外套"
-    },
-    {
-        "text": "Down jacket",
-        "transText": "羽绒服",
         "category": "服饰",
         "dir": "服饰/外套"
     },
@@ -14268,12 +13794,6 @@
         "dir": "服饰/盔甲"
     },
     {
-        "text": "Mecha",
-        "transText": "机甲",
-        "category": "服饰",
-        "dir": "服饰/盔甲"
-    },
-    {
         "text": "Helmet",
         "transText": "头盔",
         "category": "服饰",
@@ -14400,12 +13920,6 @@
         "dir": "服饰/裙子"
     },
     {
-        "text": "China dress",
-        "transText": "中国服饰",
-        "category": "服饰",
-        "dir": "服饰/裙子"
-    },
-    {
         "text": "Pinafore dress",
         "transText": "围裙连衣裙",
         "category": "服饰",
@@ -14414,12 +13928,6 @@
     {
         "text": "Sweater dress",
         "transText": "围裙连衣裙",
-        "category": "服饰",
-        "dir": "服饰/裙子"
-    },
-    {
-        "text": "Wedding dress",
-        "transText": "婚纱",
         "category": "服饰",
         "dir": "服饰/裙子"
     },
@@ -14558,12 +14066,6 @@
     {
         "text": "Skirt suit",
         "transText": "正装短裙",
-        "category": "服饰",
-        "dir": "服饰/裙子"
-    },
-    {
-        "text": "Bikini skirt",
-        "transText": "比基尼裙",
         "category": "服饰",
         "dir": "服饰/裙子"
     },
@@ -15306,12 +14808,6 @@
         "dir": "服饰/其他"
     },
     {
-        "text": "Garter straps",
-        "transText": "吊带袜的吊带",
-        "category": "服饰",
-        "dir": "服饰/其他"
-    },
-    {
         "text": "Thigh strap",
         "transText": "大腿绑带",
         "category": "服饰",
@@ -15408,18 +14904,6 @@
         "dir": "服饰/材质"
     },
     {
-        "text": "Latex",
-        "transText": "乳胶",
-        "category": "服饰",
-        "dir": "服饰/材质"
-    },
-    {
-        "text": "Leather",
-        "transText": "皮制",
-        "category": "服饰",
-        "dir": "服饰/材质"
-    },
-    {
         "text": "See-through",
         "transText": "透明",
         "category": "服饰",
@@ -15428,12 +14912,6 @@
     {
         "text": "Spandex",
         "transText": "弹性纤维",
-        "category": "服饰",
-        "dir": "服饰/材质"
-    },
-    {
-        "text": "Tight",
-        "transText": "紧身",
         "category": "服饰",
         "dir": "服饰/材质"
     },
@@ -15516,12 +14994,6 @@
         "dir": "服饰/装饰"
     },
     {
-        "text": "Costume switch",
-        "transText": "服饰互换",
-        "category": "服饰",
-        "dir": "服饰/装饰"
-    },
-    {
         "text": "Cross-laced clothes",
         "transText": "交叉花边服饰",
         "category": "服饰",
@@ -15560,12 +15032,6 @@
     {
         "text": "Side cutout",
         "transText": "侧边开口的服饰",
-        "category": "服饰",
-        "dir": "服饰/装饰"
-    },
-    {
-        "text": "Side slit",
-        "transText": "侧面有缝的服饰",
         "category": "服饰",
         "dir": "服饰/装饰"
     },
@@ -15662,12 +15128,6 @@
     {
         "text": "Argyle",
         "transText": "阿盖尔菱形花纹",
-        "category": "服饰",
-        "dir": "服饰/花纹"
-    },
-    {
-        "text": "Checkered",
-        "transText": "格子花纹",
         "category": "服饰",
         "dir": "服饰/花纹"
     },
@@ -16470,12 +15930,6 @@
         "dir": "服饰/靴子"
     },
     {
-        "text": "Cross-laced footwear",
-        "transText": "系带靴",
-        "category": "服饰",
-        "dir": "服饰/靴子"
-    },
-    {
         "text": "Ankle boots",
         "transText": "踝靴",
         "category": "服饰",
@@ -16508,12 +15962,6 @@
     {
         "text": "Snow boots",
         "transText": "雪地靴",
-        "category": "服饰",
-        "dir": "服饰/靴子"
-    },
-    {
-        "text": "Anklet",
-        "transText": "脚链",
         "category": "服饰",
         "dir": "服饰/靴子"
     },
@@ -16576,12 +16024,6 @@
         "transText": "一只脚没穿靴子",
         "category": "服饰",
         "dir": "服饰/靴子"
-    },
-    {
-        "text": "Shoe soles",
-        "transText": "鞋底",
-        "category": "服饰",
-        "dir": "服饰/鞋底"
     },
     {
         "text": "Arched soles",
@@ -16748,18 +16190,6 @@
     {
         "text": "Maebari/pasties",
         "transText": "阴贴/乳贴",
-        "category": "服饰",
-        "dir": "服饰/领口"
-    },
-    {
-        "text": "Latex",
-        "transText": "乳贴",
-        "category": "服饰",
-        "dir": "服饰/领口"
-    },
-    {
-        "text": "Torn clothes",
-        "transText": "破烂衣服",
         "category": "服饰",
         "dir": "服饰/领口"
     },
@@ -17208,12 +16638,6 @@
         "dir": "服饰/眼镜"
     },
     {
-        "text": "Medical eyepatch",
-        "transText": "医用眼罩",
-        "category": "服饰",
-        "dir": "服饰/眼镜"
-    },
-    {
         "text": "Bandage over one eye",
         "transText": "用绷带包扎一只眼睛",
         "category": "服饰",
@@ -17246,12 +16670,6 @@
     {
         "text": "Blindfold",
         "transText": "眼罩",
-        "category": "服饰",
-        "dir": "服饰/眼镜"
-    },
-    {
-        "text": "Eyepatch",
-        "transText": "眼罩(独眼)",
         "category": "服饰",
         "dir": "服饰/眼镜"
     },
@@ -17364,18 +16782,6 @@
         "dir": "服饰/面具"
     },
     {
-        "text": "Visor",
-        "transText": "面甲",
-        "category": "服饰",
-        "dir": "服饰/面具"
-    },
-    {
-        "text": "Helmet",
-        "transText": "头盔",
-        "category": "服饰",
-        "dir": "服饰/面具"
-    },
-    {
         "text": "Fox mask",
         "transText": "狐狸面具",
         "category": "服饰",
@@ -17468,12 +16874,6 @@
     {
         "text": "Wide sleeves",
         "transText": "宽袖",
-        "category": "服饰",
-        "dir": "服饰/手臂"
-    },
-    {
-        "text": "Furisode",
-        "transText": "振袖",
         "category": "服饰",
         "dir": "服饰/手臂"
     },
@@ -17748,12 +17148,6 @@
         "dir": "服饰/手"
     },
     {
-        "text": "Wrist cuffs",
-        "transText": "腕饰",
-        "category": "服饰",
-        "dir": "服饰/手"
-    },
-    {
         "text": "Wristband",
         "transText": "腕带",
         "category": "服饰",
@@ -17785,12 +17179,6 @@
     },
     {
         "text": "Handcuffs",
-        "transText": "手铐",
-        "category": "服饰",
-        "dir": "服饰/手"
-    },
-    {
-        "text": "Shackles",
         "transText": "手铐",
         "category": "服饰",
         "dir": "服饰/手"
@@ -18126,12 +17514,6 @@
         "dir": "服饰/头饰"
     },
     {
-        "text": "Helmet",
-        "transText": "头盔",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
         "text": "Alternate headwear",
         "transText": "与原设不同的头饰",
         "category": "服饰",
@@ -18158,12 +17540,6 @@
     {
         "text": "Earmuffs",
         "transText": "耳罩",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
-        "text": "Ears through headwear",
-        "transText": "耳朵穿过头饰",
         "category": "服饰",
         "dir": "服饰/头饰"
     },
@@ -18240,12 +17616,6 @@
         "dir": "服饰/头饰"
     },
     {
-        "text": "Bob cut",
-        "transText": "波波头",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
         "text": "Bone",
         "transText": "骨头",
         "category": "服饰",
@@ -18260,12 +17630,6 @@
     {
         "text": "Circlet",
         "transText": "头冠",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
-        "text": "Double bun",
-        "transText": "团子头",
         "category": "服饰",
         "dir": "服饰/头饰"
     },
@@ -18306,20 +17670,8 @@
         "dir": "服饰/头饰"
     },
     {
-        "text": "Hair bun",
-        "transText": "发髻|团子头",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
         "text": "Hair down",
         "transText": "披下来的头发",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
-        "text": "Hair flaps",
-        "transText": "在摆动的头发",
         "category": "服饰",
         "dir": "服饰/头饰"
     },
@@ -18564,12 +17916,6 @@
         "dir": "服饰/头饰"
     },
     {
-        "text": "Forehead",
-        "transText": "额头",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
         "text": "Forehead jewel",
         "transText": "额前有宝石",
         "category": "服饰",
@@ -18578,12 +17924,6 @@
     {
         "text": "Forehead kiss",
         "transText": "亲吻额头",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
-        "text": "Forehead mark",
-        "transText": "额前有图案",
         "category": "服饰",
         "dir": "服饰/头饰"
     },
@@ -18612,12 +17952,6 @@
         "dir": "服饰/头饰"
     },
     {
-        "text": "Head down",
-        "transText": "低着头",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
         "text": "Head mounted display",
         "transText": "戴着头戴显示设备",
         "category": "服饰",
@@ -18632,12 +17966,6 @@
     {
         "text": "Head rest",
         "transText": "枕着头|托着头",
-        "category": "服饰",
-        "dir": "服饰/头饰"
-    },
-    {
-        "text": "Head tilt",
-        "transText": "歪着头",
         "category": "服饰",
         "dir": "服饰/头饰"
     },
@@ -18930,12 +18258,6 @@
         "dir": "服饰/帽子"
     },
     {
-        "text": "Mob cap",
-        "transText": "暴民帽",
-        "category": "服饰",
-        "dir": "服饰/帽子"
-    },
-    {
         "text": "Newsboy cap",
         "transText": "报童帽",
         "category": "服饰",
@@ -19134,12 +18456,6 @@
         "dir": "服饰/发饰"
     },
     {
-        "text": "Hair flower",
-        "transText": "发_花",
-        "category": "服饰",
-        "dir": "服饰/发饰"
-    },
-    {
         "text": "X hair ornament",
         "transText": "x_发饰",
         "category": "服饰",
@@ -19314,20 +18630,8 @@
         "dir": "服饰/发饰"
     },
     {
-        "text": "Hair bun",
-        "transText": "发髻",
-        "category": "服饰",
-        "dir": "服饰/发饰"
-    },
-    {
         "text": "Single hair bun",
         "transText": "发髻(单)",
-        "category": "服饰",
-        "dir": "服饰/发饰"
-    },
-    {
-        "text": "Hair bell",
-        "transText": "发_铃",
         "category": "服饰",
         "dir": "服饰/发饰"
     },
@@ -19350,26 +18654,8 @@
         "dir": "服饰/小装饰"
     },
     {
-        "text": "Earrings",
-        "transText": "耳环",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Single earring",
-        "transText": "单耳环",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
         "text": "Stud earrings",
         "transText": "耳钉",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Necklace",
-        "transText": "项链",
         "category": "服饰",
         "dir": "服饰/小装饰"
     },
@@ -19404,12 +18690,6 @@
         "dir": "服饰/小装饰"
     },
     {
-        "text": "Forehead jewel",
-        "transText": "额头宝石",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
         "text": "Tassel",
         "transText": "流苏",
         "category": "服饰",
@@ -19422,12 +18702,6 @@
         "dir": "服饰/小装饰"
     },
     {
-        "text": "Lace",
-        "transText": "花边",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
         "text": "Ribbon",
         "transText": "丝带",
         "category": "服饰",
@@ -19436,12 +18710,6 @@
     {
         "text": "Stitches",
         "transText": "缝饰",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Scarf",
-        "transText": "围巾",
         "category": "服饰",
         "dir": "服饰/小装饰"
     },
@@ -19488,12 +18756,6 @@
         "dir": "服饰/小装饰"
     },
     {
-        "text": "Flag print",
-        "transText": "旗印",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
         "text": "Anchor symbol",
         "transText": "锚符号",
         "category": "服饰",
@@ -19512,26 +18774,8 @@
         "dir": "服饰/小装饰"
     },
     {
-        "text": "Iron cross",
-        "transText": "铁十字架",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
         "text": "Latin cross",
         "transText": "拉丁式十字架",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Lace-trimmed hairband",
-        "transText": "蕾丝边发带",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Ankle lace-up",
-        "transText": "脚踝系带",
         "category": "服饰",
         "dir": "服饰/小装饰"
     },
@@ -19544,60 +18788,6 @@
     {
         "text": "Heart lock kantai collection",
         "transText": "舰娘锁(舰C)",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Garters",
-        "transText": "袜带",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Thigh strap",
-        "transText": "大腿绑带",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Thigh ribbon",
-        "transText": "大腿缎带",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Leg garter",
-        "transText": "腿环|袜带",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Garter straps",
-        "transText": "吊带袜的吊带",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Leg ribbon",
-        "transText": "腿锻带",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Bandaid on leg",
-        "transText": "腿上的绷带",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Bandaged leg",
-        "transText": "包扎过的腿",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Arm garter",
-        "transText": "臂环",
         "category": "服饰",
         "dir": "服饰/小装饰"
     },
@@ -19620,44 +18810,8 @@
         "dir": "服饰/小装饰"
     },
     {
-        "text": "Thigh holster",
-        "transText": "大腿皮套",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Bandaid on knee",
-        "transText": "膝盖上的创可贴",
-        "category": "服饰",
-        "dir": "服饰/小装饰"
-    },
-    {
-        "text": "Bracelet",
-        "transText": "手链",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
-        "text": "Choker",
-        "transText": "项圈",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
         "text": "Metal collar",
         "transText": "金属项圈",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
-        "text": "Ring",
-        "transText": "戒指",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
-        "text": "Wristband",
-        "transText": "腕带",
         "category": "服饰",
         "dir": "服饰/首饰"
     },
@@ -19668,26 +18822,8 @@
         "dir": "服饰/首饰"
     },
     {
-        "text": "Brooch",
-        "transText": "胸针",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
-        "text": "Hoop earrings",
-        "transText": "圈形耳环",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
         "text": "Bangle",
         "transText": "手镯",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
-        "text": "Stud earrings",
-        "transText": "耳钉",
         "category": "服饰",
         "dir": "服饰/首饰"
     },
@@ -19724,18 +18860,6 @@
     {
         "text": "Sapphire brooch",
         "transText": "蓝宝石胸针",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
-        "text": "Jewelry",
-        "transText": "珠宝首饰",
-        "category": "服饰",
-        "dir": "服饰/首饰"
-    },
-    {
-        "text": "Necklace",
-        "transText": "项链",
         "category": "服饰",
         "dir": "服饰/首饰"
     },
@@ -19872,12 +18996,6 @@
         "dir": "表情动作/哭"
     },
     {
-        "text": "Crying with eyes open",
-        "transText": "睁着眼睛哭",
-        "category": "表情动作",
-        "dir": "表情动作/哭"
-    },
-    {
         "text": "Streaming tears",
         "transText": "流泪",
         "category": "表情动作",
@@ -19898,12 +19016,6 @@
     {
         "text": "Tearing up",
         "transText": "要哭的表情",
-        "category": "表情动作",
-        "dir": "表情动作/哭"
-    },
-    {
-        "text": "Tears",
-        "transText": "眼泪",
         "category": "表情动作",
         "dir": "表情动作/哭"
     },
@@ -19992,12 +19104,6 @@
         "dir": "表情动作/蔑视"
     },
     {
-        "text": "Jitome",
-        "transText": "鄙夷的眼神",
-        "category": "表情动作",
-        "dir": "表情动作/蔑视"
-    },
-    {
         "text": "Frown",
         "transText": "皱眉/蹙额",
         "category": "表情动作",
@@ -20018,12 +19124,6 @@
     {
         "text": "Fear kubrick",
         "transText": "害怕侧目",
-        "category": "表情动作",
-        "dir": "表情动作/蔑视"
-    },
-    {
-        "text": "Laughing",
-        "transText": "在笑的",
         "category": "表情动作",
         "dir": "表情动作/蔑视"
     },
@@ -20118,18 +19218,6 @@
         "dir": "表情动作/其他表情"
     },
     {
-        "text": "Light blush",
-        "transText": "轻微脸红",
-        "category": "表情动作",
-        "dir": "表情动作/其他表情"
-    },
-    {
-        "text": "Blush",
-        "transText": "脸红",
-        "category": "表情动作",
-        "dir": "表情动作/其他表情"
-    },
-    {
         "text": "Shy",
         "transText": "害羞的",
         "category": "表情动作",
@@ -20162,12 +19250,6 @@
     {
         "text": "Scared",
         "transText": "害怕的",
-        "category": "表情动作",
-        "dir": "表情动作/其他表情"
-    },
-    {
-        "text": "Ahegao",
-        "transText": "阿黑颜",
         "category": "表情动作",
         "dir": "表情动作/其他表情"
     },
@@ -20412,12 +19494,6 @@
         "dir": "表情动作/基础动作"
     },
     {
-        "text": "Parody",
-        "transText": "模仿",
-        "category": "表情动作",
-        "dir": "表情动作/基础动作"
-    },
-    {
         "text": "In container",
         "transText": "在容器中",
         "category": "表情动作",
@@ -20540,12 +19616,6 @@
     {
         "text": "Cooking",
         "transText": "烹饪",
-        "category": "表情动作",
-        "dir": "表情动作/基础动作"
-    },
-    {
-        "text": "Crying",
-        "transText": "哭",
         "category": "表情动作",
         "dir": "表情动作/基础动作"
     },
@@ -20844,12 +19914,6 @@
         "dir": "表情动作/基础动作"
     },
     {
-        "text": "Smelling",
-        "transText": "闻",
-        "category": "表情动作",
-        "dir": "表情动作/基础动作"
-    },
-    {
         "text": "Smoking",
         "transText": "抽烟",
         "category": "表情动作",
@@ -20948,12 +20012,6 @@
     {
         "text": "Teasing",
         "transText": "戏弄",
-        "category": "表情动作",
-        "dir": "表情动作/基础动作"
-    },
-    {
-        "text": "Thinking",
-        "transText": "思考",
         "category": "表情动作",
         "dir": "表情动作/基础动作"
     },
@@ -21108,12 +20166,6 @@
         "dir": "表情动作/手部动作"
     },
     {
-        "text": "Hands in opposite sleeves",
-        "transText": "双手反袖",
-        "category": "表情动作",
-        "dir": "表情动作/手部动作"
-    },
-    {
         "text": "Waving",
         "transText": "招手",
         "category": "表情动作",
@@ -21194,12 +20246,6 @@
     {
         "text": "Arm ribbon",
         "transText": "手臂丝带",
-        "category": "表情动作",
-        "dir": "表情动作/手部动作"
-    },
-    {
-        "text": "Bandaged arm",
-        "transText": "缠着绷带的手臂",
         "category": "表情动作",
         "dir": "表情动作/手部动作"
     },
@@ -21366,12 +20412,6 @@
         "dir": "表情动作/手部动作"
     },
     {
-        "text": "Wiping tears",
-        "transText": "擦眼泪",
-        "category": "表情动作",
-        "dir": "表情动作/手部动作"
-    },
-    {
         "text": "Finger on trigger",
         "transText": "准备扣扳机的手势",
         "category": "表情动作",
@@ -21408,12 +20448,6 @@
         "dir": "表情动作/手部动作"
     },
     {
-        "text": "Shading eyes",
-        "transText": "遮阳手势",
-        "category": "表情动作",
-        "dir": "表情动作/手部动作"
-    },
-    {
         "text": "Fingering through clothes",
         "transText": "手指",
         "category": "表情动作",
@@ -21444,12 +20478,6 @@
         "dir": "表情动作/手部动作"
     },
     {
-        "text": "Sleeves past fingers",
-        "transText": "袖子长过手指",
-        "category": "表情动作",
-        "dir": "表情动作/手部动作"
-    },
-    {
         "text": "Spread fingers",
         "transText": "张开手指",
         "category": "表情动作",
@@ -21476,12 +20504,6 @@
     {
         "text": "Curvy",
         "transText": "展现魅力的姿势",
-        "category": "表情动作",
-        "dir": "表情动作/手部动作"
-    },
-    {
-        "text": "Multiple views",
-        "transText": "多角度|多姿势",
         "category": "表情动作",
         "dir": "表情动作/手部动作"
     },
@@ -21578,12 +20600,6 @@
     {
         "text": "Chin rest",
         "transText": "托脸颊",
-        "category": "表情动作",
-        "dir": "表情动作/手部动作"
-    },
-    {
-        "text": "Head rest",
-        "transText": "托头",
         "category": "表情动作",
         "dir": "表情动作/手部动作"
     },
@@ -22140,18 +21156,6 @@
         "dir": "表情动作/放在某地"
     },
     {
-        "text": "Covering eyes",
-        "transText": "遮住眼睛",
-        "category": "表情动作",
-        "dir": "表情动作/放在某地"
-    },
-    {
-        "text": "Covering mouth",
-        "transText": "挡住嘴巴",
-        "category": "表情动作",
-        "dir": "表情动作/放在某地"
-    },
-    {
         "text": "Hands on another's ",
         "transText": "双手放在别人的脸上",
         "category": "表情动作",
@@ -22220,12 +21224,6 @@
     {
         "text": "Hands on another's shoulders",
         "transText": "双手放在别人的肩膀上",
-        "category": "表情动作",
-        "dir": "表情动作/放在某地"
-    },
-    {
-        "text": "Hands on hips",
-        "transText": "双手叉腰|双手搁在腰上",
         "category": "表情动作",
         "dir": "表情动作/放在某地"
     },
@@ -22554,12 +21552,6 @@
         "dir": "表情动作/腿部动作"
     },
     {
-        "text": "Indian style",
-        "transText": "盘腿坐",
-        "category": "表情动作",
-        "dir": "表情动作/腿部动作"
-    },
-    {
         "text": "Sitting on chair",
         "transText": "坐在椅子上",
         "category": "表情动作",
@@ -22608,44 +21600,14 @@
         "dir": "表情动作/腿部动作"
     },
     {
-        "text": "Kneeling",
-        "transText": "下跪",
-        "category": "表情动作",
-        "dir": "表情动作/腿部动作"
-    },
-    {
         "text": "All fours",
         "transText": "四肢着地",
         "category": "表情动作",
         "dir": "表情动作/腿部动作"
     },
     {
-        "text": "Kicking",
-        "transText": "踢",
-        "category": "表情动作",
-        "dir": "表情动作/腿部动作"
-    },
-    {
         "text": "High kick",
         "transText": "高踢",
-        "category": "表情动作",
-        "dir": "表情动作/腿部动作"
-    },
-    {
-        "text": "Soaking feet",
-        "transText": "泡脚",
-        "category": "表情动作",
-        "dir": "表情动作/腿部动作"
-    },
-    {
-        "text": "Reclining",
-        "transText": "斜倚",
-        "category": "表情动作",
-        "dir": "表情动作/腿部动作"
-    },
-    {
-        "text": "Hugging own legs",
-        "transText": "抱自己的双腿",
         "category": "表情动作",
         "dir": "表情动作/腿部动作"
     },
@@ -22776,20 +21738,8 @@
         "dir": "表情动作/其他动作"
     },
     {
-        "text": "Eye contact",
-        "transText": "眼对眼（对视）",
-        "category": "表情动作",
-        "dir": "表情动作/其他动作"
-    },
-    {
         "text": "Facing another",
         "transText": "面对另一个",
-        "category": "表情动作",
-        "dir": "表情动作/其他动作"
-    },
-    {
-        "text": "Facing away",
-        "transText": "二人面对面(脸贴得很近)",
         "category": "表情动作",
         "dir": "表情动作/其他动作"
     },
@@ -22808,12 +21758,6 @@
     {
         "text": "Giving",
         "transText": "递|赠送",
-        "category": "表情动作",
-        "dir": "表情动作/其他动作"
-    },
-    {
-        "text": "Holding hands",
-        "transText": "牵手",
         "category": "表情动作",
         "dir": "表情动作/其他动作"
     },
@@ -22854,12 +21798,6 @@
         "dir": "表情动作/其他动作"
     },
     {
-        "text": "Long tongue",
-        "transText": "长舌头",
-        "category": "表情动作",
-        "dir": "表情动作/其他动作"
-    },
-    {
         "text": "Mimikaki",
         "transText": "掏耳勺",
         "category": "表情动作",
@@ -22880,18 +21818,6 @@
     {
         "text": "Sitting on shoulder",
         "transText": "坐在肩膀上",
-        "category": "表情动作",
-        "dir": "表情动作/其他动作"
-    },
-    {
-        "text": "Tongue",
-        "transText": "舌头",
-        "category": "表情动作",
-        "dir": "表情动作/其他动作"
-    },
-    {
-        "text": "Tongue out",
-        "transText": "吐舌头",
         "category": "表情动作",
         "dir": "表情动作/其他动作"
     },
@@ -22928,12 +21854,6 @@
     {
         "text": "Day",
         "transText": "白天",
-        "category": "环境",
-        "dir": "环境/天气"
-    },
-    {
-        "text": "Dusk",
-        "transText": "黄昏",
         "category": "环境",
         "dir": "环境/天气"
     },
@@ -23214,12 +22134,6 @@
         "dir": "环境/大自然"
     },
     {
-        "text": "Space",
-        "transText": "太空",
-        "category": "环境",
-        "dir": "环境/大自然"
-    },
-    {
         "text": "Starry sky",
         "transText": "星空",
         "category": "环境",
@@ -23286,32 +22200,8 @@
         "dir": "环境/大自然"
     },
     {
-        "text": "Ocean",
-        "transText": "大海",
-        "category": "环境",
-        "dir": "环境/水"
-    },
-    {
         "text": "Dripping",
         "transText": "滴水",
-        "category": "环境",
-        "dir": "环境/水"
-    },
-    {
-        "text": "Beach",
-        "transText": "海滩",
-        "category": "环境",
-        "dir": "环境/水"
-    },
-    {
-        "text": "Lake",
-        "transText": "湖泊",
-        "category": "环境",
-        "dir": "环境/水"
-    },
-    {
-        "text": "Waterfall",
-        "transText": "瀑布",
         "category": "环境",
         "dir": "环境/水"
     },
@@ -23334,22 +22224,10 @@
         "dir": "环境/水"
     },
     {
-        "text": "Seashell",
-        "transText": "海贝",
-        "category": "环境",
-        "dir": "环境/水"
-    },
-    {
         "text": "Seaweed",
         "transText": "海藻",
         "category": "环境",
         "dir": "环境/水"
-    },
-    {
-        "text": "Sky",
-        "transText": "天空",
-        "category": "环境",
-        "dir": "环境/天空"
     },
     {
         "text": "Gradient sky",
@@ -23360,12 +22238,6 @@
     {
         "text": "Night sky",
         "transText": "夜空",
-        "category": "环境",
-        "dir": "环境/天空"
-    },
-    {
-        "text": "Starry sky",
-        "transText": "星空",
         "category": "环境",
         "dir": "环境/天空"
     },
@@ -23388,18 +22260,6 @@
         "dir": "环境/天空"
     },
     {
-        "text": "Sunset",
-        "transText": "落日",
-        "category": "环境",
-        "dir": "环境/天空"
-    },
-    {
-        "text": "Moon",
-        "transText": "月亮",
-        "category": "环境",
-        "dir": "环境/天空"
-    },
-    {
         "text": "Lunar",
         "transText": "月的,_月球的;",
         "category": "环境",
@@ -23418,32 +22278,8 @@
         "dir": "环境/天空"
     },
     {
-        "text": "Full moon",
-        "transText": "满月",
-        "category": "环境",
-        "dir": "环境/天空"
-    },
-    {
-        "text": "Moonlight",
-        "transText": "月光",
-        "category": "环境",
-        "dir": "环境/天空"
-    },
-    {
         "text": "Scarlet moon",
         "transText": "猩红月亮",
-        "category": "环境",
-        "dir": "环境/天空"
-    },
-    {
-        "text": "Universe",
-        "transText": "宇宙",
-        "category": "环境",
-        "dir": "环境/天空"
-    },
-    {
-        "text": "Space",
-        "transText": "太空",
         "category": "环境",
         "dir": "环境/天空"
     },
@@ -23510,12 +22346,6 @@
     {
         "text": "Cumulus",
         "transText": "积云",
-        "category": "环境",
-        "dir": "环境/云"
-    },
-    {
-        "text": "Cumulonimbus",
-        "transText": "积雨云类",
         "category": "环境",
         "dir": "环境/云"
     },
@@ -24060,12 +22890,6 @@
         "dir": "场景/室外"
     },
     {
-        "text": "Cityscape",
-        "transText": "城市风景",
-        "category": "场景",
-        "dir": "场景/室外"
-    },
-    {
         "text": "Ruins",
         "transText": "废墟",
         "category": "场景",
@@ -24468,12 +23292,6 @@
         "dir": "场景/室外"
     },
     {
-        "text": "East asian architecture",
-        "transText": "东亚建筑",
-        "category": "场景",
-        "dir": "场景/室外"
-    },
-    {
         "text": "Cathedral",
         "transText": "大教堂",
         "category": "场景",
@@ -24552,24 +23370,6 @@
         "dir": "场景/室外"
     },
     {
-        "text": "City",
-        "transText": "城市",
-        "category": "场景",
-        "dir": "场景/城市"
-    },
-    {
-        "text": "Cityscape",
-        "transText": "城市风景",
-        "category": "场景",
-        "dir": "场景/城市"
-    },
-    {
-        "text": "Street",
-        "transText": "街道",
-        "category": "场景",
-        "dir": "场景/城市"
-    },
-    {
         "text": "Downtown",
         "transText": "市中心",
         "category": "场景",
@@ -24608,12 +23408,6 @@
     {
         "text": "Lawn",
         "transText": "草坪",
-        "category": "场景",
-        "dir": "场景/城市"
-    },
-    {
-        "text": "Road",
-        "transText": "路",
         "category": "场景",
         "dir": "场景/城市"
     },
@@ -24660,12 +23454,6 @@
         "dir": "场景/城市"
     },
     {
-        "text": "Railing",
-        "transText": "栏杆",
-        "category": "场景",
-        "dir": "场景/城市"
-    },
-    {
         "text": "Bench",
         "transText": "长凳",
         "category": "场景",
@@ -24708,12 +23496,6 @@
         "dir": "场景/室内"
     },
     {
-        "text": "Classroom",
-        "transText": "教室",
-        "category": "场景",
-        "dir": "场景/室内"
-    },
-    {
         "text": "Clubroom",
         "transText": "俱乐部",
         "category": "场景",
@@ -24738,20 +23520,8 @@
         "dir": "场景/室内"
     },
     {
-        "text": "Dungeon",
-        "transText": "地库",
-        "category": "场景",
-        "dir": "场景/室内"
-    },
-    {
         "text": "Infirmary",
         "transText": "医务室",
-        "category": "场景",
-        "dir": "场景/室内"
-    },
-    {
-        "text": "Stage",
-        "transText": "舞台",
         "category": "场景",
         "dir": "场景/室内"
     },
@@ -24780,12 +23550,6 @@
         "dir": "场景/室内"
     },
     {
-        "text": "Bathing",
-        "transText": "浴室",
-        "category": "场景",
-        "dir": "场景/室内"
-    },
-    {
         "text": "Stairs",
         "transText": "楼梯",
         "category": "场景",
@@ -24808,12 +23572,6 @@
         "transText": "木质地板",
         "category": "场景",
         "dir": "场景/地板"
-    },
-    {
-        "text": "Bedroom",
-        "transText": "家具",
-        "category": "场景",
-        "dir": "场景/家具"
     },
     {
         "text": "Tatami",
@@ -24848,12 +23606,6 @@
     {
         "text": "Window",
         "transText": "窗",
-        "category": "场景",
-        "dir": "场景/家具"
-    },
-    {
-        "text": "Sash",
-        "transText": "窗扇",
         "category": "场景",
         "dir": "场景/家具"
     },
@@ -24966,20 +23718,8 @@
         "dir": "场景/床上用品"
     },
     {
-        "text": "Cushion",
-        "transText": "坐垫",
-        "category": "场景",
-        "dir": "场景/床上用品"
-    },
-    {
         "text": "Carpet",
         "transText": "地毯",
-        "category": "场景",
-        "dir": "场景/床上用品"
-    },
-    {
-        "text": "Pillow",
-        "transText": "枕头",
         "category": "场景",
         "dir": "场景/床上用品"
     },
@@ -25018,12 +23758,6 @@
         "transText": "小熊",
         "category": "场景",
         "dir": "场景/床上用品"
-    },
-    {
-        "text": "Bathroom",
-        "transText": "浴室",
-        "category": "场景",
-        "dir": "场景/浴室"
     },
     {
         "text": "Bathtub,",
@@ -25176,12 +23910,6 @@
         "dir": "物品/数码设备"
     },
     {
-        "text": "Power lines",
-        "transText": "电源线",
-        "category": "物品",
-        "dir": "物品/数码设备"
-    },
-    {
         "text": "Cable",
         "transText": "电缆",
         "category": "物品",
@@ -25320,12 +24048,6 @@
         "dir": "物品/乐器"
     },
     {
-        "text": "Playing instrument",
-        "transText": "演奏乐器",
-        "category": "物品",
-        "dir": "物品/乐器"
-    },
-    {
         "text": "Wind chime",
         "transText": "风铃",
         "category": "物品",
@@ -25416,12 +24138,6 @@
         "dir": "物品/其它物品"
     },
     {
-        "text": "Gohei",
-        "transText": "御币(驱邪布条)",
-        "category": "物品",
-        "dir": "物品/其它物品"
-    },
-    {
         "text": "Lantern/lamp",
         "transText": "灯笼",
         "category": "物品",
@@ -25470,12 +24186,6 @@
         "dir": "物品/其它物品"
     },
     {
-        "text": "Playing card",
-        "transText": "扑克牌",
-        "category": "物品",
-        "dir": "物品/其它物品"
-    },
-    {
         "text": "Cassette",
         "transText": "磁带盒",
         "category": "物品",
@@ -25508,12 +24218,6 @@
     {
         "text": "Microphone",
         "transText": "麦克风",
-        "category": "物品",
-        "dir": "物品/其它物品"
-    },
-    {
-        "text": "Mimikaki",
-        "transText": "掏耳勺",
         "category": "物品",
         "dir": "物品/其它物品"
     },
@@ -25554,12 +24258,6 @@
         "dir": "物品/其它物品"
     },
     {
-        "text": "Holding gift",
-        "transText": "拿着礼物",
-        "category": "物品",
-        "dir": "物品/其它物品"
-    },
-    {
         "text": "Inlet",
         "transText": "入口",
         "category": "物品",
@@ -25568,12 +24266,6 @@
     {
         "text": "Key",
         "transText": "钥匙",
-        "category": "物品",
-        "dir": "物品/其它物品"
-    },
-    {
-        "text": "Leash",
-        "transText": "皮带",
         "category": "物品",
         "dir": "物品/其它物品"
     },
@@ -25704,12 +24396,6 @@
         "dir": "物品/武器"
     },
     {
-        "text": "Unsheathing",
-        "transText": "出鞘",
-        "category": "物品",
-        "dir": "物品/武器"
-    },
-    {
         "text": "Katana",
         "transText": "武士刀",
         "category": "物品",
@@ -25742,12 +24428,6 @@
     {
         "text": "Scissors",
         "transText": "剪刀",
-        "category": "物品",
-        "dir": "物品/武器"
-    },
-    {
-        "text": "Axe",
-        "transText": "斧头",
         "category": "物品",
         "dir": "物品/武器"
     },
@@ -25910,12 +24590,6 @@
     {
         "text": "Mechanization",
         "transText": "机械化",
-        "category": "物品",
-        "dir": "物品/武器"
-    },
-    {
-        "text": "Robot ears",
-        "transText": "机械耳",
         "category": "物品",
         "dir": "物品/武器"
     },
@@ -26376,12 +25050,6 @@
         "dir": "物品/动物"
     },
     {
-        "text": "Stuffed bunny",
-        "transText": "兔子玩偶",
-        "category": "物品",
-        "dir": "物品/动物"
-    },
-    {
         "text": "Horse",
         "transText": "马",
         "category": "物品",
@@ -26418,12 +25086,6 @@
         "dir": "物品/动物"
     },
     {
-        "text": "Slime",
-        "transText": "史莱姆",
-        "category": "物品",
-        "dir": "物品/动物"
-    },
-    {
         "text": "Bear",
         "transText": "熊",
         "category": "物品",
@@ -26432,12 +25094,6 @@
     {
         "text": "Panda",
         "transText": "熊猫",
-        "category": "物品",
-        "dir": "物品/动物"
-    },
-    {
-        "text": "Teddy bear",
-        "transText": "泰迪熊",
         "category": "物品",
         "dir": "物品/动物"
     },
@@ -26456,12 +25112,6 @@
     {
         "text": "Hamster",
         "transText": "仓鼠",
-        "category": "物品",
-        "dir": "物品/动物"
-    },
-    {
-        "text": "Mouse",
-        "transText": "老鼠",
         "category": "物品",
         "dir": "物品/动物"
     },
@@ -26486,12 +25136,6 @@
     {
         "text": "Vase",
         "transText": "花瓶",
-        "category": "物品",
-        "dir": "物品/植物"
-    },
-    {
-        "text": "Bouquet",
-        "transText": "花束",
         "category": "物品",
         "dir": "物品/植物"
     },
@@ -26564,12 +25208,6 @@
     {
         "text": "Entangled plants",
         "transText": "缠结型植物",
-        "category": "物品",
-        "dir": "物品/植物"
-    },
-    {
-        "text": "Orchid",
-        "transText": "兰花",
         "category": "物品",
         "dir": "物品/植物"
     },
@@ -27486,12 +26124,6 @@
         "dir": "汉服/上衣"
     },
     {
-        "text": "Long coat",
-        "transText": "长袄",
-        "category": "汉服",
-        "dir": "汉服/上衣"
-    },
-    {
         "text": "Mamian skirt",
         "transText": "马面裙",
         "category": "汉服",
@@ -27520,12 +26152,6 @@
         "transText": "方领",
         "category": "汉服",
         "dir": "汉服/领子"
-    },
-    {
-        "text": "Overlapping collar",
-        "transText": "云肩",
-        "category": "汉服",
-        "dir": "汉服/装饰"
     },
     {
         "text": "Embroidery",
