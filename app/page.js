@@ -377,7 +377,7 @@ export default function Home() {
                 cateSet.add(item.category)
             }
         })
-        const cateArr = ["全部", ...cateSet.values(), "其他"]
+        const cateArr = [...cateSet.values()]
         setPrompts(result)
         setPromptsCategories(cateArr)
     }
@@ -494,6 +494,7 @@ export default function Home() {
 
     useEffect(() => {
         setIsNotionEnable(localStorage.getItem("enableNotionDict") === "true")
+        setIsOnlyNotion(localStorage.getItem("onlyNotionDict") === "true")
         setNotionToken(localStorage.getItem("notionToken"))
         setNotionDatabaseId(localStorage.getItem("notionDatabaseId"))
         loadAllCategoryKeywords().catch(err => {
@@ -650,12 +651,12 @@ export default function Home() {
         <div className={`flex flex-col space-y-2`}>
             <div>
                 <Checkbox
-                    value={isNotionEnable}
+                    checked={isNotionEnable}
                     onChange={onEnableNotionDictChange}>是否启用Notion</Checkbox>
             </div>
             <div>
                 <Checkbox
-                    value={isOnlyNotion}
+                    checked={isOnlyNotion}
                     onChange={onOnlyNotionChange}>是否只使用notion词典</Checkbox>
             </div>
             <div className={`p-1`}>
@@ -964,7 +965,7 @@ export default function Home() {
                         <Radio.Group value={curDictCategoryIndex} buttonStyle="solid" onChange={onDictCategoryClick}>
                             {
                                 allCategoryPrompts.map((category, index) => (
-                                    <Radio.Button value={index}>{category.name}</Radio.Button>
+                                    <Radio.Button key={index} value={index}>{category.name}</Radio.Button>
                                 ))
                             }
                         </Radio.Group>
@@ -978,9 +979,9 @@ export default function Home() {
                                             key: index,
                                             label: subCateName,
                                             children: subCategoryPrompts[subCateName].map((prompt) => (
-                                                    <div
-                                                        className={`inline-block p-1 m-0.25 rounded-lg cursor-pointer hover:cursor-pointer text-xs`}
-                                                        onClick={(e) => addKeyword(prompt)}>
+                                                    <div key={prompt.id}
+                                                         className={`inline-block p-1 m-0.25 rounded-lg cursor-pointer hover:cursor-pointer text-xs`}
+                                                         onClick={(e) => addKeyword(prompt)}>
                                                         <div
                                                             className={`rounded-s-lg inline-block p-1 text-white bg-green-400`}>
                                                             {prompt.text}
@@ -1053,7 +1054,6 @@ export default function Home() {
                             <Col span={12}>
                                 <Select className={`inline-block w-full`}
                                         onChange={(val) => setNewDictPromptDir(val)}
-                                        value={newDictPromptDir}
                                         defaultValue={dictCategoryDirs > 0 ? dictCategoryDirs[0] : ""}
                                         options={dictCategoryDirs.map((item) => {
                                             return {value: item, label: item}
@@ -1071,7 +1071,7 @@ export default function Home() {
             <div
                 // className={`fixed rounded-t-lg inset-y-0 z-50 right-0 w-2/3 h-screen bg-gray-200 transform transition-transform duration-300 ease-in-out
                 className={`fixed rounded rounded-t-lg inset-x-0 z-50 bottom-0 w-full  bg-base-200 transform transition-transform duration-300 ease-in-out 
-                ${isPromptDrawerOpen ? 'translate-y-0' : 'translate-y-full'} drop-shadow-3xl`}
+                ${isPromptDrawerOpen ? 'translate-y-0' : 'translate-y-full'} shadow-lg`}
             >
                 {/* 抽屉内容 */}
                 <div className="p-2 card h-full">
@@ -1081,10 +1081,6 @@ export default function Home() {
                                 提示词库
                             </h2>
                         </div>
-
-                        {/*<Button icon={XOut} onClick={(e) => setIsPromptDrawerOpen(false)}>*/}
-                        {/*    /!*<X onClick={(e) => setIsDrawerOpen(false)}></X>*!/*/}
-                        {/*</Button>*/}
 
                         <div className={`space-x-1`}>
                             <Button icon={<CloseIcon/>} onClick={(e) => setIsPromptDrawerOpen(false)}/>
@@ -1097,8 +1093,8 @@ export default function Home() {
                             setCurPromptCategory(e.target.value)
                         }}>
                             {
-                                promptsCategories.map((category) => (
-                                    <Radio.Button value={category}>{category}</Radio.Button>
+                                ["全部", ...promptsCategories, "其他"].map((category, index) => (
+                                    <Radio.Button key={index} value={category}>{category}</Radio.Button>
                                 ))
                             }
                         </Radio.Group>
@@ -1148,27 +1144,40 @@ export default function Home() {
                     <div className={`p-1 flex`}>
                         {newPromptSampleImgLink && newPromptSampleImgLink !== "" ?
                             <Image className={`w-48`} src={newPromptSampleImgLink} alt={``}/> :
-                            <div className={`w-48 skeleton`}/>
+                            <div className={'w-48 skeleton'}></div>
                         }
 
                         <div className={`flex flex-col w-1/3 m-2`}>
                             <Input type="text" placeholder="提示词标题"
-                                   className=" m-1 input input-border input-sm"
+                                   className=" m-1"
                                    name={`text`} value={newPromptTitle} onChange={(e) => {
                                 setNewPromptTitle(e.target.value)
                             }}/>
-                            <Input type="text" placeholder="分类(只支持一级分类)"
-                                   className=" m-1 input input-border input-sm"
-                                   name={`text`} value={newPromptCategory} onChange={(e) => {
-                                setNewPromptCategory(e.target.value)
-                            }}/>
+                            <Row>
+                                <Col span={12}>
+                                    <Input type="text" placeholder="分类(只支持一级分类)"
+                                           className="m-1"
+                                           name={`text`} value={newPromptCategory} onChange={(e) => {
+                                        setNewPromptCategory(e.target.value)
+                                    }}/>
+                                </Col>
+                                <Col span={12}>
+                                    <Select className={`inline-block w-full m-1`}
+                                            onChange={(val) => setNewPromptCategory(val)}
+                                            defaultValue={promptsCategories > 0 ? promptsCategories[0] : ""}
+                                            options={promptsCategories.map((item) => {
+                                                return {value: item, label: item}
+                                            })}>
+                                    </Select>
+                                </Col>
+                            </Row>
                             <Input type="text" placeholder="提示词描述"
-                                   className="m-1 input input-border input-sm"
+                                   className="m-1"
                                    name={`transText`} value={newPromptDesc} onChange={(e) => {
                                 setNewPromptDesc(e.target.value)
                             }}/>
                             <Input type="text" placeholder="示例图片链接"
-                                   className="m-1 input input-border input-sm"
+                                   className="m-1"
                                    name={`sampleImage`} value={newPromptSampleImgLink} onChange={(e) => {
                                 setNewPromptSampleImgLink(e.target.value)
                             }}/>
