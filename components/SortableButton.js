@@ -1,8 +1,7 @@
 import React from 'react';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
-import {Save, SaveIcon} from "lucide-react";
-import {Button} from "antd";
+import {Save} from "lucide-react";
 
 const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
     const {
@@ -20,11 +19,10 @@ const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`relative`}>
-            <Button className={`p-0.25 absolute bottom-0 right-0 rounded`}
-                    shape={"circle"} icon={<SaveIcon size={"small"} />} size={"small"}
+            <button className={`p-0.25 absolute bottom-0 right-0 rounded`}
                     onClick={() => (saveNewDictPromptDialog(item))}>
-                {/*<Save size={15} color="#ababab" className={`text-black`} strokeWidth={1.25} absoluteStrokeWidth/>*/}
-            </Button>
+                <Save size={15} color="#ababab" className={`text-black`} strokeWidth={1.25} absoluteStrokeWidth/>
+            </button>
             <div
                 className={`inline-block rounded-lg cursor-pointer hover:cursor-pointer text-xs m-2`}
                 onClick={(e) => toggleKeyword(index)} key={id}>

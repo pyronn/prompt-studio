@@ -2,24 +2,24 @@
 import {useEffect, useState} from 'react'
 import Link from 'next/link';
 import SortableButtonContainer from "@/components/SortableButtonContainer";
-import {PanelRightCloseIcon, X} from "lucide-react";
 import PromptAutoInput from "@/components/PromptAutoInput";
+import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
 import {
     AutoComplete,
     Button,
     Checkbox,
     Col,
+    Collapse,
     Input,
     InputNumber,
     message,
     Modal,
     Popover,
+    Radio,
     Row,
     Select,
     Slider
 } from "antd";
-import {bgYellow} from "next/dist/lib/picocolors";
-import {CopyOutlined} from "@ant-design/icons";
 
 
 export default function Home() {
@@ -58,6 +58,7 @@ export default function Home() {
     const [allCategoryPrompts, setAllCategoryPrompts] = useState([]); // 所有的提示词
     const [dictCategoryDirs, setDictCategoryDirs] = useState([]); // 词典分类
     const [dictPromptList, setDictPromptList] = useState([]); // 词典全部列表
+    const [curDictCategoryIndex, setCurDictCategoryIndex] = useState(""); // 当前的词典分类
 
     const [isPromptDictLoaded, setIsPromptDictLoaded] = useState(false); // 是否已经加载了notion词典
     const [subCategoryPrompts, setSubCategoryPrompts] = useState({}); // 二级分类的提示词
@@ -73,7 +74,7 @@ export default function Home() {
     // 系统参数
     const [stylize, setStylize] = useState(100);
     const [model, setModel] = useState("niji5");
-    const [style, setStyle] = useState("");
+    const [style, setStyle] = useState("default");
     const [chaos, setChaos] = useState(0);
     const [imageWeight, setImageWeight] = useState(1);
     const [aspect, setAspect] = useState("1:1");
@@ -229,6 +230,7 @@ export default function Home() {
         // 分割系统参数和关键词
         const input = inputKeywords.trim();
         const inputKeywordList = []
+        const keywordList = []
         const sysParams = {}
         if (inputKeywords !== "") {
             const [keywordStr, ...params] = input.split(' --').filter(Boolean);
@@ -260,8 +262,11 @@ export default function Home() {
             sysParams['model'] = {name: curModel.paramName, value: curModel.paramValue}
         }
         const activeIndex = new Array(inputKeywordList.length).fill(1)
+        if (selectedKeywords.length > 0) {
+            inputKeywordList.push(...selectedKeywords)
+            activeIndex.push(...activeKeywords)
+        }
         setActiveKeywords(activeIndex);
-
         setSelectedKeywords(inputKeywordList)
         setSystemParams(sysParams)
         parseSystemParams(sysParams)
@@ -384,6 +389,7 @@ export default function Home() {
 
     const onDictCategoryClick = (e) => {
         const index = e.target.value
+        setCurDictCategoryIndex(index)
         const category = allCategoryPrompts[index]
         const subCatePrompts = {}
         category.children.map((cate) => {
@@ -765,25 +771,30 @@ export default function Home() {
                                                 value={model}
                                                 options={Object.values(modelOptions).map((modelOption) => {
                                                     return {value: modelOption.name, label: modelOption.showName}
-                                                })}>s
+                                                })}>
                                         </Select>
                                     </div>
                                     <div className={`bordered`}>
-
-                                        <label className={`label text-xs w-1/4 inline-block`}>
-                                            <span className={`label-text`}>--ar 图片尺寸:</span>
-                                        </label>
-                                        <Select className={`max-w-xs inline-block`}
-                                                onChange={(value) => {
-                                                    setAspect(value)
-                                                }}
-                                                value={aspect}
-                                                options={aspectOptions.map((aspectOption) => {
-                                                        return {value: aspectOption, label: aspectOption}
-                                                    }
-                                                )}
-                                        >
-                                        </Select>
+                                        <Row>
+                                            <Col span={6}>
+                                                <label className={`label text-xs`}>
+                                                    <span className={`label-text`}>--ar 图片尺寸:</span>
+                                                </label>
+                                            </Col>
+                                            <Col>
+                                                <Select className={`max-w-xs inline-block`}
+                                                        onChange={(value) => {
+                                                            setAspect(value)
+                                                        }}
+                                                        value={aspect}
+                                                        options={aspectOptions.map((aspectOption) => {
+                                                                return {value: aspectOption, label: aspectOption}
+                                                            }
+                                                        )}
+                                                >
+                                                </Select>
+                                            </Col>
+                                        </Row>
                                     </div>
                                     <Row>
                                         <Col span={6}>
@@ -881,29 +892,28 @@ export default function Home() {
                                 </div>
                             </div>
                             {/*按钮组*/}
-                            <div className={``}>
-                                <Button type={"primary"} onClick={copyToClipboard} icon={<CopyOutlined/>}>
-
+                            <div className={`mt-2`}>
+                                <button className={`btn btn-primary btn-sm m-1`} onClick={copyToClipboard}>
                                     复制
-                                </Button>
-                                <Button type={"primary"} onClick={doTranslate}>
+                                </button>
+                                <button className={`btn btn-secondary btn-sm m-1`} onClick={doTranslate}>
                                     翻译
-                                </Button>
-                                <Button type={"primary"} onClick={clearInput}>
+                                </button>
+                                <button className={`btn btn-error btn-sm m-1`} onClick={clearInput}>
                                     清空
-                                </Button>
-                                <Button type={"primary"} onClick={saveNewPromptDialog}>
+                                </button>
+                                <button className={`btn btn-error btn-sm m-1`} onClick={saveNewPromptDialog}>
                                     保存提示词
-                                </Button>
+                                </button>
                             </div>
                             <div className={``}>
                                 <div>
-                                    <Button type={"primary"} className={bgYellow(300)}
+                                    <button className={"m-1 btn btn-sm btn-secondary"}
                                             onClick={toggleDrawer}>查看提示词词典
-                                    </Button>
-                                    <Button type={"primary"} className={bgYellow(300)}
+                                    </button>
+                                    <button className={"m-1 btn btn-sm btn-secondary"}
                                             onClick={togglePromptDrawer}>查看提示词收藏
-                                    </Button>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -920,7 +930,6 @@ export default function Home() {
                                                      saveNewDictPromptDialog={saveNewDictPromptDialog}
                                                      toggleKeyword={toggleKeyword}/>
                         </div>
-
                     </div>
                 </div>
 
@@ -942,10 +951,9 @@ export default function Home() {
                         </div>
 
                         <div className={`flex space-x-1`}>
-                            <button className={`btn btn-sm btn-secondary `} onClick={loadAllCategoryKeywords}>加载
-                            </button>
-                            <Button icon={PanelRightCloseIcon} onClick={(e) => setIsDrawerOpen(false)}>
-                                {/*<X onClick={(e) => setIsDrawerOpen(false)}></X>*/}
+                            <Button type={"primary"} onClick={loadAllCategoryKeywords}>加载
+                            </Button>
+                            <Button icon={<CloseIcon/>} type={"text"} onClick={(e) => setIsDrawerOpen(false)}>
                             </Button>
                         </div>
 
@@ -953,26 +961,23 @@ export default function Home() {
 
                     <div className={`card-body h-screen `}>
                         {/*一级分类*/}
-                        <div className={`join flex flex-wrap`}>
+                        <Radio.Group value={curDictCategoryIndex} buttonStyle="solid" onChange={onDictCategoryClick}>
                             {
                                 allCategoryPrompts.map((category, index) => (
-                                    <input className={`join-item btn btn-sm text-sm rounded-none btn-primary-bg`}
-                                           type={`radio`}
-                                           name={`category`}
-                                           onClick={onDictCategoryClick} value={index} aria-label={category.name}/>
+                                    <Radio.Button value={index}>{category.name}</Radio.Button>
                                 ))
                             }
-                        </div>
+                        </Radio.Group>
                         {/*二级分类和词典*/}
                         <div className={`overflow-y-auto`}>
-                            {
-                                Object.keys(subCategoryPrompts).map((subCateName) => (
-                                    <div className={`collapse collapse-arrow collapse-sm`}>
-                                        <input type={"checkbox"}/>
-                                        <div className={`collapse-title text-sm font-medium`}>{subCateName}</div>
-                                        <div className={`collapse-content`}>
-                                            {
-                                                subCategoryPrompts[subCateName].map((prompt) => (
+                            <Collapse
+                                size="small"
+                                items={
+                                    Object.keys(subCategoryPrompts).map((subCateName, index) => {
+                                        return {
+                                            key: index,
+                                            label: subCateName,
+                                            children: subCategoryPrompts[subCateName].map((prompt) => (
                                                     <div
                                                         className={`inline-block p-1 m-0.25 rounded-lg cursor-pointer hover:cursor-pointer text-xs`}
                                                         onClick={(e) => addKeyword(prompt)}>
@@ -985,12 +990,12 @@ export default function Home() {
                                                             {prompt.transText}
                                                         </div>
                                                     </div>
-                                                ))
-                                            }
-                                        </div>
-                                    </div>
-                                ))
-                            }
+                                                )
+                                            )
+                                        }
+                                    })
+                                }
+                            />
                         </div>
                     </div>
                     {/* 其他组件 */}
@@ -1008,33 +1013,56 @@ export default function Home() {
             >
                 <div>
                     <div className={`p-1`}>
-                        <Input type="text" placeholder="提示词原文"
-                               disabled={true}
-                               name={`text`} value={newDictPromptText} onChange={(e) => {
-                            setNewDictPromptText(e.target.value)
-                        }}/>
-                        <Input type="text" placeholder="输入提示词翻译"
-                               name={`transText`} value={newDictPromptTransText} onChange={(e) => {
-                            setNewDictPromptTransText(e.target.value)
-                        }}/>
+                        <Row>
+                            <Col span={24}>
+                                <Input type="text" placeholder="提示词原文"
+                                       disabled={true}
+                                       name={`text`} value={newDictPromptText} onChange={(e) => {
+                                    setNewDictPromptText(e.target.value)
+                                }}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Input type="text" placeholder="输入提示词翻译"
+                                       name={`transText`} value={newDictPromptTransText} onChange={(e) => {
+                                    setNewDictPromptTransText(e.target.value)
+                                }}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={12}>
+                                <AutoComplete className={'w-full'}
+                                              placeholder={"输入词典分类路径"}
+                                              value={newDictPromptDir}
+                                              options={dictDirOptions}
+                                              onSelect={(val) => setNewDictPromptDir(val)}
+                                              onChange={(val) => setNewDictPromptDir(val)}
+                                              onSearch={(query) => {
+                                                  setDictDirOptions(query ? dictCategoryDirs.filter(item => item.includes(query)).map(item => {
+                                                      return {
+                                                          label: (<span>{item}</span>),
+                                                          value: item
+                                                      }
 
-                        <AutoComplete className={'w-full'}
-                                      placeholder={"输入词典分类路径"}
-                                      value={newDictPromptDir}
-                                      options={dictDirOptions}
-                                      onSelect={(val) => setNewDictPromptDir(val)}
-                                      onChange={(val) => setNewDictPromptDir(val)}
-                                      onSearch={(query) => {
-                                          setDictDirOptions(query ? dictCategoryDirs.filter(item => item.includes(query)).map(item => {
-                                              return {
-                                                  label: (<span>{item}</span>),
-                                                  value: item
-                                              }
+                                                  }) : [])
+                                              }}
+                                >
+                                </AutoComplete>
+                            </Col>
+                            <Col span={12}>
+                                <Select className={`inline-block w-full`}
+                                        onChange={(val) => setNewDictPromptDir(val)}
+                                        value={newDictPromptDir}
+                                        defaultValue={dictCategoryDirs > 0 ? dictCategoryDirs[0] : ""}
+                                        options={dictCategoryDirs.map((item) => {
+                                            return {value: item, label: item}
+                                        })}>
+                                </Select>
+                            </Col>
+                        </Row>
 
-                                          }) : [])
-                                      }}
-                        >
-                        </AutoComplete>
+
                     </div>
                 </div>
             </Modal>
@@ -1058,25 +1086,22 @@ export default function Home() {
                         {/*    /!*<X onClick={(e) => setIsDrawerOpen(false)}></X>*!/*/}
                         {/*</Button>*/}
 
-                        <button className={`space-x-1`}>
-                            <X onClick={(e) => setIsPromptDrawerOpen(false)}></X>
-                        </button>
+                        <div className={`space-x-1`}>
+                            <Button icon={<CloseIcon/>} onClick={(e) => setIsPromptDrawerOpen(false)}/>
+                        </div>
                     </div>
 
                     <div className={`card-body p-2 h-full`}>
                         {isNotionEnable ? "" : <div>Notion数据库未启用</div>}
-                        <div className={`p-0.5 join flex flex-wrap rounded-xl`}>
+                        <Radio.Group value={curPromptCategory} buttonStyle="solid" onChange={(e) => {
+                            setCurPromptCategory(e.target.value)
+                        }}>
                             {
-                                promptsCategories.map((category, index) => (
-                                    <input className={`join-item btn btn-sm text-sm rounded-none`} type={`radio`}
-                                           key={index}
-                                           name={`category`}
-                                           onClick={(e) => {
-                                               setCurPromptCategory(category)
-                                           }} value={category} aria-label={category}/>
+                                promptsCategories.map((category) => (
+                                    <Radio.Button value={category}>{category}</Radio.Button>
                                 ))
                             }
-                        </div>
+                        </Radio.Group>
                         <div className={`flex flex-wrap overflow-y-auto gap-4 h-96 p-1`}>
                             {prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部").map((item, index) => (
                                 <div
@@ -1094,11 +1119,11 @@ export default function Home() {
                                             <p className="text-white">{item.desc}</p>
                                         </div>
                                         <div className={"space-x-4 w-full flex justify-end"}>
-                                            <button className={`btn btn-xs md:btn-sm btn-secondary `} onClick={(e) => {
+                                            <Button type={'primary'} onClick={(e) => {
                                                 usePrompt(item.rawPrompt);
                                                 e.stopPropagation();
                                             }}>使用
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>
@@ -1122,11 +1147,11 @@ export default function Home() {
                 <div>
                     <div className={`p-1 flex`}>
                         {newPromptSampleImgLink && newPromptSampleImgLink !== "" ?
-                            <img className={`w-48`} src={newPromptSampleImgLink} alt={``}/> :
+                            <Image className={`w-48`} src={newPromptSampleImgLink} alt={``}/> :
                             <div className={`w-48 skeleton`}/>
                         }
 
-                        <div className={`flex flex-col w-1/3`}>
+                        <div className={`flex flex-col w-1/3 m-2`}>
                             <Input type="text" placeholder="提示词标题"
                                    className=" m-1 input input-border input-sm"
                                    name={`text`} value={newPromptTitle} onChange={(e) => {
@@ -1149,7 +1174,7 @@ export default function Home() {
                             }}/>
 
                         </div>
-                        <div className={`w-2/5`}>
+                        <div className={`w-2/5 m-2`}>
                                     <textarea placeholder="提示词原文"
                                               className="text-sm min-h-[8rem] w-full max-w-md resize-none font-mono p-2 rounded border-red-100"
                                               name={`rawPrompt`} value={newPromptRawPrompt}
