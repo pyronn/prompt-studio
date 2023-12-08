@@ -10,6 +10,7 @@ import {
     Checkbox,
     Col,
     Collapse,
+    Image,
     Input,
     InputNumber,
     message,
@@ -46,6 +47,7 @@ export default function Home() {
     const [promptModalLoading, setPromptModalLoading] = useState(false)
     const [dictModalLoading, setDictModalLoading] = useState(false)
     const [dictDirOptions, setDictDirOptions] = useState([])
+    const [promptListLoading, setPromptListLoading] = useState(false)
 
     const [isPreviewImgShow, setIsPreviewImgShow] = useState(false)
     const [previewImgLink, setPreviewImgLink] = useState("")
@@ -82,6 +84,7 @@ export default function Home() {
 
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [activeKeywords, setActiveKeywords] = useState([]);
+    const [imagePrompts, setImagePrompts] = useState([]);
     const modelOption = modelOptions[model]
     const [systemParams, setSystemParams] = useState({
         model: {
@@ -218,6 +221,31 @@ export default function Home() {
 
     };
 
+    const parsePrompt = (prompt) => {
+        // 分离系统参数
+        const systemParamsPart = prompt.match(/(--\w+ [^--]+)/g) || [];
+        const nonSystemParamsPart = prompt.split(/--\w+ [^--]+/).join(' ').trim();
+
+        // 分离图片链接和文本提示词
+        const imageAndTextParts = nonSystemParamsPart.split(' ');
+        const imagePrompts = [];
+        let textPrompts = '';
+
+        imageAndTextParts.forEach(part => {
+            if (part.startsWith('http')) {
+                // 当前部分是图片链接
+                imagePrompts.push(part);
+            } else {
+                // 其余部分属于文本提示词
+                textPrompts += part + ' ';
+            }
+        });
+
+        textPrompts = textPrompts.trim();
+
+        return {imagePrompts, textPrompts, sysParamsPrompt: systemParamsPart};
+    }
+
     const toggleKeyword = (index) => {
         const newActKeywords = new Array(...activeKeywords)
         newActKeywords[index] = activeKeywords[index] === 1 ? 0 : 1
@@ -232,8 +260,8 @@ export default function Home() {
         const inputKeywordList = []
         const sysParams = {}
         if (inputKeywords !== "") {
-            const [keywordStr, ...params] = input.split(' --').filter(Boolean);
-            keywordStr.split(',').map((kw, index) => {
+            const {imagePrompts, textPrompts, sysParamsPrompt} = parsePrompt(input)
+            textPrompts.split(',').map((kw, index) => {
                 const id = Date.now() + Math.random() * 1000
                 const parts = kw.trim().split(' ::');
                 if (parts[0].trim() !== "") {
@@ -244,27 +272,28 @@ export default function Home() {
                     })
                 }
             });
-
             // 解析系统参数
-            params.map((param) => {
-                const name = param.split(' ')[0]
-                const value = param.split(' ')[1]
+            sysParamsPrompt.map((param) => {
+                const p = param.replace("--", "")
+                const name = p.split(' ')[0]
+                const value = p.split(' ')[1]
                 let key = name
                 if (name === 'niji' || name === 'v') {
                     key = 'model'
                 }
                 sysParams[key] = {name: name, value: value}
             });
+            setImagePrompts(imagePrompts)
         }
         if (!('model' in sysParams)) {
             const curModel = modelOptions[model]
             sysParams['model'] = {name: curModel.paramName, value: curModel.paramValue}
         }
         const activeIndex = new Array(inputKeywordList.length).fill(1)
-        if (selectedKeywords.length > 0) {
-            inputKeywordList.push(...selectedKeywords)
-            activeIndex.push(...activeKeywords)
-        }
+        // if (selectedKeywords.length > 0) {
+        //     inputKeywordList.push(...selectedKeywords)
+        //     activeIndex.push(...activeKeywords)
+        // }
         setActiveKeywords(activeIndex);
         setSelectedKeywords(inputKeywordList)
         setSystemParams(sysParams)
@@ -331,7 +360,13 @@ export default function Home() {
     }
 
     const onInputPrompt = (prompt) => {
-        if (typeof prompt == "string") {
+        if (typeof prompt === "string") {
+            if (prompt.startsWith("http")) {
+                const newImagePrompt = new Array(...imagePrompts)
+                newImagePrompt.push(prompt)
+                setImagePrompts(newImagePrompt)
+                return
+            }
             addKeyword({
                 text: prompt,
             })
@@ -361,6 +396,7 @@ export default function Home() {
         if (!isNotionEnable) {
             return
         }
+        setPromptListLoading(true)
         const data = fetch("/api/prompt", {
             method: 'GET',
             headers: {
@@ -379,6 +415,7 @@ export default function Home() {
         const cateArr = [...cateSet.values()]
         setPrompts(result)
         setPromptsCategories(cateArr)
+        setPromptListLoading(false)
     }
 
     const handleKeywordSortChange = (items, activeItems) => {
@@ -489,7 +526,7 @@ export default function Home() {
 
     useEffect(() => {
         parseFinalKeyword();
-    }, [activeKeywords, selectedKeywords, systemParams])
+    }, [activeKeywords, selectedKeywords, systemParams, imagePrompts])
 
     useEffect(() => {
         setIsNotionEnable(localStorage.getItem("enableNotionDict") === "true")
@@ -587,8 +624,9 @@ export default function Home() {
             }
         }).join(" ")
         const imaginePrefix = "/imagine prompt:"
-        setOutputKeywords(keywordStr + " " + systemParamStr)
-        setFinalKeywords(imaginePrefix + " " + keywordStr + " " + systemParamStr)
+        const imagePromptStr = imagePrompts.join(" ")
+        setOutputKeywords(imagePromptStr + " " + keywordStr + " " + systemParamStr)
+        setFinalKeywords(imaginePrefix + " " + imagePromptStr + " " + keywordStr + " " + systemParamStr)
     }
 
     function parseSystemForm() {
@@ -644,6 +682,12 @@ export default function Home() {
     function closePreviewImg() {
         setPreviewImgLink("")
         setIsPreviewImgShow(false)
+    }
+
+    function removeImagePromptItem(index) {
+        const newImagePrompt = new Array(...imagePrompts)
+        newImagePrompt.splice(index, 1)
+        setImagePrompts(newImagePrompt)
     }
 
     const notionConfigPopoverContent = (
@@ -743,10 +787,10 @@ export default function Home() {
                                 <h2 className="text-black text-md font-bold">Prompt</h2>
                             </div>
                             <div className="mt-1.5">
-                                <textarea
-                                    className="min-h-[10rem] w-full resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
-                                    onChange={handleInputKeywordsChange}
-                                    value={inputKeywords}
+                                <textarea placeholder={"粘贴你的提示词"}
+                                          className="min-h-[10rem] w-full resize-none text-black-300 font-mono bg-gray-300 p-2 rounded-t-md bordered"
+                                          onChange={handleInputKeywordsChange}
+                                          value={inputKeywords}
                                 />
                                 <div
                                     className="w-full text-sm text-gray-200 font-mono bg-gray-700 p-1.5 rounded-b-md bordered">
@@ -925,6 +969,28 @@ export default function Home() {
                             <PromptAutoInput items={dictPromptList} onInputPrompt={onInputPrompt}/>
                         </div>
                         <div className="mt-4">
+                            <h2>ImagePrompt</h2>
+                            <div className={'divider m-0 p-0'}></div>
+                            <div className={"flex"}>
+                                {
+                                    imagePrompts.map((item, index) => (
+                                        <div className={'relative m-1 p-1'} key={index}>
+                                            <Image width={80} className={'w-2 p-1'} src={item}/>
+                                            <button
+                                                className={'absolute right-0 top-0 m-0 p-1 lef btn-error btn btn-xs'}
+                                                onClick={() => {
+                                                    removeImagePromptItem(index)
+                                                }}>
+                                                x
+                                            </button>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <div className="mt-4">
+                            <h2>TextPrompt</h2>
+                            <div className={'divider m-0 p-0'}></div>
                             <SortableButtonContainer items={selectedKeywords} onItemsChange={handleKeywordSortChange}
                                                      activeKeywords={activeKeywords}
                                                      saveNewDictPromptDialog={saveNewDictPromptDialog}
@@ -1142,7 +1208,7 @@ export default function Home() {
                 <div>
                     <div className={`p-1 flex`}>
                         {newPromptSampleImgLink && newPromptSampleImgLink !== "" ?
-                            <Image className={`w-48`} src={newPromptSampleImgLink} alt={``}/> :
+                            <Image width={180} src={newPromptSampleImgLink} alt={``}/> :
                             <div className={'w-48 skeleton'}></div>
                         }
 
