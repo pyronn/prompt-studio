@@ -70,7 +70,7 @@ const PromptAutoInput = ({items, onInputPrompt}) => {
             onKeyUp={handleEnter}
 
         >
-            <Input.Search size="large"  placeholder="input prompt here, press enter to add prompt" enterButton/>
+            <Input.Search size="large" placeholder="请输入提示词,按Enter添加" enterButton/>
         </AutoComplete>
     );
 };

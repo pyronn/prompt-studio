@@ -17,7 +17,6 @@
     "@notionhq/client": "^2.2.13",
     "@prisma/client": "^5.5.2",
     "@vercel/analytics": "^1.1.1",
-    "@vercel/kv": "^1.0.0",
     "antd": "^5.11.5",
     "classnames": "^2.3.2",
     "crypto-js": "^4.2.0",

@@ -230,7 +230,6 @@ export default function Home() {
         // 分割系统参数和关键词
         const input = inputKeywords.trim();
         const inputKeywordList = []
-        const keywordList = []
         const sysParams = {}
         if (inputKeywords !== "") {
             const [keywordStr, ...params] = input.split(' --').filter(Boolean);
