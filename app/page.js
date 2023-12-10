@@ -561,6 +561,9 @@ export default function Home() {
         loadAllCategoryKeywords().catch(err => {
             console.log("loadDictFailed", err)
         })
+        loadPromptAll().catch(err => {
+            console.log("loadPromptFailed", err)
+        })
     }, [])
 
     useEffect(() => {
@@ -1145,7 +1148,6 @@ export default function Home() {
                                 <Select className={`inline-block w-full`}
                                         placeholder={"输入词典分类路径"}
                                         onChange={(val) => setNewDictPromptDir(val)}
-                                        defaultValue={dictCategoryDirs > 0 ? dictCategoryDirs[0] : ""}
                                         options={dictCategoryDirs.map((item) => {
                                             return {value: item, label: item}
                                         })}>
@@ -1239,14 +1241,14 @@ export default function Home() {
                         }
 
                         <div className={`flex flex-col w-1/3 m-2`}>
-                            <Input type="text" placeholder="提示词标题"
+                            <Input type="text" placeholder="输入提示词标题"
                                    className=" m-1"
                                    name={`text`} value={newPromptTitle} onChange={(e) => {
                                 setNewPromptTitle(e.target.value)
                             }}/>
                             <Row>
                                 <Col span={12}>
-                                    <Input type="text" placeholder="分类(只支持一级分类)"
+                                    <Input type="text" placeholder="输入分类(只支持一级分类)"
                                            className="m-1"
                                            name={`text`} value={newPromptCategory} onChange={(e) => {
                                         setNewPromptCategory(e.target.value)
@@ -1255,14 +1257,14 @@ export default function Home() {
                                 <Col span={12}>
                                     <Select className={`inline-block w-full m-1`}
                                             onChange={(val) => setNewPromptCategory(val)}
-                                            defaultValue={promptsCategories > 0 ? promptsCategories[0] : ""}
+                                            placeholder={"选择提示词分类分类"}
                                             options={promptsCategories.map((item) => {
                                                 return {value: item, label: item}
                                             })}>
                                     </Select>
                                 </Col>
                             </Row>
-                            <Input type="text" placeholder="提示词描述"
+                            <Input type="text" placeholder="输入提示词描述"
                                    className="m-1"
                                    name={`transText`} value={newPromptDesc} onChange={(e) => {
                                 setNewPromptDesc(e.target.value)
