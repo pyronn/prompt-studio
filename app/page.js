@@ -285,19 +285,44 @@ export default function Home() {
             });
             setImagePrompts(imagePrompts)
         }
-        if (!('model' in sysParams)) {
-            const curModel = modelOptions[model]
-            sysParams['model'] = {name: curModel.paramName, value: curModel.paramValue}
-        }
+
+        // 设置默认的系统参数
+        setDefaultSysParams(sysParams)
+
         const activeIndex = new Array(inputKeywordList.length).fill(1)
+        // TODO 文本框清空的状态下输入提示词，会把从词典添加的提示词清空掉
         // if (selectedKeywords.length > 0) {
         //     inputKeywordList.push(...selectedKeywords)
         //     activeIndex.push(...activeKeywords)
         // }
+
+
         setActiveKeywords(activeIndex);
         setSelectedKeywords(inputKeywordList)
         setSystemParams(sysParams)
         parseSystemParams(sysParams)
+    }
+
+    const setDefaultSysParams = (sysParams) => {
+        if (!('model' in sysParams)) {
+            const curModel = modelOptions[model]
+            sysParams['model'] = {name: curModel.paramName, value: curModel.paramValue}
+        }
+        if (!('style' in sysParams)) {
+            sysParams['style'] = {name: 'style', value: "default"}
+        }
+        if (!('ar' in sysParams)) {
+            sysParams['ar'] = {name: 'ar', value: "1:1"}
+        }
+        if (!('s' in sysParams)) {
+            sysParams['s'] = {name: 's', value: 100}
+        }
+        if (!('c' in sysParams)) {
+            sysParams['c'] = {name: 'c', value: 0}
+        }
+        if (!('iw' in sysParams)) {
+            sysParams['iw'] = {name: 'iw', value: 1}
+        }
     }
 
     const translateKeywords = async (keywords) => {
@@ -1118,6 +1143,7 @@ export default function Home() {
                             </Col>
                             <Col span={12}>
                                 <Select className={`inline-block w-full`}
+                                        placeholder={"输入词典分类路径"}
                                         onChange={(val) => setNewDictPromptDir(val)}
                                         defaultValue={dictCategoryDirs > 0 ? dictCategoryDirs[0] : ""}
                                         options={dictCategoryDirs.map((item) => {
