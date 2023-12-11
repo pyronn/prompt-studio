@@ -21,6 +21,7 @@ import {
     Select,
     Slider
 } from "antd";
+import {RefreshCwIcon} from "lucide-react";
 
 
 export default function Home() {
@@ -409,11 +410,13 @@ export default function Home() {
         }
     }
 
-    const togglePromptDrawer = async () => {
+    const togglePromptDrawer = () => {
 
         setIsPromptDrawerOpen(!isPromptDrawerOpen)
         if (!isPromptDrawerOpen) {
-            await loadPromptAll()
+            loadPromptAll().catch(err => {
+                message.error("load prompt failed" + err)
+            })
         }
     }
 
@@ -718,6 +721,10 @@ export default function Home() {
         setImagePrompts(newImagePrompt)
     }
 
+    function useOutput() {
+        setInputKeywords(outputKeywords)
+    }
+
     const notionConfigPopoverContent = (
         <div className={`flex flex-col space-y-2`}>
             <div>
@@ -971,6 +978,9 @@ export default function Home() {
                                 <button className={`btn btn-secondary btn-sm m-1`} onClick={doTranslate}>
                                     翻译
                                 </button>
+                                <button className={`btn btn-warning btn-sm m-1`} onClick={useOutput}>
+                                    输出提示词作为输入
+                                </button>
                                 <button className={`btn btn-error btn-sm m-1`} onClick={clearInput}>
                                     清空
                                 </button>
@@ -1176,6 +1186,9 @@ export default function Home() {
                         </div>
 
                         <div className={`space-x-1`}>
+                            <Button icon={<RefreshCwIcon onClick={() => {
+                                loadPromptAll().catch(err => message.error("load prompt failed" + err))
+                            }}/>}/>
                             <Button icon={<CloseIcon/>} onClick={(e) => setIsPromptDrawerOpen(false)}/>
                         </div>
                     </div>
@@ -1205,7 +1218,7 @@ export default function Home() {
                                         }}>
                                         <div className={'flex flex-col w-full text-xs md:text-md lg:text-lg'}>
                                             <h5>{item.title}</h5>
-                                            <p className="text-white">{item.desc}</p>
+                                            <p className="text-white text-xs">{item.desc}</p>
                                         </div>
                                         <div className={"space-x-4 w-full flex justify-end"}>
                                             <Button type={'primary'} onClick={(e) => {
