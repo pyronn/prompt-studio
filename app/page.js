@@ -681,6 +681,7 @@ export default function Home() {
         setOutputKeywords("")
         setSelectedKeywords([])
         setActiveKeywords([])
+        setImagePrompts([])
         const modelOption = modelOptions[model]
         setSystemParams({model: {name: modelOption.paramName, value: modelOption.paramValue}})
     }
