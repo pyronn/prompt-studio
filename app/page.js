@@ -886,6 +886,7 @@ export default function Home() {
                                         <Col span={10}>
                                             <Slider
                                                 min={0}
+                                                step={10}
                                                 max={1000}
                                                 onChange={(value) => setStylize(value)}
                                                 value={stylize}
@@ -1158,6 +1159,7 @@ export default function Home() {
                             <Col span={12}>
                                 <Select className={`inline-block w-full`}
                                         placeholder={"输入词典分类路径"}
+                                        value={newDictPromptDir}
                                         onChange={(val) => setNewDictPromptDir(val)}
                                         options={dictCategoryDirs.map((item) => {
                                             return {value: item, label: item}
@@ -1272,6 +1274,7 @@ export default function Home() {
                                     <Select className={`inline-block w-full m-1`}
                                             onChange={(val) => setNewPromptCategory(val)}
                                             placeholder={"选择提示词分类分类"}
+                                            value={newPromptCategory}
                                             options={promptsCategories.map((item) => {
                                                 return {value: item, label: item}
                                             })}>

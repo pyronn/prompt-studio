@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@ant-design/cssinjs':
-    specifier: ^1.17.5
-    version: 1.17.5(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^1.18.1
+    version: 1.18.1(react-dom@18.2.0)(react@18.2.0)
   '@ant-design/icons':
     specifier: ^5.2.6
     version: registry.npmmirror.com/@ant-design/icons@5.2.6(react-dom@18.2.0)(react@18.2.0)
@@ -87,8 +87,8 @@ packages:
       '@ctrl/tinycolor': registry.npmmirror.com/@ctrl/tinycolor@3.6.1
     dev: false
 
-  /@ant-design/cssinjs@1.17.5(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Ed2rruHMxZTVYGPec6QBZkrh00Df5K1FAufmBpONai5iGYxoxIkg1sRD8YdCw0NvPRAa4r1nJP5LbwICGHzGiQ==, tarball: https://registry.npmmirror.com/@ant-design/cssinjs/-/cssinjs-1.17.5.tgz}
+  /@ant-design/cssinjs@1.18.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-1JURAPrsjK1GwpqByTq3bJ7nF7lbMKDZpehqeR2n8/IR5O58/W1U4VcOeaw5ZyTHri3tEMcom7dyP2tvxpW54g==, tarball: https://registry.npmmirror.com/@ant-design/cssinjs/-/cssinjs-1.18.1.tgz}
     peerDependencies:
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
@@ -99,23 +99,6 @@ packages:
       classnames: 2.3.2
       csstype: 3.1.2
       rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      stylis: 4.3.0
-    dev: false
-
-  /@ant-design/cssinjs@1.18.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-NXzfnNjJgpn+L6d0cD2cS14Tsqs46Bsua6PwVMlmN+F0OEoa9PhJRwUWmI+HyIrc4cgVZVfQTDpXC0p07Jmglw==, tarball: https://registry.npmmirror.com/@ant-design/cssinjs/-/cssinjs-1.18.0.tgz}
-    peerDependencies:
-      react: '>=16.0.0'
-      react-dom: '>=16.0.0'
-    dependencies:
-      '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.23.5
-      '@emotion/hash': 0.8.0
-      '@emotion/unitless': 0.7.5
-      classnames: registry.npmmirror.com/classnames@2.3.2
-      csstype: 3.1.2
-      rc-util: registry.npmmirror.com/rc-util@5.38.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       stylis: 4.3.0
@@ -138,7 +121,7 @@ packages:
     resolution: {integrity: sha512-NdUTHcPe4C99WxPub+K9l9tK5/lV4UXIoaHSYgzco9BCyjKAAwzdBI+wWtYqHt7LJdbo74ZjRPJgzVweq1sz0w==, tarball: https://registry.npmmirror.com/@babel/runtime/-/runtime-7.23.5.tgz}
     engines: {node: '>=6.9.0'}
     dependencies:
-      regenerator-runtime: registry.npmmirror.com/regenerator-runtime@0.14.0
+      regenerator-runtime: 0.14.0
     dev: false
 
   /@ctrl/tinycolor@3.6.1:
@@ -384,8 +367,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.23.5
-      rc-util: registry.npmmirror.com/rc-util@5.38.1(react-dom@18.2.0)(react@18.2.0)
+      '@babel/runtime': 7.23.5
+      rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -394,7 +377,7 @@ packages:
     resolution: {integrity: sha512-jS4E7T9Li2GuYwI6PyiVXmxTiM6b07rlD9Ge8uGZSCz3WlzcG5ZK7g5bbuKNeZ9pgUuPK/5guV781ujdVpm4HQ==, tarball: https://registry.npmmirror.com/@rc-component/mini-decimal/-/mini-decimal-1.1.0.tgz}
     engines: {node: '>=8.x'}
     dependencies:
-      '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.23.5
+      '@babel/runtime': 7.23.5
     dev: false
 
   /@rc-component/mutate-observer@1.1.0(react-dom@18.2.0)(react@18.2.0):
@@ -418,9 +401,9 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.23.5
-      classnames: registry.npmmirror.com/classnames@2.3.2
-      rc-util: registry.npmmirror.com/rc-util@5.38.1(react-dom@18.2.0)(react@18.2.0)
+      '@babel/runtime': 7.23.5
+      classnames: 2.3.2
+      rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -499,7 +482,7 @@ packages:
       react-dom: '>=16.9.0'
     dependencies:
       '@ant-design/colors': 7.0.0
-      '@ant-design/cssinjs': 1.18.0(react-dom@18.2.0)(react@18.2.0)
+      '@ant-design/cssinjs': 1.18.1(react-dom@18.2.0)(react@18.2.0)
       '@ant-design/icons': registry.npmmirror.com/@ant-design/icons@5.2.6(react-dom@18.2.0)(react@18.2.0)
       '@ant-design/react-slick': 1.0.2(react@18.2.0)
       '@babel/runtime': 7.23.5
@@ -1459,10 +1442,10 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.23.5
-      classnames: registry.npmmirror.com/classnames@2.3.2
+      '@babel/runtime': 7.23.5
+      classnames: 2.3.2
       rc-resize-observer: 1.4.0(react-dom@18.2.0)(react@18.2.0)
-      rc-util: registry.npmmirror.com/rc-util@5.38.1(react-dom@18.2.0)(react@18.2.0)
+      rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -1749,10 +1732,10 @@ packages:
       react: '*'
       react-dom: '*'
     dependencies:
-      '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.23.5
-      classnames: registry.npmmirror.com/classnames@2.3.2
+      '@babel/runtime': 7.23.5
+      classnames: 2.3.2
       rc-resize-observer: 1.4.0(react-dom@18.2.0)(react@18.2.0)
-      rc-util: registry.npmmirror.com/rc-util@5.38.1(react-dom@18.2.0)(react@18.2.0)
+      rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -1790,6 +1773,10 @@ packages:
     dependencies:
       picomatch: 2.3.1
     dev: true
+
+  /regenerator-runtime@0.14.0:
+    resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==, tarball: https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz}
+    dev: false
 
   /resize-observer-polyfill@1.5.1:
     resolution: {integrity: sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==, tarball: https://registry.npmmirror.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz}
@@ -2088,7 +2075,7 @@ packages:
     version: 7.23.5
     engines: {node: '>=6.9.0'}
     dependencies:
-      regenerator-runtime: registry.npmmirror.com/regenerator-runtime@0.14.0
+      regenerator-runtime: 0.14.0
     dev: false
 
   registry.npmmirror.com/@ctrl/tinycolor@3.6.1:
@@ -2113,7 +2100,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.23.5
+      '@babel/runtime': 7.23.5
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-is: registry.npmmirror.com/react-is@18.2.0
@@ -2123,10 +2110,4 @@ packages:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-is/-/react-is-18.2.0.tgz}
     name: react-is
     version: 18.2.0
-    dev: false
-
-  registry.npmmirror.com/regenerator-runtime@0.14.0:
-    resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz}
-    name: regenerator-runtime
-    version: 0.14.0
     dev: false
