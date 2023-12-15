@@ -3,7 +3,7 @@ import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import {Save} from "lucide-react";
 
-const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
+const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords, isTextInDict}) => {
     const {
         attributes,
         listeners,
@@ -19,10 +19,13 @@ const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`relative`}>
-            <button className={`p-0.25 absolute bottom-0 right-0 rounded`}
-                    onClick={() => (saveNewDictPromptDialog(item))}>
-                <Save size={15} color="#ababab" className={`text-black`} strokeWidth={1.25} absoluteStrokeWidth/>
-            </button>
+            {
+                isTextInDict(item.word) ? "" : <button className={`p-0.25 absolute bottom-0 right-0 rounded`}
+                                                       onClick={() => (saveNewDictPromptDialog(item))}>
+                    <Save size={15} color="#ababab" className={`text-black`} strokeWidth={1.25} absoluteStrokeWidth/>
+                </button>
+            }
+
             <div
                 className={`inline-block rounded-lg cursor-pointer hover:cursor-pointer text-xs m-2`}
                 onClick={(e) => toggleKeyword(index)} key={id}>

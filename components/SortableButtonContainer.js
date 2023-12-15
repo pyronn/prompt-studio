@@ -3,7 +3,14 @@ import {closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, use
 import {rectSortingStrategy, SortableContext, sortableKeyboardCoordinates,} from '@dnd-kit/sortable';
 import SortableButton from './SortableButton';
 
-const SortableButtonContainer = ({items, onItemsChange, saveNewDictPromptDialog, toggleKeyword, activeKeywords}) => {
+const SortableButtonContainer = ({
+                                     items,
+                                     onItemsChange,
+                                     saveNewDictPromptDialog,
+                                     toggleKeyword,
+                                     activeKeywords,
+                                     isTextInDict
+                                 }) => {
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -32,7 +39,7 @@ const SortableButtonContainer = ({items, onItemsChange, saveNewDictPromptDialog,
                     {items.map((item, index) => (
                         <SortableButton key={item.id} id={item.id} item={item} index={index}
                                         saveNewDictPromptDialog={saveNewDictPromptDialog} toggleKeyword={toggleKeyword}
-                                        activeKeywords={activeKeywords}/>
+                                        activeKeywords={activeKeywords} isTextInDict={isTextInDict}/>
                     ))}
                 </div>
             </SortableContext>

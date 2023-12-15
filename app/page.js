@@ -808,6 +808,10 @@ export default function Home() {
         setPromptHistory(newHistory)
         localStorage.setItem("promptHistory", JSON.stringify(newHistory))
     };
+
+    const isTextInDict = (text) => {
+        return dictPromptList.filter((item) => item.text === text).length > 0
+    }
     return (
 
         <main className="bg-white">
@@ -1089,7 +1093,7 @@ export default function Home() {
                             <SortableButtonContainer items={selectedKeywords} onItemsChange={handleKeywordSortChange}
                                                      activeKeywords={activeKeywords}
                                                      saveNewDictPromptDialog={saveNewDictPromptDialog}
-                                                     toggleKeyword={toggleKeyword}/>
+                                                     toggleKeyword={toggleKeyword} isTextInDict={isTextInDict}/>
                         </div>
                     </div>
                 </div>
