@@ -10,18 +10,21 @@ import {
     Checkbox,
     Col,
     Collapse,
+    Drawer,
     Image,
     Input,
     InputNumber,
+    List,
     message,
     Modal,
     Popover,
     Radio,
     Row,
     Select,
-    Slider
+    Slider,
+    Tooltip
 } from "antd";
-import {RefreshCwIcon} from "lucide-react";
+import {ArrowLeft, Eraser, RefreshCwIcon, Trash} from "lucide-react";
 
 
 export default function Home() {
@@ -73,6 +76,8 @@ export default function Home() {
     const [prompts, setPrompts] = useState([]); // 所有的提示词
     const [promptsCategories, setPromptsCategories] = useState([]); // 词库分类
     const [curPromptCategory, setCurPromptCategory] = useState("全部"); // 当前的词库分类
+    const [promptHistory, setPromptHistory] = useState([]); // 提示词历史记录
+    const [promptHistoryOpen, setPromptHistoryOpen] = useState(false); // 提示词历史记录
 
     // 系统参数
     const [stylize, setStylize] = useState(100);
@@ -361,6 +366,7 @@ export default function Home() {
     }
 
     const copyToClipboard = async () => {
+        addToPromptHistory()
         if ('clipboard' in navigator) {
             navigator.clipboard.writeText(finalKeywords).then(() => message.success("已复制到粘贴板")).catch(err => message.error("复制失败" + err))
         } else {
@@ -561,6 +567,7 @@ export default function Home() {
         setIsOnlyNotion(localStorage.getItem("onlyNotionDict") === "true")
         setNotionToken(localStorage.getItem("notionToken"))
         setNotionDatabaseId(localStorage.getItem("notionDatabaseId"))
+        setPromptHistory(JSON.parse(localStorage.getItem("promptHistory") || "[]"))
         loadAllCategoryKeywords().catch(err => {
             console.log("loadDictFailed", err)
         })
@@ -660,6 +667,30 @@ export default function Home() {
         setFinalKeywords(imaginePrefix + " " + imagePromptStr + " " + keywordStr + " " + systemParamStr)
     }
 
+    const addToPromptHistory = () => {
+        if (outputKeywords === "") {
+            return
+        }
+        const now = new Intl.DateTimeFormat('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: false
+        }).format(Date.now())
+        const history = [{prompt: outputKeywords, time: now}, ...promptHistory]
+        if (history.length > 20) {
+            const his = history.slice(0, 20)
+            localStorage.setItem("promptHistory", JSON.stringify(history))
+            setPromptHistory(history)
+            return;
+        }
+        localStorage.setItem("promptHistory", JSON.stringify(history))
+        setPromptHistory(history)
+    }
+
     function parseSystemForm() {
         const newObj = {...systemParams}
 
@@ -757,6 +788,26 @@ export default function Home() {
         </div>
     )
 
+    /**
+     * 使用历史记录提示词
+     * @param item
+     */
+    const useHistory = (item) => {
+        setInputKeywords(item.prompt)
+        setPromptHistoryOpen(false)
+    };
+
+    /**
+     * 删除历史记录提示词
+     * @param item
+     * @param index
+     */
+    const deleteHistory = (item, index) => {
+        const newHistory = new Array(...promptHistory)
+        newHistory.splice(index, 1)
+        setPromptHistory(newHistory)
+        localStorage.setItem("promptHistory", JSON.stringify(newHistory))
+    };
     return (
 
         <main className="bg-white">
@@ -977,17 +1028,17 @@ export default function Home() {
                                 <button className={`btn btn-primary btn-sm m-1`} onClick={copyToClipboard}>
                                     复制
                                 </button>
-                                <button className={`btn btn-secondary btn-sm m-1`} onClick={doTranslate}>
+                                <button className={`btn btn-primary btn-sm m-1`} onClick={doTranslate}>
                                     翻译
+                                </button>
+                                <button className={`btn btn-primary btn-sm m-1`} onClick={saveNewPromptDialog}>
+                                    保存提示词
                                 </button>
                                 <button className={`btn btn-warning btn-sm m-1`} onClick={useOutput}>
                                     输出提示词作为输入
                                 </button>
                                 <button className={`btn btn-error btn-sm m-1`} onClick={clearInput}>
                                     清空
-                                </button>
-                                <button className={`btn btn-error btn-sm m-1`} onClick={saveNewPromptDialog}>
-                                    保存提示词
                                 </button>
                             </div>
                             <div className={``}>
@@ -997,6 +1048,10 @@ export default function Home() {
                                     </button>
                                     <button className={"m-1 btn btn-sm btn-secondary"}
                                             onClick={togglePromptDrawer}>查看提示词收藏
+                                    </button>
+                                    <button className={`btn btn-sm btn-secondary m-1`} onClick={() => {
+                                        setPromptHistoryOpen(!promptHistoryOpen)
+                                    }}>历史记录
                                     </button>
                                 </div>
                             </div>
@@ -1304,6 +1359,34 @@ export default function Home() {
                     </div>
                 </div>
             </Modal>
+            <Drawer title={"历史记录"} placement={"right"} open={promptHistoryOpen} onClose={() => {
+                setPromptHistoryOpen(false)
+            }} extra={
+                <Tooltip title={"清空历史记录"}>
+                    <button className={"btn btn-square btn-sm glass"} onClick={() => {
+                        localStorage.setItem("promptHistory", "[]")
+                        setPromptHistory([])
+                    }}><Eraser size={20} color={"red"}/></button>
+                </Tooltip>
+            }>
+                <List itemLayout={"vertical"}
+                      dataSource={promptHistory}
+                      renderItem={(item, index) => (
+                          <List.Item actions={[
+                              <button onClick={() => {
+                                  useHistory(item)
+                              }}><ArrowLeft size={15} color={"#1676fd"}/></button>,
+                              <button onClick={() => {
+                                  deleteHistory(item, index)
+                              }}><Trash size={15} color={"red"}/></button>
+                          ]}>
+                              <List.Item.Meta title={item.time} description={item.prompt}/>
+                          </List.Item>
+                      )}
+                >
+
+                </List>
+            </Drawer>
             {/*预览图片*/}
             <div
                 className={`absolute inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 ${isPreviewImgShow ? "show" : "hidden"}`}

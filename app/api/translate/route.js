@@ -63,8 +63,7 @@ async function translateWithCache({srcLang, tarLang, textList}) {
             ProjectId: 0,
             SourceTextList: wordsToTranslate,
         });
-        const translatedWords = resp.TargetTextList;
-        console.log(translatedWords);
+        const translatedWords = resp.TargetTextList
         translatedWords.forEach((translated, index) => {
             const originalWord = wordsToTranslate[index];
             const key = `${srcLang}-${tarLang}-${originalWord}`
