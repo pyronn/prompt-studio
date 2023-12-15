@@ -3,7 +3,16 @@ import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import {Save} from "lucide-react";
 
-const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword, activeKeywords, isTextInDict}) => {
+const SortableButton = ({
+                            id,
+                            item,
+                            index,
+                            saveNewDictPromptDialog,
+                            toggleKeyword,
+                            activeKeywords,
+                            isTextInDict,
+                            transKeywords
+                        }) => {
     const {
         attributes,
         listeners,
@@ -34,8 +43,8 @@ const SortableButton = ({id, item, index, saveNewDictPromptDialog, toggleKeyword
                     {item.word}
                 </div>
                 <div
-                    className={`${item.transText === undefined || item.transText === "" ? "hidden" : "show"} rounded-e-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-secondary" : "bg-gray-400"}`}>
-                    {item.transText}
+                    className={`${transKeywords[item.word.toLowerCase()] === undefined || transKeywords[item.word.toLowerCase()] === "" ? "hidden" : "show"} rounded-e-sm inline-block p-1 text-white ${activeKeywords[index] === 1 ? "bg-secondary" : "bg-gray-400"}`}>
+                    {transKeywords[item.word.toLowerCase()] === undefined || transKeywords[item.word.toLowerCase()] === "" ? "" : transKeywords[item.word.toLowerCase()]}
                 </div>
             </div>
         </div>

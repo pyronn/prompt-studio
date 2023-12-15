@@ -27,12 +27,17 @@ const client = new TmtClient({
 
 export async function POST(req) {
     const reqParam = await req.json()
-    const srcLang = reqParam.srcLang
+    const srcLang = reqParam.srcLang === undefined ? "auto" : reqParam.srcLang
     const tarLang = reqParam.tarLang
     const textList = reqParam.textList
+    if (tarLang === undefined || textList === undefined) {
+        return Response.json({
+            "status": "error",
+            "msg": "tarLang, textList are required"
+        })
+    }
 
-
-    const targetTextList = await translateWithCache({srcLang, tarLang, textList})
+    const targetTextList = await translateWithCache({srcLang, tarLang, textList});
 
     return Response.json({
         "status": "ok",
@@ -48,7 +53,7 @@ async function translateWithCache({srcLang, tarLang, textList}) {
     const wordsToTranslate = [];
 
     textList.forEach(word => {
-        const key = `${srcLang}-${tarLang}-${word}`
+        const key = `${tarLang}-${word}`
         if (cache.has(key)) {
             translations[word] = cache.get(key);
         } else {
@@ -66,7 +71,7 @@ async function translateWithCache({srcLang, tarLang, textList}) {
         const translatedWords = resp.TargetTextList
         translatedWords.forEach((translated, index) => {
             const originalWord = wordsToTranslate[index];
-            const key = `${srcLang}-${tarLang}-${originalWord}`
+            const key = `${tarLang}-${originalWord}`
             cache.set(key, translated, 5 * 60 * 60 * 1000);
             translations[originalWord] = translated;
         });

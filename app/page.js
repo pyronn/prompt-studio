@@ -25,6 +25,7 @@ import {
     Tooltip
 } from "antd";
 import {ArrowLeft, Eraser, RefreshCwIcon, Trash} from "lucide-react";
+import {arrayMove} from "@/lib/tools";
 
 
 export default function Home() {
@@ -88,9 +89,10 @@ export default function Home() {
     const [aspect, setAspect] = useState("1:1");
 
 
-    const [selectedKeywords, setSelectedKeywords] = useState([]);
-    const [activeKeywords, setActiveKeywords] = useState([]);
-    const [imagePrompts, setImagePrompts] = useState([]);
+    const [selectedKeywords, setSelectedKeywords] = useState([]); // 所有的关键词列表，包括从词典添加的和输入的
+    const [activeKeywords, setActiveKeywords] = useState([]); // 所有关键词列表对应的激活状态,0和1表示
+    const [keywordTransText, setKeywordTransText] = useState({}); // 所有关键词列表对应的翻译文本
+    const [imagePrompts, setImagePrompts] = useState([]); // 图片提示词
     const modelOption = modelOptions[model]
     const [systemParams, setSystemParams] = useState({
         model: {
@@ -113,7 +115,9 @@ export default function Home() {
 
 
     const handleInputKeywordsChange = (event) => {
-        setInputKeywords(event.target.value);
+        const inputKeyword = event.target.value
+        setInputKeywords(inputKeyword);
+        parseInputKeywords(inputKeyword);
     };
 
     const onEnableNotionDictChange = (e) => {
@@ -259,11 +263,11 @@ export default function Home() {
     }
 
     // 解析输入的关键词
-    const parseInputKeywords = () => {
-
+    const parseInputKeywords = (inputs) => {
         // 分割系统参数和关键词
-        const input = inputKeywords.trim();
+        const input = inputs.trim();
         const inputKeywordList = []
+        const inputWords = []
         const sysParams = {}
         if (inputKeywords !== "") {
             const {imagePrompts, textPrompts, sysParamsPrompt} = parsePrompt(input)
@@ -276,6 +280,7 @@ export default function Home() {
                         word: parts[0].trim(),
                         weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
                     })
+                    inputWords.push(parts[0].trim())
                 }
             });
             // 解析系统参数
@@ -291,6 +296,8 @@ export default function Home() {
             });
             setImagePrompts(imagePrompts)
         }
+
+        // TODO 输入的语言先如果不是英文则先翻译成英文
 
         // 设置默认的系统参数
         setDefaultSysParams(sysParams)
@@ -331,7 +338,7 @@ export default function Home() {
         }
     }
 
-    const translateKeywords = async (keywords) => {
+    const translateKeywords = async (keywords, tarLang = "zh") => {
         const resp = await fetch('/api/translate', {
             method: 'POST',
             headers: {
@@ -340,7 +347,7 @@ export default function Home() {
             body: JSON.stringify({
                 provider: "tencent",
                 srcLang: "en",
-                tarLang: "zh",
+                tarLang: tarLang,
                 textList: keywords
             })
         })
@@ -350,19 +357,22 @@ export default function Home() {
 
     const doTranslate = async () => {
         const srcTextList = []
-        const srcTextObjList = []
+        // const srcTextObjList = []
         selectedKeywords.map((kw, index) => {
             if (kw.transText === undefined || kw.transText === "") {
                 srcTextList.push(kw.word)
-                srcTextObjList.push({word: kw.word, index: index})
+                // srcTextObjList.push({word: kw.word, index: index})
             }
         })
+        if (srcTextList.length === 0) {
+            return
+        }
         const targetTextList = await translateKeywords(srcTextList)
-        const newSelectedKeywords = new Array(...selectedKeywords)
-        srcTextObjList.map((kwObj) => {
-            newSelectedKeywords[kwObj.index].transText = targetTextList[kwObj.index]
+        const newKeywordTransText = {...keywordTransText}
+        srcTextList.map((item, index) => {
+            newKeywordTransText[item.toLowerCase()] = targetTextList[index]
         })
-        setSelectedKeywords(newSelectedKeywords)
+        setKeywordTransText(newKeywordTransText)
     }
 
     const copyToClipboard = async () => {
@@ -379,6 +389,12 @@ export default function Home() {
         const id = dictPrompt.id ? dictPrompt.id : Date.now()
         newSelected.push({word: dictPrompt.text, transText: dictPrompt.transText, id: id})
         setSelectedKeywords(newSelected)
+        if (dictPrompt.transText !== undefined && dictPrompt.transText !== "") {
+            const newTransText = {...keywordTransText}
+            newTransText[dictPrompt.text.toLowerCase()] = dictPrompt.transText
+            setKeywordTransText(newTransText)
+        }
+
 
         if (activeKeywords.length === 1) {
             const newActive = activeKeywords.copyWithin(1, 0)
@@ -452,10 +468,15 @@ export default function Home() {
         setPromptListLoading(false)
     }
 
-    const handleKeywordSortChange = (items, activeItems) => {
-        setSelectedKeywords(items)
-        setActiveKeywords(activeItems)
+    const handleKeywordSortChange = (activeId, overId) => {
+        const oldIndex = selectedKeywords.findIndex(item => item.id === activeId);
+        const newIndex = selectedKeywords.findIndex(item => item.id === overId);
+        const newSelected = new Array(...arrayMove(selectedKeywords, oldIndex, newIndex))
+        const newActive = new Array(...arrayMove(activeKeywords, oldIndex, newIndex))
+        setSelectedKeywords(newSelected)
+        setActiveKeywords(newActive)
     }
+
 
     const onDictCategoryClick = (e) => {
         const index = e.target.value
@@ -555,8 +576,8 @@ export default function Home() {
     }
 
     useEffect(() => {
-        parseInputKeywords();
-    }, [inputKeywords]);
+        doTranslate()
+    }, [selectedKeywords]);
 
     useEffect(() => {
         parseFinalKeyword();
@@ -1093,7 +1114,8 @@ export default function Home() {
                             <SortableButtonContainer items={selectedKeywords} onItemsChange={handleKeywordSortChange}
                                                      activeKeywords={activeKeywords}
                                                      saveNewDictPromptDialog={saveNewDictPromptDialog}
-                                                     toggleKeyword={toggleKeyword} isTextInDict={isTextInDict}/>
+                                                     toggleKeyword={toggleKeyword} isTextInDict={isTextInDict}
+                                                     transKeywords={keywordTransText}/>
                         </div>
                     </div>
                 </div>

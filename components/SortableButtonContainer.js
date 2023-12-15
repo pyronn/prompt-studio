@@ -9,7 +9,8 @@ const SortableButtonContainer = ({
                                      saveNewDictPromptDialog,
                                      toggleKeyword,
                                      activeKeywords,
-                                     isTextInDict
+                                     isTextInDict,
+                                     transKeywords,
                                  }) => {
 
     const sensors = useSensors(
@@ -26,9 +27,7 @@ const SortableButtonContainer = ({
     const handleDragEnd = (event) => {
         const {active, over} = event;
         if (active.id !== over.id) {
-            const oldIndex = items.findIndex(item => item.id === active.id);
-            const newIndex = items.findIndex(item => item.id === over.id);
-            onItemsChange(new Array(...arrayMove(items, oldIndex, newIndex)), new Array(...arrayMove(activeKeywords, oldIndex, newIndex)))
+            onItemsChange(active.id, over.id)
         }
     };
 
@@ -39,7 +38,7 @@ const SortableButtonContainer = ({
                     {items.map((item, index) => (
                         <SortableButton key={item.id} id={item.id} item={item} index={index}
                                         saveNewDictPromptDialog={saveNewDictPromptDialog} toggleKeyword={toggleKeyword}
-                                        activeKeywords={activeKeywords} isTextInDict={isTextInDict}/>
+                                        activeKeywords={activeKeywords} isTextInDict={isTextInDict} transKeywords={transKeywords}/>
                     ))}
                 </div>
             </SortableContext>
@@ -49,10 +48,3 @@ const SortableButtonContainer = ({
 
 export default SortableButtonContainer;
 
-// 辅助函数：用于移动数组中的元素
-function arrayMove(array, from, to) {
-    const startIndex = to < 0 ? array.length + to : to;
-    const item = array.splice(from, 1)[0];
-    array.splice(startIndex, 0, item);
-    return array;
-}
