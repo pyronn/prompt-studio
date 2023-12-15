@@ -880,7 +880,7 @@ export default function Home() {
                                           value={inputKeywords}
                                 />
                                 <div
-                                    className="w-full text-sm text-gray-200 font-mono bg-gray-700 p-1.5 rounded-b-md bordered">
+                                    className="overflow-wrap break-words w-full text-sm text-gray-200 font-mono bg-gray-700 p-1.5 rounded-b-md bordered">
                                     {finalKeywords}
                                 </div>
                             </div>
