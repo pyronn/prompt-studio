@@ -115,9 +115,10 @@ export default function Home() {
 
 
     const handleInputKeywordsChange = (event) => {
-        const inputKeyword = event.target.value
-        setInputKeywords(inputKeyword);
-        parseInputKeywords(inputKeyword);
+        const inputValue = event.target.value
+        const oldValue = inputKeywords
+        setInputKeywords(inputValue);
+        parseInputKeywords(inputValue);
     };
 
     const onEnableNotionDictChange = (e) => {
@@ -253,7 +254,7 @@ export default function Home() {
 
         textPrompts = textPrompts.trim();
 
-        return {imagePrompts, textPrompts, sysParamsPrompt: systemParamsPart};
+        return {imagePrompts, textPrompts: textPrompts, sysParamsPrompt: systemParamsPart};
     }
 
     const toggleKeyword = (index) => {
@@ -263,41 +264,64 @@ export default function Home() {
     }
 
     // 解析输入的关键词
-    const parseInputKeywords = (inputs) => {
-        // 分割系统参数和关键词
-        const input = inputs.trim();
+    const parseInputKeywords = (newInputKeyword, oldInputKeywords) => {
+        const newInput = newInputKeyword.trim();
+        const oldInput = oldInputKeywords.trim();
         const inputKeywordList = []
         const inputWords = []
+        const diffWordIdx = {}
         const sysParams = {}
-        if (inputKeywords !== "") {
-            const {imagePrompts, textPrompts, sysParamsPrompt} = parsePrompt(input)
-            textPrompts.split(',').map((kw, index) => {
-                const id = Date.now() + Math.random() * 1000
-                const parts = kw.trim().split(' ::');
-                if (parts[0].trim() !== "") {
-                    inputKeywordList.push({
-                        id: id,
-                        word: parts[0].trim(),
-                        weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
-                    })
-                    inputWords.push(parts[0].trim())
-                }
-            });
-            // 解析系统参数
-            sysParamsPrompt.map((param) => {
-                const p = param.replace("--", "")
-                const name = p.split(' ')[0]
-                const value = p.split(' ')[1]
-                let key = name
-                if (name === 'niji' || name === 'v') {
-                    key = 'model'
-                }
-                sysParams[key] = {name: name, value: value}
-            });
-            setImagePrompts(imagePrompts)
+        if (newInputKeyword === "") {
+            setInputKeywords("")
+            setSelectedKeywords([])
+            setActiveKeywords([])
+            setImagePrompts([])
+            setDefaultSysParams(sysParams)
+            setSystemParams(sysParams)
+            parseSystemParams(sysParams)
+            return
         }
 
-        // TODO 输入的语言先如果不是英文则先翻译成英文
+        const {imagePrompts, textPrompts, sysParamsPrompt} = parsePrompt(newInput)
+        const {textPrompts: oldTextPrompts} = parsePrompt(oldInput)
+        textPrompts.split(',').map((kw, index) => {
+            const id = Date.now() + Math.random() * 1000
+            const parts = kw.trim().split(' ::');
+            if (parts[0].trim() !== "") {
+                inputKeywordList.push({
+                    id: id,
+                    word: parts[0].trim(),
+                    weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
+                })
+                inputWords.push(parts[0].trim())
+            }
+        });
+        // 解析系统参数
+        sysParamsPrompt.map((param) => {
+            const p = param.replace("--", "")
+            const name = p.split(' ')[0]
+            const value = p.split(' ')[1]
+            let key = name
+            if (name === 'niji' || name === 'v') {
+                key = 'model'
+            }
+            sysParams[key] = {name: name, value: value}
+        });
+        setImagePrompts(imagePrompts)
+
+        // TODO 输入的语言先如果不是英文则先翻译成英文, 再把selectedKeyword中的中文词重新替换为翻译后的英文词
+        const diffKeywords = inputWords.filter((x, index) => {
+            return !selectedKeywords.map(item => item.word).includes(x)
+        })
+        if (diffKeywords.length > 0) {
+            translateKeywords(diffKeywords, "en").then((transText) => {
+                const newTransText = {...keywordTransText}
+                diffKeywords.map((item, index) => {
+                    newTransText[item.toLowerCase()] = transText[index]
+                })
+                setKeywordTransText(newTransText)
+            })
+        }
 
         // 设置默认的系统参数
         setDefaultSysParams(sysParams)
