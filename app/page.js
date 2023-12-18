@@ -90,6 +90,7 @@ export default function Home() {
 
 
     const [selectedKeywords, setSelectedKeywords] = useState([]); // 所有的关键词列表，包括从词典添加的和输入的
+    const [rawSelectedKeywords, setRawSelectedKeywords] = useState([]); // 文本框输入的原始未翻译的关键词列表
     const [activeKeywords, setActiveKeywords] = useState([]); // 所有关键词列表对应的激活状态,0和1表示
     const [keywordTransText, setKeywordTransText] = useState({}); // 所有关键词列表对应的翻译文本
     const [imagePrompts, setImagePrompts] = useState([]); // 图片提示词
@@ -111,12 +112,15 @@ export default function Home() {
     const [newPromptRawPrompt, setNewPromptRawPrompt] = useState("");
     const [newPromptSampleImgLink, setNewPromptSampleImgLink] = useState("");
 
-    const [toasts, setToasts] = useState([]);
+    const [translateTimerId, setTranslateTimerId] = useState(null);
+    const [inputTransTimer, setInputTransTimer] = useState(null);
+    const [autoTranslate, setAutoTranslate] = useState(true);
 
 
     const handleInputKeywordsChange = (event) => {
         const inputValue = event.target.value
         const oldValue = inputKeywords
+        // setOldInputKeywords(oldValue)
         setInputKeywords(inputValue);
         parseInputKeywords(inputValue);
     };
@@ -264,14 +268,10 @@ export default function Home() {
     }
 
     // 解析输入的关键词
-    const parseInputKeywords = (newInputKeyword, oldInputKeywords) => {
-        const newInput = newInputKeyword.trim();
-        const oldInput = oldInputKeywords.trim();
-        const inputKeywordList = []
-        const inputWords = []
-        const diffWordIdx = {}
+    const parseInputKeywords = (inputValue) => {
+        const inputKeyword = inputValue.trim();
         const sysParams = {}
-        if (newInputKeyword === "") {
+        if (inputKeyword === "") {
             setInputKeywords("")
             setSelectedKeywords([])
             setActiveKeywords([])
@@ -281,21 +281,10 @@ export default function Home() {
             parseSystemParams(sysParams)
             return
         }
-
-        const {imagePrompts, textPrompts, sysParamsPrompt} = parsePrompt(newInput)
-        const {textPrompts: oldTextPrompts} = parsePrompt(oldInput)
-        textPrompts.split(',').map((kw, index) => {
-            const id = Date.now() + Math.random() * 1000
-            const parts = kw.trim().split(' ::');
-            if (parts[0].trim() !== "") {
-                inputKeywordList.push({
-                    id: id,
-                    word: parts[0].trim(),
-                    weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
-                })
-                inputWords.push(parts[0].trim())
-            }
-        });
+        // 把输入关键词解析为图像,文本提示词和系统参数
+        const {imagePrompts, textPrompts, sysParamsPrompt} = parsePrompt(inputKeyword)
+        // 解析文本提示词
+        const {textPromptList: inputKeywordList} = parseTextPrompts(textPrompts)
         // 解析系统参数
         sysParamsPrompt.map((param) => {
             const p = param.replace("--", "")
@@ -307,21 +296,6 @@ export default function Home() {
             }
             sysParams[key] = {name: name, value: value}
         });
-        setImagePrompts(imagePrompts)
-
-        // TODO 输入的语言先如果不是英文则先翻译成英文, 再把selectedKeyword中的中文词重新替换为翻译后的英文词
-        const diffKeywords = inputWords.filter((x, index) => {
-            return !selectedKeywords.map(item => item.word).includes(x)
-        })
-        if (diffKeywords.length > 0) {
-            translateKeywords(diffKeywords, "en").then((transText) => {
-                const newTransText = {...keywordTransText}
-                diffKeywords.map((item, index) => {
-                    newTransText[item.toLowerCase()] = transText[index]
-                })
-                setKeywordTransText(newTransText)
-            })
-        }
 
         // 设置默认的系统参数
         setDefaultSysParams(sysParams)
@@ -333,11 +307,52 @@ export default function Home() {
         //     activeIndex.push(...activeKeywords)
         // }
 
-
-        setActiveKeywords(activeIndex);
-        setSelectedKeywords(inputKeywordList)
+        setImagePrompts(imagePrompts)
+        // setActiveKeywords(activeIndex);
+        setRawSelectedKeywords(inputKeywordList)
+        // setSelectedKeywords(inputKeywordList)
         setSystemParams(sysParams)
         parseSystemParams(sysParams)
+    }
+
+    const parseTextPrompts = (textPrompts) => {
+        const textPromptList = []
+        const textWords = []
+        textPrompts.split(',').map((kw, index) => {
+            const id = Date.now() + Math.random() * 1000
+            const parts = kw.trim().split('::');
+            if (parts[0].trim() !== "") {
+                const word = parts[0].trim()
+                // 输入的词不是英文或英文词组则先翻译成英文
+                if (!/^[a-zA-Z\s]+$/.test(word)) {
+                    // 不是英文
+                    const transText = keywordTransText[word.toLowerCase()]
+                    if (transText === undefined || transText === "") {
+                        textPromptList.push({
+                            id: id,
+                            word: word,
+                            weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
+                        })
+                        textWords.push(word)
+                    } else {
+                        textPromptList.push({
+                            id: id,
+                            word: transText,
+                            weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
+                        })
+                        textWords.push(word)
+                    }
+                } else {
+                    textPromptList.push({
+                        id: id,
+                        word: word,
+                        weight: parts.length > 1 ? parseInt(parts[1], 10) : undefined
+                    })
+                    textWords.push(word)
+                }
+            }
+        });
+        return {textPromptList: textPromptList, textWords: textWords}
     }
 
     const setDefaultSysParams = (sysParams) => {
@@ -362,28 +377,62 @@ export default function Home() {
         }
     }
 
-    const translateKeywords = async (keywords, tarLang = "zh") => {
-        const resp = await fetch('/api/translate', {
+    const translate = async (keywords, tarLang = "zh") => {
+        return await fetch('/api/translate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 provider: "tencent",
-                srcLang: "en",
                 tarLang: tarLang,
                 textList: keywords
             })
-        })
-        const data = await resp.json()
-        return data.data.targetList
+        }).then(resp => resp.json()).then(resp => resp.data.targetList)
     }
 
-    const doTranslate = async () => {
+    // 翻译输入的提示词，翻译为英文
+    const translateInput = () => {
+        // 找出输入前后不同的提示词,并记录索引位置
+        const srcTextList = []
+        const srcTextIndex = {}
+        rawSelectedKeywords.map((kw, index) => {
+            const word = kw.word
+            if (!/^[a-zA-Z\s]+$/.test(word)) {
+                srcTextList.push(word)
+                srcTextIndex[word] = index
+            }
+        })
+        if (srcTextList.length === 0) {
+            setSelectedKeywords(rawSelectedKeywords)
+            setActiveKeywords(new Array(rawSelectedKeywords.length).fill(1))
+            return
+        }
+        translate(srcTextList, "en").then((targetTextList) => {
+            const newSelected = new Array(...rawSelectedKeywords)
+            const newKeywordTransText = {...keywordTransText}
+            targetTextList.map((item, index) => {
+                const word = srcTextList[index]
+                const targetIndex = srcTextIndex[word]
+                newKeywordTransText[word.toLowerCase()] = item
+                newKeywordTransText[item.toLowerCase()] = word
+                newSelected[targetIndex].word = item
+            })
+            setSelectedKeywords(newSelected)
+            setKeywordTransText(newKeywordTransText)
+            setActiveKeywords(new Array(newSelected.length).fill(1))
+        }).catch(err => {
+            console.error(err)
+            message.error("翻译失败")
+        })
+    }
+
+    const translatePrompts = () => {
         const srcTextList = []
         // const srcTextObjList = []
         selectedKeywords.map((kw, index) => {
-            if (kw.transText === undefined || kw.transText === "") {
+            const transText = keywordTransText[kw.word.toLowerCase()]
+            if (transText === undefined || transText === "") {
                 srcTextList.push(kw.word)
                 // srcTextObjList.push({word: kw.word, index: index})
             }
@@ -391,12 +440,16 @@ export default function Home() {
         if (srcTextList.length === 0) {
             return
         }
-        const targetTextList = await translateKeywords(srcTextList)
-        const newKeywordTransText = {...keywordTransText}
-        srcTextList.map((item, index) => {
-            newKeywordTransText[item.toLowerCase()] = targetTextList[index]
+        translate(srcTextList).then((targetTextList) => {
+            const newKeywordTransText = {...keywordTransText}
+            srcTextList.map((item, index) => {
+                newKeywordTransText[item.toLowerCase()] = targetTextList[index]
+            })
+            setKeywordTransText(newKeywordTransText)
+        }).catch(err => {
+            console.error(err)
+            message.error("翻译失败")
         })
-        setKeywordTransText(newKeywordTransText)
     }
 
     const copyToClipboard = async () => {
@@ -408,17 +461,30 @@ export default function Home() {
         }
     }
 
-    const addKeyword = (dictPrompt) => {
+    const addKeyword = async (dictPrompt) => {
         const newSelected = new Array(...selectedKeywords)
+        const word = dictPrompt.text
         const id = dictPrompt.id ? dictPrompt.id : Date.now()
-        newSelected.push({word: dictPrompt.text, transText: dictPrompt.transText, id: id})
-        setSelectedKeywords(newSelected)
-        if (dictPrompt.transText !== undefined && dictPrompt.transText !== "") {
-            const newTransText = {...keywordTransText}
-            newTransText[dictPrompt.text.toLowerCase()] = dictPrompt.transText
-            setKeywordTransText(newTransText)
+        let transText = dictPrompt.transText ? dictPrompt.transText :
+            (keywordTransText[dictPrompt.text.toLowerCase()] ? keywordTransText[dictPrompt.text.toLowerCase()] : "")
+
+        if (transText === "") {
+            const resp = await translate([word], /^[a-zA-Z\s]+$/.test(word) ? "zh" : "en")
+            transText = resp[0]
+        }
+        if (/^[a-zA-Z\s]+$/.test(word)) {
+            newSelected.push({word: word, transText: transText, id: id})
+        } else {
+            newSelected.push({word: transText, transText: transText, id: id})
         }
 
+        if (transText !== undefined && transText !== "") {
+            const newTransText = {...keywordTransText}
+            newTransText[word.toLowerCase()] = transText
+            newTransText[transText.toLowerCase()] = word
+            setKeywordTransText(newTransText)
+        }
+        setSelectedKeywords(newSelected)
 
         if (activeKeywords.length === 1) {
             const newActive = activeKeywords.copyWithin(1, 0)
@@ -600,7 +666,37 @@ export default function Home() {
     }
 
     useEffect(() => {
-        doTranslate()
+        if (inputTransTimer) {
+            clearTimeout(inputTransTimer)
+        }
+        const timerId = setTimeout(() => {
+            if (autoTranslate) {
+                translateInput()
+            }
+        }, 300)
+        setInputTransTimer(timerId)
+        return () => {
+            if (inputTransTimer !== null) {
+                clearTimeout(inputTransTimer)
+            }
+        }
+    }, [rawSelectedKeywords])
+
+    useEffect(() => {
+        if (translateTimerId) {
+            clearTimeout(translateTimerId)
+        }
+        const timerId = setTimeout(() => {
+            if (autoTranslate) {
+                translatePrompts()
+            }
+        }, 300)
+        setTranslateTimerId(timerId)
+        return () => {
+            if (translateTimerId !== null) {
+                clearTimeout(translateTimerId)
+            }
+        }
     }, [selectedKeywords]);
 
     useEffect(() => {
@@ -661,7 +757,7 @@ export default function Home() {
         const keywordList = []
         activeKeywords.forEach((val, index) => {
             if (val === 1) {
-                keywordList.push(selectedKeywords[index].word)
+                keywordList.push(selectedKeywords[index].weight ? selectedKeywords[index].word + "::" + selectedKeywords[index].weight : selectedKeywords[index].word)
             }
         })
         const keywordStr = keywordList.join(", ")
@@ -870,7 +966,7 @@ export default function Home() {
                                     <span><img className={`w-8`} src={`favicon.ico`} alt={''}/></span>
                                 </Link>
                                 <Link href="/" className={"flex items-center py-5 px-5 text-black"}>
-                                    <span className="font-bold">PromptStudio</span>
+                                    <h1 className="font-bold">PromptStudio</h1>
                                 </Link>
 
                             </div>
@@ -1077,7 +1173,7 @@ export default function Home() {
                                 <button className={`btn btn-primary btn-sm m-1`} onClick={copyToClipboard}>
                                     复制
                                 </button>
-                                <button className={`btn btn-primary btn-sm m-1`} onClick={doTranslate}>
+                                <button className={`btn btn-primary btn-sm m-1`} onClick={translatePrompts}>
                                     翻译
                                 </button>
                                 <button className={`btn btn-primary btn-sm m-1`} onClick={saveNewPromptDialog}>

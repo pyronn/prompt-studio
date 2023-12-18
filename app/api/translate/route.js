@@ -61,7 +61,7 @@ async function translateWithCache({srcLang, tarLang, textList}) {
         }
     });
     // 对于没有缓存的单词，批量调用翻译服务
-    if (wordsToTranslate.length > 0) {
+    if (wordsToTranslate.length > 1) {
         const resp = await client.TextTranslateBatch({
             Source: srcLang,
             Target: tarLang,
@@ -75,6 +75,18 @@ async function translateWithCache({srcLang, tarLang, textList}) {
             cache.set(key, translated, 5 * 60 * 60 * 1000);
             translations[originalWord] = translated;
         });
+    }else if (wordsToTranslate.length === 1){
+        const resp = await client.TextTranslate({
+            Source: srcLang,
+            Target: tarLang,
+            ProjectId: 0,
+            SourceText: wordsToTranslate[0],
+        });
+        const translated = resp.TargetText
+        const originalWord = wordsToTranslate[0];
+        const key = `${tarLang}-${originalWord}`
+        cache.set(key, translated, 5 * 60 * 60 * 1000);
+        translations[originalWord] = translated;
     }
     return textList.map(word => translations[word]);
 }
