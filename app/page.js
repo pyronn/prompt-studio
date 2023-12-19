@@ -22,6 +22,7 @@ import {
     Row,
     Select,
     Slider,
+    Switch,
     Tooltip
 } from "antd";
 import {ArrowLeft, Eraser, RefreshCwIcon, Trash} from "lucide-react";
@@ -53,6 +54,7 @@ export default function Home() {
     const [dictModalLoading, setDictModalLoading] = useState(false)
     const [dictDirOptions, setDictDirOptions] = useState([])
     const [promptListLoading, setPromptListLoading] = useState(false)
+    const [dictListLoading, setDictListLoading] = useState(false)
 
     const [isPreviewImgShow, setIsPreviewImgShow] = useState(false)
     const [previewImgLink, setPreviewImgLink] = useState("")
@@ -111,6 +113,8 @@ export default function Home() {
     const [newPromptCategory, setNewPromptCategory] = useState("");
     const [newPromptRawPrompt, setNewPromptRawPrompt] = useState("");
     const [newPromptSampleImgLink, setNewPromptSampleImgLink] = useState("");
+    const [promptEdit, setPromptEdit] = useState(false);
+    const [editPromptId, setEditPromptId] = useState("");
 
     const [translateTimerId, setTranslateTimerId] = useState(null);
     const [inputTransTimer, setInputTransTimer] = useState(null);
@@ -223,6 +227,51 @@ export default function Home() {
             setNewPromptRawPrompt("")
             setNewPromptSampleImgLink("")
             message.success("保存成功")
+            loadPromptAll()
+        }).catch(err => {
+            setPromptModalLoading(false)
+            // setPromptModalOpen(false)
+            setNewPromptTitle("")
+            setNewPromptDesc("")
+            setNewPromptCategory("")
+            setNewPromptRawPrompt("")
+            setNewPromptSampleImgLink("")
+            message.error("保存失败" + err)
+        })
+
+    };
+
+    const updatePrompt = () => {
+        if (!isNotionEnable) {
+            message.warning("请先启用Notion")
+            return
+        }
+        setPromptModalLoading(true)
+        const resp = fetch("api/prompt", {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("notionToken"),
+                'Notion-Database-Id': localStorage.getItem("notionDatabaseId")
+            },
+            body: JSON.stringify({
+                id: editPromptId,
+                title: newPromptTitle,
+                desc: newPromptDesc,
+                category: newPromptCategory,
+                rawPrompt: newPromptRawPrompt,
+                sampleImgLink: newPromptSampleImgLink,
+            })
+        }).then(resp => {
+            setPromptModalLoading(false)
+            setPromptModalOpen(false)
+            setNewPromptTitle("")
+            setNewPromptDesc("")
+            setNewPromptCategory("")
+            setNewPromptRawPrompt("")
+            setNewPromptSampleImgLink("")
+            message.success("保存成功")
+            loadPromptAll()
         }).catch(err => {
             setPromptModalLoading(false)
             // setPromptModalOpen(false)
@@ -393,8 +442,13 @@ export default function Home() {
 
     // 翻译输入的提示词，翻译为英文
     const translateInput = () => {
+        if (!autoTranslate) {
+            setSelectedKeywords(rawSelectedKeywords)
+            setActiveKeywords(new Array(rawSelectedKeywords.length).fill(1))
+            return;
+        }
         // 找出输入前后不同的提示词,并记录索引位置
-        const srcTextList = []
+        const srcTextList = [];
         const srcTextIndex = {}
         rawSelectedKeywords.map((kw, index) => {
             const word = kw.word
@@ -544,18 +598,19 @@ export default function Home() {
                 'Authorization': 'Bearer ' + localStorage.getItem("notionToken"),
                 'Notion-Database-Id': localStorage.getItem("notionDatabaseId")
             }
-        }).then(res => res.json()).then(res => res.data);
-        const result = await data
-        const cateSet = new Set()
-        result.map((item) => {
-            if (item.category !== undefined && item.category !== "其他") {
-                cateSet.add(item.category)
-            }
-        })
-        const cateArr = [...cateSet.values()]
-        setPrompts(result)
-        setPromptsCategories(cateArr)
-        setPromptListLoading(false)
+        }).then(res => res.json()).then(res => res.data).then(data => {
+            const result = data
+            const cateSet = new Set()
+            result.map((item) => {
+                if (item.category !== undefined && item.category !== "其他") {
+                    cateSet.add(item.category)
+                }
+            })
+            const cateArr = [...cateSet.values()]
+            setPrompts(result)
+            setPromptsCategories(cateArr)
+            setPromptListLoading(false)
+        });
     }
 
     const handleKeywordSortChange = (activeId, overId) => {
@@ -628,6 +683,7 @@ export default function Home() {
      * @returns {Promise<void>}
      */
     const loadAllCategoryKeywords = async () => {
+        setDictListLoading(true)
         if (!isNotionEnable) {
             const resp = await fetch('/api/dict/local', {
                 method: 'GET',
@@ -639,6 +695,7 @@ export default function Home() {
             parseAllDictDirs(result.data)
             parseAllDictText(result.data)
             setAllCategoryPrompts(result.data)
+            setDictListLoading(false)
             return
         }
         const resp = await fetch('/api/dict', {
@@ -663,6 +720,7 @@ export default function Home() {
         parseAllDictDirs(result.data)
         parseAllDictText(result.data)
         setAllCategoryPrompts(result.data)
+        setDictListLoading(false)
     }
 
     useEffect(() => {
@@ -670,9 +728,7 @@ export default function Home() {
             clearTimeout(inputTransTimer)
         }
         const timerId = setTimeout(() => {
-            if (autoTranslate) {
-                translateInput()
-            }
+            translateInput()
         }, 300)
         setInputTransTimer(timerId)
         return () => {
@@ -863,6 +919,7 @@ export default function Home() {
             message.warning("请先启用Notion")
             return
         }
+        setPromptEdit(false)
         setNewPromptTitle("");
         setNewPromptCategory("")
         setNewPromptDesc("")
@@ -953,6 +1010,19 @@ export default function Home() {
     const isTextInDict = (text) => {
         return dictPromptList.filter((item) => item.text === text).length > 0
     }
+
+
+    function editPrompt(prompt) {
+        setEditPromptId(prompt.id)
+        setPromptEdit(true)
+        setNewPromptTitle(prompt.title);
+        setNewPromptCategory(prompt.category)
+        setNewPromptDesc(prompt.desc)
+        setNewPromptSampleImgLink(prompt.sampleImage)
+        setNewPromptRawPrompt(prompt.rawPrompt)
+        setPromptModalOpen(true)
+    }
+
     return (
 
         <main className="bg-white">
@@ -1024,6 +1094,12 @@ export default function Home() {
                                           onChange={handleInputKeywordsChange}
                                           value={inputKeywords}
                                 />
+                                <div className={`p-1 bg-gray-200`}>
+                                    <Switch checkedChildren="自动翻译" unCheckedChildren="不翻译" checked={autoTranslate}
+                                            onChange={(checked) => {
+                                                setAutoTranslate(checked)
+                                            }}/>
+                                </div>
                                 <div
                                     className="overflow-wrap break-words w-full text-sm text-gray-200 font-mono bg-gray-700 p-1.5 rounded-b-md bordered">
                                     {finalKeywords}
@@ -1258,7 +1334,7 @@ export default function Home() {
                         </div>
 
                         <div className={`flex space-x-1`}>
-                            <Button type={"primary"} onClick={loadAllCategoryKeywords}>加载
+                            <Button type={"primary"} loading={dictListLoading} onClick={loadAllCategoryKeywords}>加载
                             </Button>
                             <Button icon={<CloseIcon/>} type={"text"} onClick={(e) => setIsDrawerOpen(false)}>
                             </Button>
@@ -1390,7 +1466,7 @@ export default function Home() {
                         </div>
 
                         <div className={`space-x-1`}>
-                            <Button icon={<RefreshCwIcon onClick={() => {
+                            <Button loading={promptListLoading} icon={<RefreshCwIcon onClick={() => {
                                 loadPromptAll().catch(err => message.error("load prompt failed" + err))
                             }}/>}/>
                             <Button icon={<CloseIcon/>} onClick={(e) => setIsPromptDrawerOpen(false)}/>
@@ -1425,11 +1501,16 @@ export default function Home() {
                                             <p className="text-white text-xs">{item.desc}</p>
                                         </div>
                                         <div className={"space-x-4 w-full flex justify-end"}>
-                                            <Button type={'primary'} onClick={(e) => {
+                                            <button className={`btn btn-info btn-sm`} onClick={(e) => {
                                                 usePrompt(item.rawPrompt);
                                                 e.stopPropagation();
                                             }}>使用
-                                            </Button>
+                                            </button>
+                                            <button className={'btn btn-sm btn-primary'} onClick={(e) => {
+                                                editPrompt(item)
+                                                e.stopPropagation()
+                                            }}>编辑
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -1445,7 +1526,9 @@ export default function Home() {
                    width={"w-5/6"}
                    confirmLoading={promptModalLoading}
                    open={promptModalOpen}
-                   onOk={saveNewPrompt}
+                   onOk={() => {
+                       promptEdit ? updatePrompt() : saveNewPrompt()
+                   }}
                    onCancel={() => {
                        setPromptModalOpen(false)
                    }}
