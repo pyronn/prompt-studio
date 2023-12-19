@@ -322,7 +322,7 @@ export default function Home() {
         const sysParams = {}
         if (inputKeyword === "") {
             setInputKeywords("")
-            setSelectedKeywords([])
+            setRawSelectedKeywords([])
             setActiveKeywords([])
             setImagePrompts([])
             setDefaultSysParams(sysParams)
