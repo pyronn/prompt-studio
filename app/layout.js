@@ -8,7 +8,7 @@ import Script from "next/script";
 const inter = Inter({subsets: ['latin']})
 
 export const metadata = {
-    title: 'PromptStudio',
+    title: 'PromptStudio | MidJourney 提示词编辑器 | MidJourney提示词库 | 可视化提示词工作室| prompt-studio.xyz',
     description: 'Your MidJourney Prompt Repo and Generator',
 }
 
