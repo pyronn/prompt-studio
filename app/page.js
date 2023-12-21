@@ -32,6 +32,7 @@ import {arrayMove} from "@/lib/tools";
 export default function Home() {
 
     const modelOptions = {
+        "v6": {name: "v5.2", paramName: "v", paramValue: "6", showName: "V 6(Beta)"},
         "v5.2": {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
         "niji5": {name: "niji5", paramName: "niji", paramValue: "5", showName: "Niji 5"},
         "v5.1": {name: "v5.1", paramName: "v", paramValue: "5.1", showName: "V 5.1"},
@@ -357,11 +358,13 @@ export default function Home() {
         // }
 
         setImagePrompts(imagePrompts)
-        // setActiveKeywords(activeIndex);
         setRawSelectedKeywords(inputKeywordList)
-        // setSelectedKeywords(inputKeywordList)
         setSystemParams(sysParams)
         parseSystemParams(sysParams)
+        if (!autoTranslate) {
+            setActiveKeywords(activeIndex);
+            setSelectedKeywords(inputKeywordList)
+        }
     }
 
     const parseTextPrompts = (textPrompts) => {
@@ -373,7 +376,7 @@ export default function Home() {
             if (parts[0].trim() !== "") {
                 const word = parts[0].trim()
                 // 输入的词不是英文或英文词组则先翻译成英文
-                if (!/^[a-zA-Z\s]+$/.test(word)) {
+                if (!/^[0-9A-Za-z\s.,?!]+$/.test(word)) {
                     // 不是英文
                     const transText = keywordTransText[word.toLowerCase()]
                     if (transText === undefined || transText === "") {
@@ -452,7 +455,7 @@ export default function Home() {
         const srcTextIndex = {}
         rawSelectedKeywords.map((kw, index) => {
             const word = kw.word
-            if (!/^[a-zA-Z\s]+$/.test(word)) {
+            if (!/^[0-9A-Za-z\s.,?!]+$/.test(word)) {
                 srcTextList.push(word)
                 srcTextIndex[word] = index
             }
@@ -523,10 +526,10 @@ export default function Home() {
             (keywordTransText[dictPrompt.text.toLowerCase()] ? keywordTransText[dictPrompt.text.toLowerCase()] : "")
 
         if (transText === "") {
-            const resp = await translate([word], /^[a-zA-Z\s]+$/.test(word) ? "zh" : "en")
+            const resp = await translate([word], /^[0-9A-Za-z\s.,?!]+$/.test(word) ? "zh" : "en")
             transText = resp[0]
         }
-        if (/^[a-zA-Z\s]+$/.test(word)) {
+        if (/^[0-9A-Za-z\s.,?!]+$/.test(word)) {
             newSelected.push({word: word, transText: transText, id: id})
         } else {
             newSelected.push({word: transText, transText: transText, id: id})
@@ -729,7 +732,7 @@ export default function Home() {
         }
         const timerId = setTimeout(() => {
             translateInput()
-        }, 300)
+        }, 200)
         setInputTransTimer(timerId)
         return () => {
             if (inputTransTimer !== null) {
@@ -746,7 +749,7 @@ export default function Home() {
             if (autoTranslate) {
                 translatePrompts()
             }
-        }, 300)
+        }, 200)
         setTranslateTimerId(timerId)
         return () => {
             if (translateTimerId !== null) {
@@ -930,6 +933,7 @@ export default function Home() {
 
     function usePrompt(rawPrompt) {
         setInputKeywords(rawPrompt)
+        parseInputKeywords(rawPrompt)
         togglePromptDrawer()
     }
 
@@ -1095,7 +1099,8 @@ export default function Home() {
                                           value={inputKeywords}
                                 />
                                 <div className={`p-1 bg-gray-200`}>
-                                    <Switch checkedChildren="自动翻译" unCheckedChildren="不翻译" checked={autoTranslate}
+                                    <Switch checkedChildren="自动翻译" unCheckedChildren="不翻译"
+                                            checked={autoTranslate}
                                             onChange={(checked) => {
                                                 setAutoTranslate(checked)
                                             }}/>
