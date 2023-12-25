@@ -28,6 +28,7 @@ import {
 import {ArrowLeft, Eraser, RefreshCwIcon, Trash} from "lucide-react";
 import {arrayMove} from "@/lib/tools";
 
+const zhPattern = /[\u4e00-\u9fa5\u3000-\u303f\uff0c\uff1b\uff1a\uff0e\uff1f\uff01\uff1e\uff1c\u201c\u201d\u2018\u2019]/
 
 export default function Home() {
 
@@ -526,10 +527,10 @@ export default function Home() {
             (keywordTransText[dictPrompt.text.toLowerCase()] ? keywordTransText[dictPrompt.text.toLowerCase()] : "")
 
         if (transText === "") {
-            const resp = await translate([word], /^[0-9A-Za-z\s.,?!]+$/.test(word) ? "zh" : "en")
+            const resp = await translate([word], !zhPattern.test(word) ? "zh" : "en")
             transText = resp[0]
         }
-        if (/^[0-9A-Za-z\s.,?!]+$/.test(word)) {
+        if (!zhPattern.test(word)) {
             newSelected.push({word: word, transText: transText, id: id})
         } else {
             newSelected.push({word: transText, transText: transText, id: id})
