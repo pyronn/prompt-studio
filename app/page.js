@@ -376,8 +376,8 @@ export default function Home() {
             const parts = kw.trim().split('::');
             if (parts[0].trim() !== "") {
                 const word = parts[0].trim()
-                // 输入的词不是英文或英文词组则先翻译成英文
-                if (!/^[0-9A-Za-z\s.,?!]+$/.test(word)) {
+                // 输入的词是中文则先翻译成英文
+                if (zhPattern.test(word)) {
                     // 不是英文
                     const transText = keywordTransText[word.toLowerCase()]
                     if (transText === undefined || transText === "") {
@@ -456,7 +456,7 @@ export default function Home() {
         const srcTextIndex = {}
         rawSelectedKeywords.map((kw, index) => {
             const word = kw.word
-            if (!/^[0-9A-Za-z\s.,?!]+$/.test(word)) {
+            if (zhPattern.test(word)) {
                 srcTextList.push(word)
                 srcTextIndex[word] = index
             }
