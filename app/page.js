@@ -33,7 +33,7 @@ const zhPattern = /[\u4e00-\u9fa5\u3000-\u303f\uff0c\uff1b\uff1a\uff0e\uff1f\uff
 export default function Home() {
 
     const modelOptions = {
-        "v6": {name: "v5.2", paramName: "v", paramValue: "6", showName: "V 6(Beta)"},
+        "v6.0": {name: "v6.0", paramName: "v", paramValue: "6.0", showName: "V 6(Beta)"},
         "v5.2": {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
         "niji5": {name: "niji5", paramName: "niji", paramValue: "5", showName: "Niji 5"},
         "v5.1": {name: "v5.1", paramName: "v", paramValue: "5.1", showName: "V 5.1"},
