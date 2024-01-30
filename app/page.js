@@ -33,7 +33,8 @@ const zhPattern = /[\u4e00-\u9fa5\u3000-\u303f\uff0c\uff1b\uff1a\uff0e\uff1f\uff
 export default function Home() {
 
     const modelOptions = {
-        "v6.0": {name: "v6.0", paramName: "v", paramValue: "6.0", showName: "V 6(Beta)"},
+        "niji6": {name: "niji6", paramName: "niji", paramValue: "6", showName: "Niji 6"},
+        "v6": {name: "v6", paramName: "v", paramValue: "6", showName: "V 6"},
         "v5.2": {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
         "niji5": {name: "niji5", paramName: "niji", paramValue: "5", showName: "Niji 5"},
         "v5.1": {name: "v5.1", paramName: "v", paramValue: "5.1", showName: "V 5.1"},
@@ -47,6 +48,8 @@ export default function Home() {
     const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2"]
 
     const styleOptions = ["default", "raw", "cute", "expressive", "original", "scenic"]
+
+    const defaultModel = "niji6"
 
     const [messageApi, contextHolder] = message.useMessage()
 
@@ -86,7 +89,7 @@ export default function Home() {
 
     // 系统参数
     const [stylize, setStylize] = useState(100);
-    const [model, setModel] = useState("niji5");
+    const [model, setModel] = useState("niji6");
     const [style, setStyle] = useState("default");
     const [chaos, setChaos] = useState(0);
     const [imageWeight, setImageWeight] = useState(1);
@@ -98,7 +101,7 @@ export default function Home() {
     const [activeKeywords, setActiveKeywords] = useState([]); // 所有关键词列表对应的激活状态,0和1表示
     const [keywordTransText, setKeywordTransText] = useState({}); // 所有关键词列表对应的翻译文本
     const [imagePrompts, setImagePrompts] = useState([]); // 图片提示词
-    const modelOption = modelOptions[model]
+    const modelOption = modelOptions[model]?.name ? modelOptions[model] : modelOptions[defaultModel]
     const [systemParams, setSystemParams] = useState({
         model: {
             name: modelOption.paramName,
@@ -340,7 +343,11 @@ export default function Home() {
         sysParamsPrompt.map((param) => {
             const p = param.replace("--", "")
             const name = p.split(' ')[0]
-            const value = p.split(' ')[1]
+            const valueStr = p.split(' ')[1]
+            let value = valueStr
+            if (!isNaN(valueStr) && !isNaN(parseFloat(valueStr))) {
+                value = parseFloat(valueStr)
+            }
             let key = name
             if (name === 'niji' || name === 'v') {
                 key = 'model'
@@ -804,6 +811,7 @@ export default function Home() {
                     setAspect(sysParams[key].value)
                     break
                 case "model":
+                    console.log("model", sysParams[key], model, modelOption)
                     setModel(sysParams[key].name + sysParams[key].value)
                     break
                 default:
