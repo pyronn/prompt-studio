@@ -124,6 +124,7 @@ export default function Home() {
     const [translateTimerId, setTranslateTimerId] = useState(null);
     const [inputTransTimer, setInputTransTimer] = useState(null);
     const [autoTranslate, setAutoTranslate] = useState(true);
+    const [addPromptPrefix, setAddPromptPrefix] = useState(false)
 
 
     const handleInputKeywordsChange = (event) => {
@@ -872,8 +873,9 @@ export default function Home() {
         }).join(" ")
         const imaginePrefix = "/imagine prompt:"
         const imagePromptStr = imagePrompts.join(" ")
-        setOutputKeywords(imagePromptStr + " " + keywordStr + " " + systemParamStr)
-        setFinalKeywords(imaginePrefix + " " + imagePromptStr + " " + keywordStr + " " + systemParamStr)
+        const multiPrompts = imagePrompts.length > 0 ? imagePromptStr + " " + keywordStr + " " + systemParamStr : keywordStr + " " + systemParamStr
+        setOutputKeywords(multiPrompts)
+        setFinalKeywords(addPromptPrefix ? imaginePrefix + multiPrompts : multiPrompts)
     }
 
     const addToPromptHistory = () => {
@@ -1112,6 +1114,11 @@ export default function Home() {
                                             checked={autoTranslate}
                                             onChange={(checked) => {
                                                 setAutoTranslate(checked)
+                                            }}/>
+                                    <Switch checkedChildren="添加指令前缀" unCheckedChildren="不添加指令前缀"
+                                            checked={addPromptPrefix}
+                                            onChange={(checked) => {
+                                                setAddPromptPrefix(checked)
                                             }}/>
                                 </div>
                                 <div
