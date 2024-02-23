@@ -45,7 +45,7 @@ export default function Home() {
     }
 
 
-    const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2"]
+    const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2", "9:20"]
 
     const styleOptions = ["default", "raw", "cute", "expressive", "original", "scenic"]
 
