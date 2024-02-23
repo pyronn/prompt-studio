@@ -350,8 +350,25 @@ export default function Home() {
                 value = parseFloat(valueStr)
             }
             let key = name
-            if (name === 'niji' || name === 'v') {
-                key = 'model'
+            switch (name) {
+                case "v":
+                case "niji":
+                    key = "model"
+                    break
+                case "s":
+                case "stylize":
+                    key = "s"
+                    break
+                case "style":
+                    key = "style"
+                    break
+                case "c":
+                case "chaos":
+                    key = "c"
+                    break
+                case "iw":
+                    key = "iw"
+                    break
             }
             sysParams[key] = {name: name, value: value}
         });
@@ -424,16 +441,16 @@ export default function Home() {
         if (!('style' in sysParams)) {
             sysParams['style'] = {name: 'style', value: "default"}
         }
-        if (!('ar' in sysParams)) {
+        if (!('ar' in sysParams) && !('aspect' in sysParams)) {
             sysParams['ar'] = {name: 'ar', value: "1:1"}
         }
-        if (!('s' in sysParams)) {
+        if (!('s' in sysParams) && !('stylize' in sysParams)) {
             sysParams['s'] = {name: 's', value: 100}
         }
-        if (!('c' in sysParams)) {
+        if (!('c' in sysParams) && !('chaos' in sysParams)) {
             sysParams['c'] = {name: 'c', value: 0}
         }
-        if (!('iw' in sysParams)) {
+        if (!('iw' in sysParams) && !('imageWeight' in sysParams)) {
             sysParams['iw'] = {name: 'iw', value: 1}
         }
     }
@@ -812,7 +829,6 @@ export default function Home() {
                     setAspect(sysParams[key].value)
                     break
                 case "model":
-                    console.log("model", sysParams[key], model, modelOption)
                     setModel(sysParams[key].name + sysParams[key].value)
                     break
                 default:
