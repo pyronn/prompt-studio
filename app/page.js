@@ -537,8 +537,12 @@ export default function Home() {
 
     const copyToClipboard = async () => {
         addToPromptHistory()
+        await copyTextToClipboard(finalKeywords)
+    }
+
+    const copyTextToClipboard = async (text) => {
         if ('clipboard' in navigator) {
-            navigator.clipboard.writeText(finalKeywords).then(() => message.success("已复制到粘贴板")).catch(err => message.error("复制失败" + err))
+            navigator.clipboard.writeText(text).then(() => message.success("已复制到粘贴板")).catch(err => message.error("复制失败" + err))
         } else {
             message.warning("浏览器不支持复制到粘贴板")
         }
@@ -1054,6 +1058,39 @@ export default function Home() {
         setPromptModalOpen(true)
     }
 
+    // 提示词右键菜单项
+    const promptContextMenuItems = [
+        {
+            label: '复制',
+            key: 'copy'
+        },
+        {
+            label: '移除',
+            key: 'remove'
+        },
+        // TODO 编辑，权重
+    ]
+
+    // 提示词右键菜单事件处理
+    const promptContextMenuClick = async (item, promptText, idx) => {
+        switch (item.key) {
+            case "copy":
+                await copyTextToClipboard(promptText)
+                break
+            case "remove":
+                const newSelectedKeywords = new Array(...selectedKeywords)
+                newSelectedKeywords.splice(idx, 1)
+                setSelectedKeywords(newSelectedKeywords)
+                const newActiveKeywords = new Array(...activeKeywords)
+                newActiveKeywords.splice(idx, 1)
+                setActiveKeywords(newActiveKeywords)
+                const newKeywordTransText = new Array(...keywordTransText)
+                newKeywordTransText.splice(idx, 1)
+                setKeywordTransText(newKeywordTransText)
+                break
+        }
+    }
+
     return (
 
         <main className="bg-white">
@@ -1348,7 +1385,9 @@ export default function Home() {
                                                      activeKeywords={activeKeywords}
                                                      saveNewDictPromptDialog={saveNewDictPromptDialog}
                                                      toggleKeyword={toggleKeyword} isTextInDict={isTextInDict}
-                                                     transKeywords={keywordTransText}/>
+                                                     transKeywords={keywordTransText}
+                                                     contextMenuClick={promptContextMenuClick}
+                                                     contextMenuItems={promptContextMenuItems}/>
                         </div>
                     </div>
                 </div>

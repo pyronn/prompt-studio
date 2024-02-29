@@ -11,6 +11,7 @@ const SortableButtonContainer = ({
                                      activeKeywords,
                                      isTextInDict,
                                      transKeywords,
+                                     contextMenuItems, contextMenuClick
                                  }) => {
 
     const sensors = useSensors(
@@ -38,7 +39,9 @@ const SortableButtonContainer = ({
                     {items.map((item, index) => (
                         <SortableButton key={item.id} id={item.id} item={item} index={index}
                                         saveNewDictPromptDialog={saveNewDictPromptDialog} toggleKeyword={toggleKeyword}
-                                        activeKeywords={activeKeywords} isTextInDict={isTextInDict} transKeywords={transKeywords}/>
+                                        activeKeywords={activeKeywords} isTextInDict={isTextInDict}
+                                        transKeywords={transKeywords} contextMenuItems={contextMenuItems}
+                                        contextMenuClick={contextMenuClick}/>
                     ))}
                 </div>
             </SortableContext>
