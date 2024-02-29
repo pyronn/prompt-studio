@@ -121,3 +121,7 @@ TENCENTCLOUD_SECRET_KEY=YOUR_SECRET_KEY
 ### Docker部署
 
 TODO ...
+
+## Thanks
+
+![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)
