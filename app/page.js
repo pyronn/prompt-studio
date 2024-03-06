@@ -44,6 +44,9 @@ export default function Home() {
         "niji4": {name: "niji4", paramName: "niji", paramValue: "4", showName: "Niji 4"},
     }
 
+    const pageSize = 20
+    const [promptsCursor,setPromptsCursor]  = useState("")
+
 
     const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2", "9:20"]
 
@@ -233,7 +236,7 @@ export default function Home() {
             setNewPromptRawPrompt("")
             setNewPromptSampleImgLink("")
             message.success("保存成功")
-            loadPromptAll()
+            loadPromptAll(true)
         }).catch(err => {
             setPromptModalLoading(false)
             // setPromptModalOpen(false)
@@ -277,7 +280,7 @@ export default function Home() {
             setNewPromptRawPrompt("")
             setNewPromptSampleImgLink("")
             message.success("保存成功")
-            loadPromptAll()
+            loadPromptAll(true)
         }).catch(err => {
             setPromptModalLoading(false)
             // setPromptModalOpen(false)
@@ -613,25 +616,40 @@ export default function Home() {
 
         setIsPromptDrawerOpen(!isPromptDrawerOpen)
         if (!isPromptDrawerOpen) {
-            loadPromptAll().catch(err => {
+            loadPromptAll(true).catch(err => {
                 message.error("load prompt failed" + err)
             })
         }
     }
 
-    const loadPromptAll = async () => {
+    const loadPromptAll = async (isReload) => {
         if (!isNotionEnable) {
             return
         }
+        if (promptListLoading){
+            return
+        }
+        if (isReload) {
+            setPromptsCursor("");
+        }
+        const queryParam = {
+            pageSize: pageSize,
+            startCursor: promptsCursor
+        }
         setPromptListLoading(true)
-        const data = fetch("/api/prompt", {
+        const query = new URLSearchParams(queryParam).toString()
+        const url = "/api/prompt?" + query
+        const data = fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem("notionToken"),
                 'Notion-Database-Id': localStorage.getItem("notionDatabaseId")
             }
-        }).then(res => res.json()).then(res => res.data).then(data => {
+        }).then(res => res.json()).then(res => {
+            setPromptsCursor(res.page.nextCursor)
+            return res.data
+        }).then(data => {
             const result = data
             const cateSet = new Set()
             result.map((item) => {
@@ -643,6 +661,10 @@ export default function Home() {
             setPrompts(result)
             setPromptsCategories(cateArr)
             setPromptListLoading(false)
+
+        }).catch(err => {
+            setPromptListLoading(false)
+            message.error("load prompt failed" + err)
         });
     }
 
@@ -801,7 +823,7 @@ export default function Home() {
         loadAllCategoryKeywords().catch(err => {
             console.log("loadDictFailed", err)
         })
-        loadPromptAll().catch(err => {
+        loadPromptAll(true).catch(err => {
             console.log("loadPromptFailed", err)
         })
     }, [])
@@ -1543,7 +1565,7 @@ export default function Home() {
 
                         <div className={`space-x-1`}>
                             <Button loading={promptListLoading} icon={<RefreshCwIcon onClick={() => {
-                                loadPromptAll().catch(err => message.error("load prompt failed" + err))
+                                loadPromptAll(true).catch(err => message.error("load prompt failed" + err))
                             }}/>}/>
                             <Button icon={<CloseIcon/>} onClick={(e) => setIsPromptDrawerOpen(false)}/>
                         </div>
