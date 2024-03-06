@@ -10,6 +10,7 @@ import {
     Checkbox,
     Col,
     Collapse,
+    Divider,
     Drawer,
     Image,
     Input,
@@ -26,6 +27,7 @@ import {
     Tooltip
 } from "antd";
 import {ArrowLeft, Eraser, RefreshCwIcon, Trash} from "lucide-react";
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {arrayMove} from "@/lib/tools";
 
 const zhPattern = /[\u4e00-\u9fa5\u3000-\u303f\uff0c\uff1b\uff1a\uff0e\uff1f\uff01\uff1e\uff1c\u201c\u201d\u2018\u2019]/
@@ -45,7 +47,8 @@ export default function Home() {
     }
 
     const pageSize = 20
-    const [promptsCursor,setPromptsCursor]  = useState("")
+    const [promptsCursor, setPromptsCursor] = useState("")
+    const [promptHasMore, setPromptHasMore] = useState(true)
 
 
     const aspectOptions = ["1:1", "4:3", "16:9", "3:4", "9:16", "3:2", "2:3", "2:1", "1:2", "9:20"]
@@ -626,7 +629,7 @@ export default function Home() {
         if (!isNotionEnable) {
             return
         }
-        if (promptListLoading){
+        if (promptListLoading) {
             return
         }
         if (isReload) {
@@ -648,6 +651,7 @@ export default function Home() {
             }
         }).then(res => res.json()).then(res => {
             setPromptsCursor(res.page.nextCursor)
+            setPromptHasMore(res.page.hasMore)
             return res.data
         }).then(data => {
             const result = data
@@ -1582,7 +1586,16 @@ export default function Home() {
                                 ))
                             }
                         </Radio.Group>
-                        <div className={`flex flex-wrap overflow-y-auto gap-4 h-96 p-1`}>
+
+                        <InfiniteScroll
+                            className={`flex flex-wrap overflow-y-auto gap-4 h-96 p-1`}
+                            dataLength={prompts.length}
+                            next={loadPromptAll}
+                            hasMore={promptHasMore}
+                            loader={<h4>Loading...</h4>}
+                            endMessage={<Divider plain>没有更多了</Divider>}
+                            scrollableTarget="scrollableDiv"
+                        >
                             {prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部").map((item, index) => (
                                 <div
                                     className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"
@@ -1613,7 +1626,7 @@ export default function Home() {
                                     </div>
                                 </div>
                             ))}
-                        </div>
+                        </InfiniteScroll>
                     </div>
                 </div>
             </div>
