@@ -1,5 +1,5 @@
 "use client"
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import Link from 'next/link';
 import SortableButtonContainer from "@/components/SortableButtonContainer";
 import PromptAutoInput from "@/components/PromptAutoInput";
@@ -10,7 +10,6 @@ import {
     Checkbox,
     Col,
     Collapse,
-    Divider,
     Drawer,
     Image,
     Input,
@@ -27,7 +26,6 @@ import {
     Tooltip
 } from "antd";
 import {ArrowLeft, Eraser, RefreshCwIcon, Trash} from "lucide-react";
-import InfiniteScroll from 'react-infinite-scroll-component';
 import {arrayMove} from "@/lib/tools";
 
 const zhPattern = /[\u4e00-\u9fa5\u3000-\u303f\uff0c\uff1b\uff1a\uff0e\uff1f\uff01\uff1e\uff1c\u201c\u201d\u2018\u2019]/
@@ -667,13 +665,19 @@ export default function Home() {
                 }
             })
             const cateArr = [...cateSet.values()]
-            setPrompts(result)
-            setPromptsCategories(cateArr)
+            if (isReload){
+                setPrompts(result)
+                setPromptsCategories(cateArr)
+            }else{
+                setPrompts(prompts.concat(result))
+                setPromptsCategories(promptsCategories.concat(cateArr))
+            }
             setPromptListLoading(false)
-
+            setShouldLoadMore(false)
         }).catch(err => {
             setPromptListLoading(false)
             message.error("load prompt failed" + err)
+            setShouldLoadMore(false)
         });
     }
 
@@ -1121,6 +1125,42 @@ export default function Home() {
                 break
         }
     }
+
+    const promptListContainerRef = useRef(null)
+
+    useEffect(() => {
+        // 绑定滚动事件处理器
+        const scrollContainer = promptListContainerRef.current;
+        if (scrollContainer) {
+            scrollContainer.addEventListener('scroll', handlePromptListScroll);
+        }
+
+        // 清理函数：组件卸载时移除滚动事件监听器
+        return () => {
+            if (scrollContainer) {
+                scrollContainer.removeEventListener('scroll', handlePromptListScroll);
+            }
+        };
+    },[])
+
+    const [shouldLoadMore, setShouldLoadMore] = useState(false);
+    const handlePromptListScroll = (event) => {
+        const scrollContainer = promptListContainerRef.current;
+
+        if (scrollContainer) {
+            // 检查用户是否滚动到容器的底部
+            const isAtBottom = scrollContainer.scrollHeight - scrollContainer.scrollTop === scrollContainer.clientHeight;
+
+            // 如果用户已经到达底部，更新状态以触发数据加载
+            setShouldLoadMore(isAtBottom);
+        }
+    }
+
+    useEffect(() => {
+        if (shouldLoadMore && promptHasMore) {
+            loadPromptAll(false)
+        }
+    },[shouldLoadMore])
 
     return (
 
@@ -1592,92 +1632,40 @@ export default function Home() {
                             }
                         </Radio.Group>
 
-                        <InfiniteScroll
-                            // className={}
-                            dataLength={prompts.length}
-                            next={loadPromptAll}
-                            hasMore={promptHasMore}
-                            loader={<h4>Loading...</h4>}
-                            endMessage={<Divider plain>没有更多了</Divider>}
-                            scrollableTarget="scrollableDiv"
-                        >
-                            <List className="flex flex-wrap overflow-y-auto gap-4 h-96 p-1"
-                                  grid={{
-                                      gutter: 16,
-                                      column: 4,
-                                      xs: 1,
-                                      sm: 2,
-                                      md: 4,
-                                      lg: 4,
-                                      xl: 6,
-                                      xxl: 8,
-                                  }}
-                                  dataSource={prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部")}
-                                  renderItem={(item, index) => (
-                                      <div
-                                          className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 xl:w-64 xl:h-64  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"
-                                      >
-                                          <img src={item.sampleImage} alt={item.desc}
-                                               className="absolute inset-0 w-full h-full object-cover object-center"/>
-                                          <div
-                                              className="absolute inset-0 bg-black bg-opacity-30 hover:bg-opacity-50 flex text-white justify-end xs:text-xs items-start flex-col p-4"
-                                              onClick={(e) => {
-                                                  previewPromptImage(item)
-                                              }}>
-                                              <div className={'flex flex-col w-full text-xs md:text-md lg:text-lg'}>
-                                                  <h5>{item.title}</h5>
-                                                  <p className="text-white text-xs">{item.desc}</p>
-                                              </div>
-                                              <div className={"space-x-4 w-full flex justify-end"}>
-                                                  <button className={`btn btn-info btn-sm`} onClick={(e) => {
-                                                      usePrompt(item.rawPrompt);
-                                                      e.stopPropagation();
-                                                  }}>使用
-                                                  </button>
-                                                  <button className={'btn btn-sm btn-primary'} onClick={(e) => {
-                                                      editPrompt(item)
-                                                      e.stopPropagation()
-                                                  }}>编辑
-                                                  </button>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  )}
-                            >
+                        <div className={`flex flex-wrap overflow-y-auto gap-4 h-96 p-1`} ref={promptListContainerRef}>
+                            {prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部").map((item, index) => (
+                                <div
+                                    className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"
+                                >
+                                    <img src={item.sampleImage} alt={item.desc}
+                                         className="absolute inset-0 w-full h-full object-cover object-center"/>
+                                    <div
+                                        className="absolute inset-0 bg-black bg-opacity-30 hover:bg-opacity-50 flex text-white justify-end xs:text-xs items-start flex-col p-4"
+                                        onClick={(e) => {
+                                            previewPromptImage(item)
+                                        }}>
+                                        <div className={'flex flex-col w-full text-xs md:text-md lg:text-lg'}>
+                                            <h5>{item.title}</h5>
+                                            <p className="text-white text-xs">{item.desc}</p>
+                                        </div>
+                                        <div className={"space-x-4 w-full flex justify-end"}>
+                                            <button className={`btn btn-info btn-sm`} onClick={(e) => {
+                                                usePrompt(item.rawPrompt);
+                                                e.stopPropagation();
+                                            }}>使用
+                                            </button>
+                                            <button className={'btn btn-sm btn-primary'} onClick={(e) => {
+                                                editPrompt(item)
+                                                e.stopPropagation()
+                                            }}>编辑
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        {!promptHasMore ? <div className={`divider`}>No More Data</div>:""}
 
-
-                            </List>
-                            {/*{prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部").map((item, index) => (*/}
-                            {/*    <div*/}
-                            {/*        className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"*/}
-                            {/*    >*/}
-                            {/*        <img src={item.sampleImage} alt={item.desc}*/}
-                            {/*             className="absolute inset-0 w-full h-full object-cover object-center"/>*/}
-                            {/*        <div*/}
-                            {/*            className="absolute inset-0 bg-black bg-opacity-30 hover:bg-opacity-50 flex text-white justify-end xs:text-xs items-start flex-col p-4"*/}
-                            {/*            onClick={(e) => {*/}
-                            {/*                previewPromptImage(item)*/}
-                            {/*            }}>*/}
-                            {/*            <div className={'flex flex-col w-full text-xs md:text-md lg:text-lg'}>*/}
-                            {/*                <h5>{item.title}</h5>*/}
-                            {/*                <p className="text-white text-xs">{item.desc}</p>*/}
-                            {/*            </div>*/}
-                            {/*            <div className={"space-x-4 w-full flex justify-end"}>*/}
-                            {/*                <button className={`btn btn-info btn-sm`} onClick={(e) => {*/}
-                            {/*                    usePrompt(item.rawPrompt);*/}
-                            {/*                    e.stopPropagation();*/}
-                            {/*                }}>使用*/}
-                            {/*                </button>*/}
-                            {/*                <button className={'btn btn-sm btn-primary'} onClick={(e) => {*/}
-                            {/*                    editPrompt(item)*/}
-                            {/*                    e.stopPropagation()*/}
-                            {/*                }}>编辑*/}
-                            {/*                </button>*/}
-                            {/*            </div>*/}
-                            {/*        </div>*/}
-                            {/*    </div>*/}
-                            {/*))}*/}
-                        </InfiniteScroll>
                     </div>
                 </div>
             </div>
