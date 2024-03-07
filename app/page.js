@@ -46,7 +46,7 @@ export default function Home() {
         "niji4": {name: "niji4", paramName: "niji", paramValue: "4", showName: "Niji 4"},
     }
 
-    const pageSize = 20
+    const pageSize = 4
     const [promptsCursor, setPromptsCursor] = useState("")
     const [promptHasMore, setPromptHasMore] = useState(true)
 
@@ -632,12 +632,13 @@ export default function Home() {
         if (promptListLoading) {
             return
         }
+        let cursor = promptsCursor
         if (isReload) {
-            setPromptsCursor("");
+            cursor = ""
         }
         const queryParam = {
             pageSize: pageSize,
-            startCursor: promptsCursor
+            startCursor: cursor,
         }
         setPromptListLoading(true)
         const query = new URLSearchParams(queryParam).toString()
@@ -650,7 +651,11 @@ export default function Home() {
                 'Notion-Database-Id': localStorage.getItem("notionDatabaseId")
             }
         }).then(res => res.json()).then(res => {
-            setPromptsCursor(res.page.nextCursor)
+            if (res.page.nextCursor === null) {
+                setPromptsCursor("")
+            } else {
+                setPromptsCursor(res.page.nextCursor)
+            }
             setPromptHasMore(res.page.hasMore)
             return res.data
         }).then(data => {
@@ -1588,7 +1593,7 @@ export default function Home() {
                         </Radio.Group>
 
                         <InfiniteScroll
-                            className={`flex flex-wrap overflow-y-auto gap-4 h-96 p-1`}
+                            // className={}
                             dataLength={prompts.length}
                             next={loadPromptAll}
                             hasMore={promptHasMore}
@@ -1596,42 +1601,89 @@ export default function Home() {
                             endMessage={<Divider plain>没有更多了</Divider>}
                             scrollableTarget="scrollableDiv"
                         >
-                            {prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部").map((item, index) => (
-                                <div
-                                    className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"
-                                >
-                                    <img src={item.sampleImage} alt={item.desc}
-                                         className="absolute inset-0 w-full h-full object-cover object-center"/>
-                                    <div
-                                        className="absolute inset-0 bg-black bg-opacity-30 hover:bg-opacity-50 flex text-white justify-end xs:text-xs items-start flex-col p-4"
-                                        onClick={(e) => {
-                                            previewPromptImage(item)
-                                        }}>
-                                        <div className={'flex flex-col w-full text-xs md:text-md lg:text-lg'}>
-                                            <h5>{item.title}</h5>
-                                            <p className="text-white text-xs">{item.desc}</p>
-                                        </div>
-                                        <div className={"space-x-4 w-full flex justify-end"}>
-                                            <button className={`btn btn-info btn-sm`} onClick={(e) => {
-                                                usePrompt(item.rawPrompt);
-                                                e.stopPropagation();
-                                            }}>使用
-                                            </button>
-                                            <button className={'btn btn-sm btn-primary'} onClick={(e) => {
-                                                editPrompt(item)
-                                                e.stopPropagation()
-                                            }}>编辑
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                            <List className="flex flex-wrap overflow-y-auto gap-4 h-96 p-1"
+                                  grid={{
+                                      gutter: 16,
+                                      column: 4,
+                                      xs: 1,
+                                      sm: 2,
+                                      md: 4,
+                                      lg: 4,
+                                      xl: 6,
+                                      xxl: 8,
+                                  }}
+                                  dataSource={prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部")}
+                                  renderItem={(item, index) => (
+                                      <div
+                                          className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 xl:w-64 xl:h-64  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"
+                                      >
+                                          <img src={item.sampleImage} alt={item.desc}
+                                               className="absolute inset-0 w-full h-full object-cover object-center"/>
+                                          <div
+                                              className="absolute inset-0 bg-black bg-opacity-30 hover:bg-opacity-50 flex text-white justify-end xs:text-xs items-start flex-col p-4"
+                                              onClick={(e) => {
+                                                  previewPromptImage(item)
+                                              }}>
+                                              <div className={'flex flex-col w-full text-xs md:text-md lg:text-lg'}>
+                                                  <h5>{item.title}</h5>
+                                                  <p className="text-white text-xs">{item.desc}</p>
+                                              </div>
+                                              <div className={"space-x-4 w-full flex justify-end"}>
+                                                  <button className={`btn btn-info btn-sm`} onClick={(e) => {
+                                                      usePrompt(item.rawPrompt);
+                                                      e.stopPropagation();
+                                                  }}>使用
+                                                  </button>
+                                                  <button className={'btn btn-sm btn-primary'} onClick={(e) => {
+                                                      editPrompt(item)
+                                                      e.stopPropagation()
+                                                  }}>编辑
+                                                  </button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  )}
+                            >
+
+
+                            </List>
+                            {/*{prompts.filter(item => item.category === curPromptCategory || curPromptCategory === "全部").map((item, index) => (*/}
+                            {/*    <div*/}
+                            {/*        className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48  aspect-w-1 aspect-h-1 relative overflow-hidden shadow-2xl shadow-base-200 rounded-xl"*/}
+                            {/*    >*/}
+                            {/*        <img src={item.sampleImage} alt={item.desc}*/}
+                            {/*             className="absolute inset-0 w-full h-full object-cover object-center"/>*/}
+                            {/*        <div*/}
+                            {/*            className="absolute inset-0 bg-black bg-opacity-30 hover:bg-opacity-50 flex text-white justify-end xs:text-xs items-start flex-col p-4"*/}
+                            {/*            onClick={(e) => {*/}
+                            {/*                previewPromptImage(item)*/}
+                            {/*            }}>*/}
+                            {/*            <div className={'flex flex-col w-full text-xs md:text-md lg:text-lg'}>*/}
+                            {/*                <h5>{item.title}</h5>*/}
+                            {/*                <p className="text-white text-xs">{item.desc}</p>*/}
+                            {/*            </div>*/}
+                            {/*            <div className={"space-x-4 w-full flex justify-end"}>*/}
+                            {/*                <button className={`btn btn-info btn-sm`} onClick={(e) => {*/}
+                            {/*                    usePrompt(item.rawPrompt);*/}
+                            {/*                    e.stopPropagation();*/}
+                            {/*                }}>使用*/}
+                            {/*                </button>*/}
+                            {/*                <button className={'btn btn-sm btn-primary'} onClick={(e) => {*/}
+                            {/*                    editPrompt(item)*/}
+                            {/*                    e.stopPropagation()*/}
+                            {/*                }}>编辑*/}
+                            {/*                </button>*/}
+                            {/*            </div>*/}
+                            {/*        </div>*/}
+                            {/*    </div>*/}
+                            {/*))}*/}
                         </InfiniteScroll>
                     </div>
                 </div>
             </div>
 
-            {/* 提示词保存*/}
+            {/* 提示词保存*/
+            }
             <Modal className={"w-11/12 max-w-5xl"}
                    title={"保存提示词"}
                    width={"w-5/6"}
@@ -1727,7 +1779,8 @@ export default function Home() {
 
                 </List>
             </Drawer>
-            {/*预览图片*/}
+            {/*预览图片*/
+            }
             <div
                 className={`absolute inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 ${isPreviewImgShow ? "show" : "hidden"}`}
                 onClick={closePreviewImg}>
