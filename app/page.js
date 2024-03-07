@@ -46,7 +46,7 @@ export default function Home() {
         "niji4": {name: "niji4", paramName: "niji", paramValue: "4", showName: "Niji 4"},
     }
 
-    const pageSize = 4
+    const pageSize = 20
     const [promptsCursor, setPromptsCursor] = useState("")
     const [promptHasMore, setPromptHasMore] = useState(true)
 
