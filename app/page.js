@@ -373,6 +373,8 @@ export default function Home() {
                 case "iw":
                     key = "iw"
                     break
+                default:
+                    break
             }
             sysParams[key] = {name: name, value: value}
         });
@@ -923,7 +925,7 @@ export default function Home() {
                 case "tile":
                     return `--tile`
                 default:
-                    return ""
+                    return `--${systemParams[key].name} ${systemParams[key].value ? systemParams[key].value : ""}`
             }
         }).join(" ")
         const imaginePrefix = "/imagine prompt:"
