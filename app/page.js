@@ -1335,7 +1335,7 @@ export default function Home() {
                                                     onChange={(value) => {
                                                         setStyle(value)
                                                     }}
-                                                    defaultValue={style}
+                                                    value={style}
                                                     options={styleOptions.map((styleOption) => {
                                                             return {value: styleOption, label: styleOption}
                                                         }
