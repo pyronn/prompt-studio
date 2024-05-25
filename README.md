@@ -93,9 +93,15 @@ npm install
 ```
 2. 配置环境变量
 翻译需要配置腾讯云翻译服务的秘钥, 保存到环境变量中, 关键词不是自动翻译，所以不配置也可以运行
+deepl
 ``` dotenv
 TENCENTCLOUD_SECRET_ID=YOUR_SECRET_ID
 TENCENTCLOUD_SECRET_KEY=YOUR_SECRET_KEY
+
+// deepl 翻译服务
+DEEPL_AUTH_KEY=YOUR_AUTH_KEY
+// deepl 免费版和付费版的api host不一样，可以切换
+DEEPL_API_HOST=YOUR_API_HOST
 ```
 
 3. 启动开发服务器

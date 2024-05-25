@@ -30,19 +30,30 @@ import {arrayMove} from "@/lib/tools";
 
 const zhPattern = /[\u4e00-\u9fa5\u3000-\u303f\uff0c\uff1b\uff1a\uff0e\uff1f\uff01\uff1e\uff1c\u201c\u201d\u2018\u2019]/
 
-export default function Home() {
-
-    const modelOptions = {
-        "niji6": {name: "niji6", paramName: "niji", paramValue: "6", showName: "Niji 6"},
-        "v6": {name: "v6", paramName: "v", paramValue: "6", showName: "V 6"},
-        "v5.2": {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
-        "niji5": {name: "niji5", paramName: "niji", paramValue: "5", showName: "Niji 5"},
-        "v5.1": {name: "v5.1", paramName: "v", paramValue: "5.1", showName: "V 5.1"},
-        "v5": {name: "v5", paramName: "v", paramValue: "5", showName: "V 5"},
-        "v4": {name: "v4", paramName: "v", paramValue: "4", showName: "V 4"},
-        "v3": {name: "v3", paramName: "v", paramValue: "3", showName: "V 3"},
-        "niji4": {name: "niji4", paramName: "niji", paramValue: "4", showName: "Niji 4"},
+const translateProviders = [
+    {
+        label: "腾讯翻译",
+        value: "tencent"
+    },
+    {
+        label: "DeepL翻译",
+        value: "deepl"
     }
+]
+
+const modelOptions = {
+    "niji6": {name: "niji6", paramName: "niji", paramValue: "6", showName: "Niji 6"},
+    "v6": {name: "v6", paramName: "v", paramValue: "6", showName: "V 6"},
+    "v5.2": {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
+    "niji5": {name: "niji5", paramName: "niji", paramValue: "5", showName: "Niji 5"},
+    "v5.1": {name: "v5.1", paramName: "v", paramValue: "5.1", showName: "V 5.1"},
+    "v5": {name: "v5", paramName: "v", paramValue: "5", showName: "V 5"},
+    "v4": {name: "v4", paramName: "v", paramValue: "4", showName: "V 4"},
+    "v3": {name: "v3", paramName: "v", paramValue: "3", showName: "V 3"},
+    "niji4": {name: "niji4", paramName: "niji", paramValue: "4", showName: "Niji 4"},
+}
+
+export default function Home() {
 
     const pageSize = 20
     const [promptsCursor, setPromptsCursor] = useState("")
@@ -129,6 +140,7 @@ export default function Home() {
     const [inputTransTimer, setInputTransTimer] = useState(null);
     const [autoTranslate, setAutoTranslate] = useState(true);
     const [addPromptPrefix, setAddPromptPrefix] = useState(false)
+    const [translateProvider, setTranslateProvider] = useState("tencent")
 
 
     const handleInputKeywordsChange = (event) => {
@@ -468,7 +480,7 @@ export default function Home() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                provider: "tencent",
+                provider: translateProvider,
                 tarLang: tarLang,
                 textList: keywords
             })
@@ -667,10 +679,10 @@ export default function Home() {
                 }
             })
             const cateArr = [...cateSet.values()]
-            if (isReload){
+            if (isReload) {
                 setPrompts(result)
                 setPromptsCategories(cateArr)
-            }else{
+            } else {
                 setPrompts(prompts.concat(result))
                 setPromptsCategories(promptsCategories.concat(cateArr))
             }
@@ -1143,7 +1155,7 @@ export default function Home() {
                 scrollContainer.removeEventListener('scroll', handlePromptListScroll);
             }
         };
-    },[])
+    }, [])
 
     const [shouldLoadMore, setShouldLoadMore] = useState(false);
     const handlePromptListScroll = (event) => {
@@ -1162,7 +1174,7 @@ export default function Home() {
         if (shouldLoadMore && promptHasMore) {
             loadPromptAll(false)
         }
-    },[shouldLoadMore])
+    }, [shouldLoadMore])
 
     return (
 
@@ -1246,6 +1258,15 @@ export default function Home() {
                                             onChange={(checked) => {
                                                 setAddPromptPrefix(checked)
                                             }}/>
+                                    <Select className={`inline-block`}
+                                            onChange={(value) => {
+                                                setTranslateProvider(value)
+                                            }}
+                                            size={'small'}
+                                            value={translateProvider}
+                                            options={translateProviders.map(provider => provider)}
+                                    >
+                                    </Select>
                                 </div>
                                 <div
                                     className="overflow-wrap break-words w-full text-sm text-gray-200 font-mono bg-gray-700 p-1.5 rounded-b-md bordered">
@@ -1666,7 +1687,7 @@ export default function Home() {
                                 </div>
                             ))}
                         </div>
-                        {!promptHasMore ? <div className={`divider`}>No More Data</div>:""}
+                        {!promptHasMore ? <div className={`divider`}>No More Data</div> : ""}
 
                     </div>
                 </div>

@@ -1,28 +1,4 @@
-import {tmt} from "tencentcloud-sdk-nodejs-tmt/tencentcloud/services/"
-import {MemoryCache} from "@/lib/types";
-
-// 导入对应产品模块的client models。
-const TmtClient = tmt.v20180321.Client
-
-const cache = new MemoryCache()
-
-const client = new TmtClient({
-    credential: {
-        secretId: process.env.TENCENTCLOUD_SECRET_ID,
-        secretKey: process.env.TENCENTCLOUD_SECRET_KEY,
-    },
-    // 产品地域
-    region: "ap-shanghai",
-    // 可选配置实例
-    profile: {
-        signMethod: "TC3-HMAC-SHA256", // 签名方法
-        httpProfile: {
-            reqMethod: "POST", // 请求方法
-            reqTimeout: 30, // 请求超时时间，默认60s
-            // proxy: "http://127.0.0.1:8899" // http请求代理
-        },
-    },
-})
+import {translateWithCache} from "@/lib/translate";
 
 
 export async function POST(req) {
@@ -30,14 +6,22 @@ export async function POST(req) {
     const srcLang = reqParam.srcLang === undefined ? "auto" : reqParam.srcLang
     const tarLang = reqParam.tarLang
     const textList = reqParam.textList
+    const provider = reqParam.provider
     if (tarLang === undefined || textList === undefined) {
         return Response.json({
             "status": "error",
             "msg": "tarLang, textList are required"
         })
     }
+    if (!checkProviderEnable(provider)) {
+        return Response.json({
+            "status": "error",
+            "msg": "provider not enabled, set api key in env"
+        })
+    }
 
-    const targetTextList = await translateWithCache({srcLang, tarLang, textList});
+
+    const targetTextList = await translateWithCache({srcLang, tarLang, textList,provider});
 
     return Response.json({
         "status": "ok",
@@ -47,46 +31,12 @@ export async function POST(req) {
     })
 }
 
-async function translateWithCache({srcLang, tarLang, textList}) {
-
-    const translations = {};
-    const wordsToTranslate = [];
-
-    textList.forEach(word => {
-        const key = `${tarLang}-${word}`
-        if (cache.has(key)) {
-            translations[word] = cache.get(key);
-        } else {
-            wordsToTranslate.push(word);
-        }
-    });
-    // 对于没有缓存的单词，批量调用翻译服务
-    if (wordsToTranslate.length > 1) {
-        const resp = await client.TextTranslateBatch({
-            Source: srcLang,
-            Target: tarLang,
-            ProjectId: 0,
-            SourceTextList: wordsToTranslate,
-        });
-        const translatedWords = resp.TargetTextList
-        translatedWords.forEach((translated, index) => {
-            const originalWord = wordsToTranslate[index];
-            const key = `${tarLang}-${originalWord}`
-            cache.set(key, translated, 5 * 60 * 60 * 1000);
-            translations[originalWord] = translated;
-        });
-    }else if (wordsToTranslate.length === 1){
-        const resp = await client.TextTranslate({
-            Source: srcLang,
-            Target: tarLang,
-            ProjectId: 0,
-            SourceText: wordsToTranslate[0],
-        });
-        const translated = resp.TargetText
-        const originalWord = wordsToTranslate[0];
-        const key = `${tarLang}-${originalWord}`
-        cache.set(key, translated, 5 * 60 * 60 * 1000);
-        translations[originalWord] = translated;
+const checkProviderEnable = (provider) => {
+    if (provider === "tencent") {
+        return process.env.TENCENTCLOUD_SECRET_ID && process.env.TENCENTCLOUD_SECRET_KEY
+    } else if (provider === "deepl") {
+        return !!process.env.DEEPL_AUTH_KEY
     }
-    return textList.map(word => translations[word]);
+    return false
+
 }
