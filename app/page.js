@@ -1014,7 +1014,6 @@ export default function Home() {
     function usePrompt(rawPrompt) {
         setInputKeywords(rawPrompt)
         parseInputKeywords(rawPrompt)
-        togglePromptDrawer()
     }
 
     function previewPromptImage(promptItem) {
