@@ -839,7 +839,7 @@ export default function Home() {
 
     useEffect(() => {
         parseFinalKeyword();
-    }, [activeKeywords, selectedKeywords, systemParams, imagePrompts])
+    }, [activeKeywords, selectedKeywords, systemParams, imagePrompts, addPromptPrefix]);
 
     useEffect(() => {
         setIsNotionEnable(localStorage.getItem("enableNotionDict") === "true")
@@ -1333,6 +1333,7 @@ export default function Home() {
                                         </Col>
                                         <Col span={6}>
                                             <InputNumber width={10}
+                                                         step={10}
                                                          min={0}
                                                          max={1000}
                                                          value={stylize}
