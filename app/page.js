@@ -42,6 +42,7 @@ const translateProviders = [
 ]
 
 const modelOptions = {
+    "v6.1": {name: "v6.1", paramName: "v", paramValue: "6.1", showName: "V 6.1"},
     "niji6": {name: "niji6", paramName: "niji", paramValue: "6", showName: "Niji 6"},
     "v6": {name: "v6", paramName: "v", paramValue: "6", showName: "V 6"},
     "v5.2": {name: "v5.2", paramName: "v", paramValue: "5.2", showName: "V 5.2"},
