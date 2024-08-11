@@ -1,0 +1,13 @@
+{
+  "Home": {
+    "title": "Nextjs Starter"
+  },
+  "LocaleSwitcher": {
+    "label": "Switch Language",
+    "locale": "{locale, select, zh {简体中文} en {English} other {Unknown}}"
+  },
+  "Footer": {
+    "title": "Nextjs Starter",
+    "partnerLink": "Partner Links:"
+  }
+}

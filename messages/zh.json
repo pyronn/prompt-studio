@@ -1,0 +1,13 @@
+{
+  "Home": {
+    "title": "Nextjs 基础模板"
+  },
+  "LocaleSwitcher": {
+    "label": "切换语言",
+    "locale": "{locale, select, zh {简体中文} en {English} other {Unknown}}"
+  },
+  "Footer": {
+    "title": "Nextjs Starter",
+    "partnerLink": "友情链接："
+  }
+}
