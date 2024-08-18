@@ -2,8 +2,12 @@
  * Represents a part of a prompt with its associated weight.
  */
 export interface TextPromptPart {
+    id: string;
     text: string;
     weight: number;
+    translation?: string;
+    isActivated: boolean;
+    isSaved: boolean;
 }
 
 /**
@@ -95,7 +99,15 @@ function parseTextPrompts(textPromptsString: string): TextPromptPart[] {
     for (const prompt of weightedPrompts) {
         const sentenceParts = prompt.text.split('.').map(p => p.trim()).filter(Boolean);
         for (const part of sentenceParts) {
-            result.push({ text: part, weight: prompt.weight });
+            const id = Math.random().toString(36).slice(2, 9)
+            result.push({
+                id: id,
+                text: part,
+                weight: prompt.weight,
+                translation: '',
+                isActivated: true,
+                isSaved: false
+            });
         }
     }
 
@@ -111,7 +123,8 @@ function parsePromptWithWeight(prompt: string): TextPromptPart[] {
     const parts = prompt.split('::');
 
     if (parts.length === 1) {
-        return [{ text: prompt.trim(), weight: 1 }];
+        const id = Math.random().toString(36).slice(2, 9)
+        return [{id: id, text: prompt.trim(), weight: 1, translation: '', isActivated: true, isSaved: false}];
     }
 
     const p1 = parts[0].trim();
@@ -120,7 +133,8 @@ function parsePromptWithWeight(prompt: string): TextPromptPart[] {
     const weightMatch = p2.match(WEIGHT_REGEX);
 
     if (!weightMatch) {
-        return [{ text: prompt, weight: 1 }];
+        const id = Math.random().toString(36).slice(2, 9)
+        return [{id: id, text: prompt, weight: 1, translation: '', isActivated: true, isSaved: false}];
     }
 
     const weight = parseFloat(weightMatch[0]);
@@ -133,7 +147,15 @@ function parsePromptWithWeight(prompt: string): TextPromptPart[] {
     const result: TextPromptPart[] = [];
 
     if (p1) {
-        result.push({ text: p1, weight: isNaN(weight) || weight < -0.5 || weight > 2 ? 1 : weight });
+        const id = Math.random().toString(36).slice(2, 9)
+        result.push({
+            id: id,
+            text: p1,
+            weight: isNaN(weight) || weight < -0.5 || weight > 2 ? 1 : weight,
+            translation: '',
+            isActivated: true,
+            isSaved: false
+        });
     }
 
     if (remainingText) {

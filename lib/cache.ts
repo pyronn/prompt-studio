@@ -1,5 +1,11 @@
-class DictPrompt {
-    constructor(id, text, transText, category, dir) {
+export class DictPrompt {
+    id: string;
+    text: string;
+    transText: string;
+    category: string;
+    dir: string;
+
+    constructor(id: string, text: string, transText: string, category: string, dir: string) {
         this.id = id;
         this.text = text;
         this.transText = transText;
@@ -8,18 +14,29 @@ class DictPrompt {
     }
 }
 
-class PromptCategory {
-    constructor(id, name, parent, children) {
+export class PromptCategory {
+    id: string;
+    name: string;
+    parent: string | null;
+    children: string[];
+
+    constructor(id: string, name: string, parent: string | null, children: string[]) {
         this.id = id;
         this.name = name;
         this.parent = parent;
-        this.children = children
+        this.children = children;
     }
-
 }
 
-class Prompt {
-    constructor(id, title, desc, category, rawPrompt, sampleImgLink) {
+export class Prompt {
+    id: string;
+    title: string;
+    desc: string;
+    category: string;
+    rawPrompt: string;
+    sampleImgLink: string;
+
+    constructor(id: string, title: string, desc: string, category: string, rawPrompt: string, sampleImgLink: string) {
         this.id = id;
         this.title = title;
         this.desc = desc;
@@ -29,14 +46,16 @@ class Prompt {
     }
 }
 
-class MemoryCache {
+export class MemoryCache {
+    private cache: { [key: string]: any };
+    private timeout: { [key: string]: NodeJS.Timeout };
+
     constructor() {
         this.cache = {};
         this.timeout = {};
     }
 
-    // 设置缓存
-    set(key, value, ttl) {
+    set(key: string, value: any, ttl?: number): void {
         this.cache[key] = value;
         if (ttl) {
             if (this.timeout[key]) {
@@ -49,18 +68,15 @@ class MemoryCache {
         }
     }
 
-    // 获取缓存
-    get(key) {
+    get(key: string): any | undefined {
         return this.cache[key];
     }
 
-    // 检查是否含有某个键
-    has(key) {
-        return this.cache.hasOwnProperty(key);
+    has(key: string): boolean {
+        return Object.prototype.hasOwnProperty.call(this.cache, key);
     }
 
-    // 删除缓存
-    delete(key) {
+    delete(key: string): void {
         delete this.cache[key];
         if (this.timeout[key]) {
             clearTimeout(this.timeout[key]);
@@ -68,12 +84,9 @@ class MemoryCache {
         }
     }
 
-    // 清除所有缓存
-    clear() {
+    clear(): void {
         this.cache = {};
         Object.values(this.timeout).forEach(timeout => clearTimeout(timeout));
         this.timeout = {};
     }
 }
-
-export {PromptCategory,DictPrompt,MemoryCache}
