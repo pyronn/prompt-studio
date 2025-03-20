@@ -19,6 +19,14 @@ interface EditorSetting {
     translateService: string;
 }
 
+interface EditorSettingInput {
+    index?: number;
+    name?: string;
+    autoTranslate?: boolean;
+    addPrefix?: boolean;
+    translateService?: string;
+}
+
 type EditorState = PromptState & EditorSetting;
 
 type Action =
@@ -34,7 +42,7 @@ type Action =
     | { type: 'UPDATE_SYSTEM_PARAMETER'; payload: { key: string; value: string } }
     | { type: 'UPDATE_NEGATIVE_PROMPTS'; payload: string[] }
     | { type: 'REORDER_TEXT_PROMPTS'; payload: { startIndex: number; endIndex: number } }
-    | { type: 'UPDATE_SETTING'; payload: EditorSetting };
+    | { type: 'UPDATE_SETTING'; payload: EditorSettingInput };
 
 function updateFinalPrompt(state: EditorState): EditorState {
     const finalPrompt = formatParsedPrompt({
@@ -158,11 +166,11 @@ const initialState: EditorState = {
     index: 0,
     name: "",
     addPrefix: false,
-    translateService: 'google',
+    translateService: 'tencent',
 };
 
 const PromptEditorContext = createContext<{
-    state: PromptState;
+    state: EditorState;
     dispatch: React.Dispatch<Action>;
 } | undefined>(undefined);
 
