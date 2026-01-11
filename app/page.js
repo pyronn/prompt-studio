@@ -806,6 +806,80 @@ export default function Home() {
         setDictListLoading(false)
     }
 
+    /**
+     * 导出提示词库数据
+     */
+    const exportPromptLibrary = () => {
+        if (prompts.length === 0) {
+            message.warning("提示词库为空，无法导出");
+            return;
+        }
+        
+        // 格式化提示词库数据
+        const exportData = JSON.stringify(prompts, null, 2);
+        
+        // 创建下载链接
+        const blob = new Blob([exportData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        // 创建a标签并下载
+        const a = document.createElement('a');
+        const date = new Date().toISOString().split('T')[0];
+        a.href = url;
+        a.download = `prompt-library-${date}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        message.success("提示词库导出成功");
+    }
+    
+    /**
+     * 导出提示词词典数据
+     */
+    const exportPromptDictionary = () => {
+        if (dictPromptList.length === 0) {
+            message.warning("提示词词典为空，无法导出");
+            return;
+        }
+        
+        // 格式化词典数据
+        const exportData = JSON.stringify(allCategoryPrompts, null, 2);
+        
+        // 创建下载链接
+        const blob = new Blob([exportData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        // 创建a标签并下载
+        const a = document.createElement('a');
+        const date = new Date().toISOString().split('T')[0];
+        a.href = url;
+        a.download = `prompt-dictionary-${date}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        message.success("提示词词典导出成功");
+    }
+    
+    /**
+     * 导入提示词库数据（功能待实现）
+     */
+    const importPromptLibrary = () => {
+        message.info("提示词库导入功能即将推出");
+        // TODO: 实现提示词库数据导入功能
+    }
+    
+    /**
+     * 导入提示词词典数据（功能待实现）
+     */
+    const importPromptDictionary = () => {
+        message.info("提示词词典导入功能即将推出");
+        // TODO: 实现提示词词典数据导入功能
+    }
+
     useEffect(() => {
         if (inputTransTimer) {
             clearTimeout(inputTransTimer)
@@ -1507,6 +1581,7 @@ export default function Home() {
                         <div className={`flex space-x-1`}>
                             <Button type={"primary"} loading={dictListLoading} onClick={loadAllCategoryKeywords}>加载
                             </Button>
+                            <Button type={"primary"} onClick={exportPromptDictionary}>导出</Button>
                             <Button icon={<CloseIcon/>} type={"text"} onClick={(e) => setIsDrawerOpen(false)}>
                             </Button>
                         </div>
@@ -1640,6 +1715,7 @@ export default function Home() {
                             <Button loading={promptListLoading} icon={<RefreshCwIcon onClick={() => {
                                 loadPromptAll(true).catch(err => message.error("load prompt failed" + err))
                             }}/>}/>
+                            <Button type={"primary"} onClick={exportPromptLibrary}>导出</Button>
                             <Button icon={<CloseIcon/>} onClick={(e) => setIsPromptDrawerOpen(false)}/>
                         </div>
                     </div>
